@@ -1,0 +1,31 @@
+{
+  "name": "ralshop",
+  "version": "1.0.0",
+  "description": "Full Functional E-Commerce Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urlGuney/RalShop.git"
+  },
+  "keywords": [
+    "shopping",
+    "e-commerce",
+    "shop",
+    "cart"
+  ],
+  "author": "Guney Ural",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/urlGuney/RalShop/issues"
+  },
+  "homepage": "https://github.com/urlGuney/RalShop#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.13",
+    "morgan": "^1.10.0"
+  }
+}
