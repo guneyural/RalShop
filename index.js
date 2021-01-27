@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const PORT = 3001 || process.env.PORT;
 const DATABASE = process.env.DATABASE;
 const expressError = require("./utils/expressError");
+const Routes = require("./routes");
 
 app.use(morgan("dev"));
 app.use(express.json());
@@ -20,6 +21,10 @@ mongoose
   .then(() => console.log("Connected To Database."))
   .catch((err) => console.log("Could Not Connect To Database." + err));
 
+app.use("/user", Routes.UserRoutes);
+app.use("/shop", Routes.ShopRoutes);
+app.use("/cart", Routes.CartRoutes);
+app.use("/product", Routes.ProductRoutes);
 app.get("/", (req, res) => {
   res.send("Güney Ural");
 });
