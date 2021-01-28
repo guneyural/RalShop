@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const expressError = require("../utils/expressError");
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,6 +20,20 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  let user = this;
+  let newUsername = this.username.split(" ").join(".");
+  this.username = newUsername;
+  try {
+    const hash = await bcrypt.hash(user.password, 10);
+    this.password = hash;
+  } catch (err) {
+    if (err)
+      next(new expressError("An error occured while creating the user.", 500));
+  }
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
