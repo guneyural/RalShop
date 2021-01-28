@@ -2,13 +2,26 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const expressError = require("../utils/expressError");
 const catchAsync = require("../utils/catchAsync");
+const { UserValidation } = require("../validations/shcmeas");
 const bcrypt = require("bcrypt");
 
 const register = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+  const { error } = UserValidation.validate(req.body);
   if (!req.body.username || !email || !password) {
     return next(new expressError("Fill All Fields", 400));
   }
+  if (error)
+    return next(
+      new expressError(
+        error.details[0].message.split(" ")[
+          error.details[0].message.split(" ").length - 1
+        ] === "email"
+          ? "Email Must Be A Valid Email"
+          : "Username Must Be Less Than 30 Characters",
+        400
+      )
+    );
 
   const findUserByEmail = await User.findOne({ email: req.body.email });
   const findUserByUsername = await User.findOne({
