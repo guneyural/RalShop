@@ -15,12 +15,12 @@ const createShop = catchAsync(async (req, res, next) => {
       new expressError(
         error.details[0].message.split(" ")[
           error.details[0].message.split(" ").length - 1
-        ] === "email" && "Email Required.",
+        ] === "email" && "Email Must Be A Valid Email.",
         400
       )
     );
-  const findShopByName = await Shop.find({ name });
-  const findShopByEmail = await Shop.find({ email });
+  const findShopByName = await Shop.findOne({ name });
+  const findShopByEmail = await Shop.findOne({ email });
   if (findShopByName)
     return next(new expressError("Shop With That Name Exists.", 400));
   if (findShopByEmail)
@@ -39,7 +39,7 @@ const loginShop = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password)
     return next(new expressError("Fill All Fields", 400));
-  const getShop = await Shop.find({ email });
+  const getShop = await Shop.findOne({ email });
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 404));
 
   const comparePassword = await bcrypt.compare(password, getShop.password);
@@ -57,11 +57,13 @@ const getShopById = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const getShop = await Shop.findById(req.params.id);
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
+  const { _id, name, email, description, image } = getShop;
   res.json({
-    name: getShop.name,
-    email: getShop.email,
-    description: getShop.description,
-    image: getShop.image,
+    id: _id,
+    name,
+    email,
+    description,
+    image,
   });
 });
 
@@ -70,11 +72,13 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const getShop = await Shop.findById(req.shop.id);
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
+  const { _id, name, email, description, image } = getShop;
   res.json({
-    name: getShop.name,
-    email: getShop.email,
-    description: getShop.description,
-    image: getShop.image,
+    id: _id,
+    name,
+    email,
+    description,
+    image,
   });
 });
 
