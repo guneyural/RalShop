@@ -8,6 +8,8 @@ const UserValidation = Joi.object({
 
 const ShopValidation = Joi.object({
   name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
   description: Joi.string(),
   image: Joi.string(),
 });
