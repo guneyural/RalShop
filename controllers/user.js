@@ -4,6 +4,7 @@ const expressError = require("../utils/expressError");
 const catchAsync = require("../utils/catchAsync");
 const { UserValidation } = require("../validations/shcmeas");
 const bcrypt = require("bcrypt");
+const mongoId = require("mongoose").Types.ObjectId;
 
 const register = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -70,6 +71,8 @@ const getUserByUsername = catchAsync(async (req, res, next) => {
 });
 
 const getCurrentUser = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID.", 400));
   const currentUser = await User.findById(req.user.id);
   if (!currentUser)
     return next(new expressError("Current User Not Found", 404));
