@@ -10,10 +10,6 @@ const shopSchema = new mongoose.Schema(
     password: strOptions,
     description: String,
     image: String,
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
   },
   { timestamps: true }
 );
