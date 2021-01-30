@@ -21,7 +21,7 @@ const CartValidation = Joi.object({
 
 const ProductValidation = Joi.object({
   title: Joi.string().required(),
-  price: Joi.string().required(),
+  price: Joi.number().required(),
   description: Joi.string().required(),
   stock: Joi.number().required(),
   image: Joi.string().required(),

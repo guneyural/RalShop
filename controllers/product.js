@@ -31,14 +31,16 @@ const updateProduct = catchAsync(async (req, res, next) => {
 
   const getProduct = await Product.findById(req.params.id);
   if (!getProduct) return next(new expressError("Product Not Found", 404));
-  if (getProduct.shop === req.shop.id) {
+  if (getProduct.shop == req.shop.id) {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body
+      req.body,
+      { new: true }
     );
-    res.status(204).json(updatedProduct);
+    res.json(updatedProduct);
+  } else {
+    next(new expressError("You Are Not Owner Of This Product.", 403));
   }
-  return next(new expressError("You Are Not Owner Of This Product.", 403));
 });
 
 const deleteProduct = catchAsync(async (req, res, next) => {
@@ -47,9 +49,9 @@ const deleteProduct = catchAsync(async (req, res, next) => {
 
   const getProduct = await Product.findById(req.params.id);
   if (!getProduct) return next(new expressError("Product Not Found", 404));
-  if (getProduct.shop === req.shop.id) {
+  if (getProduct.shop == req.shop.id) {
     await Product.deleteOne({ _id: req.params.id });
-    res.status(204).json("Product Deleted");
+    return res.json("Product Deleted");
   }
   return next(new expressError("You Are Not Owner Of This Product.", 403));
 });
