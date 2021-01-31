@@ -10,29 +10,33 @@ const createCard = catchAsync(async (req, res) => {
   res.status(201).json(cart);
 });
 
-const addToCard = catchAsync(async (req, res, next) => {});
+const addToCard = catchAsync(async (req, res, next) => {
+  const getCart = await Cart.findOne({ user: req.user.id });
+  if (!getCart)
+    return next(new expressError("You Don't Have A Shopping Cart.", 404));
+
+  const updateCart = await Cart.findOneAndUpdate(
+    { user: req.user.id },
+    req.body,
+    { new: true }
+  );
+  res.json(updateCart);
+});
 
 const deleteCard = catchAsync(async (req, res, next) => {
-  if (!mongoId.isValid(req.params.id))
-    return next(new expressError("Enter Valid Id", 400));
-  const getCart = await Cart.findById(req.params.id);
+  const getCart = await Cart.findOne({ user: req.user.id });
   if (!getCart) return next(new expressError("Cart Not Found.", 404));
   if (getCart.user == req.user.id) {
-    await Cart.findByIdAndDelete(req.params.id);
+    await Cart.findOneAndDelete({ user: req.user.id });
     return res.json("Cart Deleted.");
   }
   return next(new expressError("You Are Not Owner Of This Card.", 403));
 });
 
 const getCard = catchAsync(async (req, res, next) => {
-  if (!mongoId.isValid(req.params.id))
-    return next(new expressError("Enter Valid Id", 400));
-  const getCart = await Cart.findById(req.params.id);
+  const getCart = await Cart.findOne({ user: req.user.id });
   if (!getCart) return next(new expressError("Cart Not Found.", 404));
-
-  if (getCart.user == req.user.id) {
-    return res.json(getCart);
-  }
+  if (getCart.user == req.user.id) return res.json(getCart);
   return next(new expressError("You Are Not Owner Of This Card.", 403));
 });
 

@@ -7,9 +7,9 @@ const {
 } = require("../controllers/cart");
 const { isUser } = require("../middlewares/isAuth");
 
-Router.post("/create", isUser, createCard);
-Router.put("/add", isUser, addToCard);
-Router.delete("/remove/:id", isUser, deleteCard);
-Router.get("/get/:id", isUser, getCard);
+Router.post("/", isUser, createCard);
+Router.put("/", isUser, addToCard);
+Router.delete("/", isUser, deleteCard);
+Router.get("/", isUser, getCard);
 
 module.exports = Router;
