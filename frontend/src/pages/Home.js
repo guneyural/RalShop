@@ -3,9 +3,8 @@ import Logo from "../assets/logo.png";
 
 const HomePage = () => {
   return (
-    <div>
+    <div style={{ marginTop: "100px" }}>
       <h1>Home</h1>
-      <img src={Logo} alt="logo" style={{ height: "250px" }} />
     </div>
   );
 };
