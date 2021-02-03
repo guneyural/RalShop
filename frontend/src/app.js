@@ -10,7 +10,7 @@ const App = () => {
   return (
     <Router>
       <Navbar />
-      <div className="container">
+      <div className="container main-container" style={{ paddingTop: "120px" }}>
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/auth" exact component={AuthPage} />

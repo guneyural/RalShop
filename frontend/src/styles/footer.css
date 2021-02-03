@@ -9,11 +9,11 @@
 }
 
 .footer-logo {
-  width: 70px;
+  width: 60px;
 }
 
 .footer-logo-text {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
 }
 
@@ -38,7 +38,7 @@
   text-decoration: underline;
 }
 
-@media only screen and (min-width: 430px) {
+@media only screen and (min-width: 431px) {
   .footer .container {
     display: flex;
     justify-content: space-between;
@@ -55,5 +55,9 @@
     display: block;
     padding-left: 10px;
     padding-top: 5px;
+  }
+
+  .main-container {
+    padding-bottom: 150px;
   }
 }
