@@ -27,6 +27,7 @@ body {
   color: var(--primary-color);
   background: var(--bg-color);
   margin: 0 0 100px;
+  padding: 0;
 }
 
 .default-btn {
@@ -56,11 +57,12 @@ body {
 
 .not-found-container {
   width: 100%;
-  height: 100vh;
+  height: 70vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding-top: 40px;
 }
 
 .not-found-container h1 {
@@ -96,6 +98,10 @@ body {
   background: white;
   border-bottom: 1px solid #d4cfcf;
   box-shadow: 1px 1px 9px -2px #d4cfcf;
+  transition: var(--transition-quick);
+}
+.top-nav-scroll {
+  top: 0;
 }
 
 .tiny-nav {
@@ -244,14 +250,13 @@ body {
 }
 
 .nav-mobile {
-  position: absolute;
+  position: fixed;
   z-index: 999999;
   background: white;
   right: 0;
   top: 0;
   height: 100vh;
   width: 0;
-  border-left: 1px solid #c2c2c2;
   transition: 0.5s;
   overflow-x: hidden;
 }
@@ -261,6 +266,7 @@ body {
 }
 
 .nav-active {
+  border-left: 1px solid #c2c2c2;
   width: 60%;
   color: var(--primary-color) !important;
 }

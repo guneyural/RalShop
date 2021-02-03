@@ -23,6 +23,8 @@ const TinyNavLink = styled.span`
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
+  const [scroll, setScroll] = useState(window.scrollY);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     document.querySelectorAll(".nav-mobile a").forEach((item) => {
@@ -34,9 +36,11 @@ const Navbar = () => {
     if (isNavOpen) {
       document.querySelector(".nav-mobile").className += " nav-active";
       document.querySelector(".bg").style.display = "block";
+      document.body.style.overflow = "hidden";
     } else {
       document.querySelector(".nav-mobile").className = "nav-mobile";
       document.querySelector(".bg").style.display = "none";
+      document.body.style.overflow = "auto";
     }
   }, [isNavOpen]);
 
@@ -44,6 +48,11 @@ const Navbar = () => {
     const getWidth = () => {
       setWindowSize(window.innerWidth);
     };
+    const getScroll = () => {
+      setScroll(window.scrollY);
+    };
+
+    window.addEventListener("scroll", getScroll);
     window.addEventListener("resize", getWidth);
 
     if (windowSize > 892) {
@@ -53,10 +62,16 @@ const Navbar = () => {
       document.body.style.overflow = "hidden";
     }
 
+    if (scroll > 15) {
+      document.querySelector(".top-nav").classList.add("top-nav-scroll");
+    } else {
+      document.querySelector(".top-nav").classList.remove("top-nav-scroll");
+    }
+
     return () => {
       window.removeEventListener("resize", getWidth);
     };
-  }, [windowSize]);
+  }, [windowSize, scroll]);
 
   const getCategory = (idx) => {
     window.location.href = `http://localhost:3000/category/${idx}`;
@@ -104,6 +119,8 @@ const Navbar = () => {
                 <input
                   type="text"
                   name="searchQuery"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search Product, Brand, Category or Seller"
                   className="search-bar"
                 />
