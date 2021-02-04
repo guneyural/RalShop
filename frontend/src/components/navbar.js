@@ -11,6 +11,7 @@ import {
 import { GiHamburgerMenu } from "react-icons/gi";
 import { categories, subCategories } from "../data/category";
 import { CgMenuGridR } from "react-icons/cg";
+import { useSelector } from "react-redux";
 
 const TinyNavLink = styled.span`
   color: #6c757d;
@@ -25,6 +26,7 @@ const Navbar = () => {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
   const [scroll, setScroll] = useState(window.scrollY);
   const [searchQuery, setSearchQuery] = useState("");
+  const { user, isAuthenticated } = useSelector((state) => state.Auth);
 
   useEffect(() => {
     document.querySelectorAll(".nav-mobile a").forEach((item) => {
@@ -130,9 +132,15 @@ const Navbar = () => {
               </form>
             </section>
             <section className="navbar-right">
-              <Link to="/auth">
-                <FaUserCircle /> Login
-              </Link>
+              {isAuthenticated ? (
+                <Link to={`/user/${user.username}`}>
+                  <FaUserCircle /> Profile
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <FaUserCircle /> Login
+                </Link>
+              )}
               <Link to="/wishlist">
                 <FaHeart /> Wishlist
               </Link>
@@ -198,11 +206,19 @@ const Navbar = () => {
                 <CgMenuGridR className="mobile-nav-icon" /> Categories
               </li>
             </Link>
-            <Link to="/auth">
-              <li>
-                <FaUserCircle className="mobile-nav-icon" /> Login
-              </li>
-            </Link>
+            {isAuthenticated ? (
+              <Link to={`/user/${user.username}`}>
+                <li>
+                  <FaUserCircle className="mobile-nav-icon" /> Profile
+                </li>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <li>
+                  <FaUserCircle className="mobile-nav-icon" /> Login
+                </li>
+              </Link>
+            )}
           </ul>
         </section>
         <section className="mobile-nav-bottom">

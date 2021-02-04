@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../assets/logo.png";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin, registerUser } from "../redux/actions/authActions";
 
 const BrandName = styled.h1`
   font-weight: 300;
@@ -24,6 +26,8 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [emailOrUsername, setEmailOrUsername] = useState("");
+  const Auth = useSelector((state) => state.Auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (password.length >= 6) {
@@ -33,12 +37,21 @@ const AuthPage = () => {
     }
   }, [password]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="row auth">
       <div className="col-sm-6 forms">
         <section>
           <h2>{isLogin ? "Login" : "Register"}</h2>
-          <form onSubmit={(e) => e.preventDefault()}>
+          {!Auth.isAuthenticated && (
+            <span className="text-danger">
+              {Auth.error.msg !== null && Auth.error.msg}
+            </span>
+          )}
+          <form onSubmit={(e) => handleSubmit(e)}>
             {isLogin && (
               <div className="form-section">
                 <label htmlFor="emailOrUsername">Email Or Username</label>
@@ -97,7 +110,15 @@ const AuthPage = () => {
             </div>
             {!isLogin && <Colorful>Forgot Password ?</Colorful>}
             <div className="form-section mt-2">
-              <button className="default-btn" disabled={btnDisabled}>
+              <button
+                className="default-btn"
+                disabled={btnDisabled}
+                onClick={() =>
+                  isLogin
+                    ? dispatch(userLogin({ emailOrUsername, password }))
+                    : dispatch(registerUser({ email, username, password }))
+                }
+              >
                 {isLogin ? "Login" : "Register"}
               </button>
             </div>
