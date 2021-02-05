@@ -108,7 +108,7 @@ const AuthPage = () => {
                 </div>
               )}
             </div>
-            {!isLogin && <Colorful>Forgot Password ?</Colorful>}
+            {isLogin && <Colorful>Forget Password ?</Colorful>}
             <div className="form-section mt-2">
               <button
                 className="default-btn"
