@@ -5,7 +5,7 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Express
 - ReactJS
 - NodeJS
-### Installed Packages
+## Installed Packages
 - Bcrypt for hashing passwords
 - Cloudinary for saving images
 - Dotenv for enviorment variables
@@ -16,6 +16,9 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Morgan for logging
 - Multer for handling file data
 - Multer-storage-cloudinary for storing files in cloudinary
+## Versions
+- Node: v12.16.1
+- Npm: 6.14.11
 
-#### Author
+### Author
 Guney Ural
