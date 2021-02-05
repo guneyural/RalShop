@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const expressError = require("../utils/expressError");
 
+const imageSchema = new mongoose.Schema({
+  url: String,
+  filename: String,
+});
+imageSchema.virtual("thumbnail").get(function () {
+  return this.url.replace("/upload", "/upload/w_150");
+});
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -10,6 +18,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    profilePhoto: [imageSchema],
     email: {
       type: String,
       unique: true,
