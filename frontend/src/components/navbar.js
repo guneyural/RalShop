@@ -132,7 +132,7 @@ const Navbar = () => {
               </form>
             </section>
             <section className="navbar-right">
-              {isAuthenticated ? (
+              {isAuthenticated && user !== null ? (
                 <Link to={`/user/${user.username}`}>
                   <FaUserCircle /> Profile
                 </Link>
@@ -206,7 +206,7 @@ const Navbar = () => {
                 <CgMenuGridR className="mobile-nav-icon" /> Categories
               </li>
             </Link>
-            {isAuthenticated ? (
+            {isAuthenticated && user !== null ? (
               <Link to={`/user/${user.username}`}>
                 <li>
                   <FaUserCircle className="mobile-nav-icon" /> Profile

@@ -34,7 +34,7 @@ export const userLogin = (loginData) => (dispatch) => {
     .post("/api/user/login", loginData)
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: USER_LOGIN, payload: data.token });
+      dispatch({ type: USER_LOGIN, payload: data });
     })
     .catch((err) => {
       dispatch({

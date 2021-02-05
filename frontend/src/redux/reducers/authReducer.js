@@ -59,9 +59,11 @@ export const Auth = (state = initialState, action) => {
     case LOGOUT_USER:
       localStorage.removeItem("user-token");
       return {
+        ...state,
         token: null,
         user: {},
         loading: false,
+        isAuthenticated: false,
         error: {
           msg: null,
           status: null,
@@ -70,6 +72,7 @@ export const Auth = (state = initialState, action) => {
     case AUTH_ERROR:
       return {
         ...state,
+        loading: false,
         error: {
           msg: action.payload.msg,
           status: action.payload.status,

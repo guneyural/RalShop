@@ -17,7 +17,7 @@ const App = () => {
   const { isAuthenticated } = useSelector((state) => state.Auth);
   useEffect(() => {
     dispatch(getUser());
-  }, []);
+  }, [dispatch, isAuthenticated]);
 
   return (
     <Router>

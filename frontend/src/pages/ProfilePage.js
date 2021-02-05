@@ -12,14 +12,14 @@ const ProfilePage = () => {
     dispatch(getProfile(username));
   }, [dispatch, username]);
 
+  if (error.msg !== null && error.msg === "User Not Found") {
+    return (
+      <div>
+        <h1 className="text-danger">{error.msg}</h1>
+      </div>
+    );
+  }
   if (!loading) {
-    if (error.msg !== null) {
-      return (
-        <div>
-          <h1 className="text-danger">{error.msg}</h1>
-        </div>
-      );
-    }
     return (
       <div>
         {profile !== null && (
