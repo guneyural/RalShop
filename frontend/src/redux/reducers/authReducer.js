@@ -9,7 +9,7 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  token: localStorage.getItem("token"),
+  token: localStorage.getItem("user-token"),
   isAuthenticated: false,
   user: null,
   loading: false,
@@ -28,10 +28,6 @@ export const Auth = (state = initialState, action) => {
         isAuthenticated: true,
         user: action.payload,
         loading: false,
-        error: {
-          msg: null,
-          status: null,
-        },
       };
     case GET_USER_BY_USERNAME:
       return {
