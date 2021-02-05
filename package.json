@@ -24,13 +24,16 @@
   "homepage": "https://github.com/urlGuney/RalShop#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "cloudinary": "^1.24.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.13",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "multer-storage-cloudinary": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0"
