@@ -33,6 +33,10 @@ const register = catchAsync(async (req, res, next) => {
     return next(new expressError("Username Exists.", 400));
 
   const createUser = new User(req.body);
+  const hash = await bcrypt.hash(createUser.password, 10);
+  createUser.password = hash;
+  let newUsername = createUser.username.split(" ").join(".");
+  createUser.username = newUsername;
   const saveUser = await createUser.save();
 
   const token = jwt.sign({ id: saveUser._id }, process.env.SECRET, {
@@ -80,9 +84,71 @@ const getCurrentUser = catchAsync(async (req, res, next) => {
   res.json({ _id, username, email });
 });
 
+const resetPassword = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID.", 400));
+  const findUser = await User.findById(req.user.id);
+  if (!findUser) return next(new expressError("User Not Found.", 404));
+  const { oldPassword, newPassword } = req.body;
+  const isMatch = await bcrypt.compare(oldPassword, findUser.password);
+  if (!isMatch) return next(new expressError("Wrong Password.", 400));
+  const hashPassword = await bcrypt.hash(newPassword, 10);
+  await User.findByIdAndUpdate(req.user.id, { password: hashPassword });
+  res.json("Password Changed.");
+});
+
+const removeUser = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID", 400));
+  const findUser = await User.findById(req.user.id);
+  if (!findUser) return next(new expressError("User Not Found.", 404));
+  const { password } = req.body;
+  const isMatch = await bcrypt.compare(password, findUser.password);
+  if (!isMatch) return next(new expressError("Wrong Password", 400));
+  await User.findOneAndDelete({ _id: req.user.id });
+  res.json("User Deleted.");
+});
+
+const updateUserData = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID", 400));
+  const findUser = await User.findById(req.user.id);
+  if (!findUser) return next(new expressError("User Not Found.", 404));
+  const getUsers = await User.find({
+    _id: { $ne: req.user.id },
+    $or: [{ username: req.body.username }, { email: req.body.email }],
+  });
+  if (getUsers.length > 0)
+    return next(new expressError("User Already exists.", 400));
+  const file = req.file;
+  const { removePhoto } = req.body;
+  const updateUser = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    req.body,
+    { new: true }
+  );
+  if (file) {
+    updateUser.profilePhoto = { url: file.path, filename: file.filename };
+    updateUser.hasPhoto = true;
+    await updateUser.save();
+  }
+  if (removePhoto) {
+    updateUser.profilePhoto = {};
+    updateUser.hasPhoto = false;
+    await updateUser.save();
+  }
+  res.json(updateUser);
+});
+
+const forgetPassword = catchAsync(async (req, res, next) => {});
+
 module.exports = {
   login,
   register,
   getUserByUsername,
   getCurrentUser,
+  resetPassword,
+  forgetPassword,
+  removeUser,
+  updateUserData,
 };
