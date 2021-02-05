@@ -47,7 +47,9 @@ const AuthPage = () => {
         <section>
           <h2>{isLogin ? "Login" : "Register"}</h2>
           {Auth.error.msg !== null && (
-            <span className="text-danger">{Auth.error.msg}</span>
+            <span className="text-danger">
+              {Auth.error.msg !== "Login To See The Content." && Auth.error.msg}
+            </span>
           )}
           <form onSubmit={(e) => handleSubmit(e)}>
             {isLogin && (
