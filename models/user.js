@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    profilePhoto: [imageSchema],
+    profilePhoto: imageSchema,
     email: {
       type: String,
       unique: true,
