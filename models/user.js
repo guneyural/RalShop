@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     profilePhoto: imageSchema,
+    hasPhoto: { type: Boolean, default: false },
     email: {
       type: String,
       unique: true,
@@ -32,20 +33,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-userSchema.pre("save", async function (next) {
-  let user = this;
-  let newUsername = this.username.split(" ").join(".");
-  this.username = newUsername;
-  try {
-    const hash = await bcrypt.hash(user.password, 10);
-    this.password = hash;
-  } catch (err) {
-    if (err)
-      next(new expressError("An error occured while creating the user.", 500));
-  }
-  next();
-});
 
 const User = mongoose.model("User", userSchema);
 
