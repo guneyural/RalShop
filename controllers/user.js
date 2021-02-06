@@ -140,6 +140,37 @@ const updateUserData = catchAsync(async (req, res, next) => {
     updateUser.hasPhoto = false;
     await updateUser.save();
   }
+  if (updateUser.email !== findUser.email) {
+    const emailOptions = {
+      from: process.env.EMAIL,
+      to: updateUser.email,
+      subject: "Email Changed.",
+      text: `${updateUser.email} is the valid email for UralShop.`,
+    };
+
+    transporter.sendMail(emailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info);
+      }
+    });
+
+    const secondEmailOptions = {
+      from: process.env.EMAIL,
+      to: findUser.email,
+      subject: "Email Changed.",
+      text: `${findUser.email} address changed to ${updateUser.email}. Now ${updateUser.email} is valid Email.`,
+    };
+
+    transporter.sendMail(secondEmailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info);
+      }
+    });
+  }
   res.json(updateUser);
 });
 

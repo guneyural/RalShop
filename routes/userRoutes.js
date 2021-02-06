@@ -12,7 +12,7 @@ const limiter = rateLimit({
 });
 const passwordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 1,
+  max: 3,
   message: "Rate Limit Exceeded.",
 });
 
