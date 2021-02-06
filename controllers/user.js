@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const mongoId = require("mongoose").Types.ObjectId;
 const transporter = require("../nodemailer");
 const generateId = require("../utils/generateId");
+const moment = require("moment");
 
 const register = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -243,9 +244,53 @@ const sendForgetPasswordEmail = catchAsync(async (req, res) => {
 });
 
 const checkResetPasswordToken = catchAsync(async (req, res, next) => {
-  // Get Mail Address in url param
-  // Check expiration date
-  // Get id from url param compare it if true return true
+  const { usernameOrEmail, userToken } = req.params;
+  const getUser = await User.findOne({
+    $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
+  });
+  if (!getUser) return next(new expressError("redirect", 403));
+  const {
+    resetPassword: { token, expiration },
+  } = getUser;
+  if (moment(expiration).isAfter(Date.now())) {
+    const compareToken = await bcrypt.compare(userToken, token);
+    if (!compareToken) return next(new expressError("redirect tutmadı", 403));
+    return res.json("success");
+  } else {
+    getUser.resetPassword = {};
+    await getUser.save();
+    return next(new expressError("redirect", 403));
+  }
+});
+
+const changePassword = catchAsync(async (req, res, next) => {
+  const token = req.headers["password-token"];
+  const { emailOrUsername } = req.params;
+  const { newPassword, confirmPassword } = req.body;
+  if (!newPassword || !confirmPassword)
+    return next(new expressError("Password can't be blank.", 400));
+  if (newPassword.length < 6)
+    return next(
+      new expressError("Password must be at least 6 characters.", 400)
+    );
+  if (token.length > 8 || token.length < 8)
+    return next(new expressError("redirect", 403));
+  const getUser = await User.findOne({
+    $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+  });
+  if (!getUser) return next(new expressError("redirect", 403));
+  const { resetPassword } = getUser;
+  if (moment(resetPassword.expiration).isBefore(Date.now()))
+    return next(new expressError("redirect", 403));
+  const compareToken = await bcrypt.compare(token, resetPassword.token);
+  if (!compareToken) return next(new expressError("redirect", 403));
+  if (newPassword !== confirmPassword)
+    return next(new expressError("Passwords don't match.", 400));
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  getUser.password = hashedPassword;
+  getUser.resetPassword = {};
+  await getUser.save();
+  res.json("Successfully changed the password.");
 });
 
 module.exports = {
@@ -257,5 +302,6 @@ module.exports = {
   sendForgetPasswordEmail,
   checkResetPasswordToken,
   removeUser,
+  changePassword,
   updateUserData,
 };
