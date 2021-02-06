@@ -1,12 +1,5 @@
 # RalShop
 
-<<<<<<< HEAD
-RalShop is a full stack e-commerce app built with MERN stack.
-
-## Tech Stack
-
-=======
-
 RalShop is a full stack e-commerce app built with MERN stack.
 
 ## Tech Stack
@@ -15,10 +8,6 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Express
 - ReactJS
 - NodeJS
-
-## Installed Packages
-
-=======
 
 ## Installed Packages
 
