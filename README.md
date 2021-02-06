@@ -30,10 +30,6 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Node: v12.16.1
 - Npm: 6.14.11
 
-### Author
-
-# Guney Ural
-
 ## Versions
 
 - Node: v12.16.1
