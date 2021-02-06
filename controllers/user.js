@@ -158,7 +158,13 @@ const updateUserData = catchAsync(async (req, res, next) => {
       from: process.env.EMAIL,
       to: updateUser.email,
       subject: "Email Changed.",
-      text: `${updateUser.email} is the valid email for UralShop.`,
+      html: `<div style="margin:auto;background:white;border:1px solid #dedede;width:400px;padding:20px">
+      <p>Email address of @${updateUser.username} changed.</p>
+      <p><b>${updateUser.email}</b> is valid email.</p>
+      <hr />
+        <h3 style="text-align:center">UralShop</h3>
+        <p style="text-align:center; font-size:11px;">Guney Ural @2021</p>
+      </div>`,
     };
 
     transporter.sendMail(emailOptions, function (error, info) {
@@ -173,7 +179,12 @@ const updateUserData = catchAsync(async (req, res, next) => {
       from: process.env.EMAIL,
       to: findUser.email,
       subject: "Email Changed.",
-      text: `${findUser.email} address changed to ${updateUser.email}. Now ${updateUser.email} is valid Email.`,
+      html: `<div style="margin:auto;background:white;border:1px solid #dedede;width:400px;padding:20px">
+      <p><b>${findUser.email}</b> address changed to <b>${updateUser.email}</b>. Now <b>${updateUser.email}</b> is valid email.</p>
+      <hr />
+        <h3 style="text-align:center">UralShop</h3>
+        <p style="text-align:center; font-size:11px;">Guney Ural @2021</p>
+      </div>`,
     };
 
     transporter.sendMail(secondEmailOptions, function (error, info) {
@@ -187,7 +198,7 @@ const updateUserData = catchAsync(async (req, res, next) => {
   res.json(updateUser);
 });
 
-const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
+const sendForgetPasswordEmail = catchAsync(async (req, res) => {
   const { emailOrUsername } = req.body;
   const getAccount = await User.findOne({
     $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
@@ -204,7 +215,15 @@ const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
       from: process.env.EMAIL,
       to: getAccount.email,
       subject: "Password Reset Request.",
-      text: token,
+      html: `<div style="margin:auto;background:white;border:1px solid #dedede;width:400px;padding:20px">
+        <h1>Reset Your Password?</h1>
+        <p>If you have sent password reset request for @${getAccount.username} copy bold text down there which is your confirmation code.</p>
+        <p>If you didn't make this request ignore this email.</p>
+        <h2><strong>${token}</strong></h2>
+        <hr />
+        <h3 style="text-align:center">UralShop</h3>
+        <p style="text-align:center; font-size:11px;">Guney Ural @2021</p>
+      </div>`,
     };
 
     transporter.sendMail(emailOptions, function (error, info) {
