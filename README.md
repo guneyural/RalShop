@@ -24,6 +24,7 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Express-mongo-sanitize for to avoid nosql injection
 - Nodemailer for sending email
 - Express-rate-limiter for rate limit
+- Moment for date time operations
 
 ## Versions
 
