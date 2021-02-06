@@ -5,6 +5,8 @@ const catchAsync = require("../utils/catchAsync");
 const { UserValidation } = require("../validations/shcmeas");
 const bcrypt = require("bcrypt");
 const mongoId = require("mongoose").Types.ObjectId;
+const transporter = require("../nodemailer");
+const generateId = require("../utils/generateId");
 
 const register = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -141,7 +143,34 @@ const updateUserData = catchAsync(async (req, res, next) => {
   res.json(updateUser);
 });
 
-const forgetPassword = catchAsync(async (req, res, next) => {});
+const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
+  const { emailOrUsername } = req.body;
+  const getAccount = await User.findOne({
+    $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
+  });
+  if (getAccount) {
+    const emailOptions = {
+      from: process.env.EMAIL,
+      to: getAccount.email,
+      subject: "Password Reset Request.",
+      text: generateId(8),
+    };
+
+    transporter.sendMail(emailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+      transporter.close();
+    });
+    res.json({
+      msg: "Email Has Been Sent If Account Exists.",
+    });
+  } else {
+    res.json({ msg: "Email Has Been Sent If Account Exists." });
+  }
+});
 
 module.exports = {
   login,
@@ -149,7 +178,7 @@ module.exports = {
   getUserByUsername,
   getCurrentUser,
   resetPassword,
-  forgetPassword,
+  sendForgetPasswordEmail,
   removeUser,
   updateUserData,
 };
