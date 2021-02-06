@@ -8,8 +8,10 @@ const DATABASE = process.env.DATABASE;
 const expressError = require("./utils/expressError");
 const Routes = require("./routes");
 const helmet = require("helmet");
+const sanitize = require("express-mongo-sanitize");
 
 app.use(helmet());
+app.use(sanitize());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

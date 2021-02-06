@@ -30,6 +30,7 @@ RalShop is a full stack e-commerce app built with MERN stack.
 - Morgan for logging
 - Multer for handling file data
 - Multer-storage-cloudinary for storing files in cloudinary
+- Express-mongo-sanitize for to avoid nosql injection
 <<<<<<< HEAD
 ## Versions
 - Node: v12.16.1
