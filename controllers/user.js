@@ -28,9 +28,10 @@ const register = catchAsync(async (req, res, next) => {
   const findUserByUsername = await User.findOne({
     username: req.body.username,
   });
-  if (findUserByEmail) return next(new expressError("Email Exists.", 400));
+  if (findUserByEmail)
+    return next(new expressError("Try Different Email.", 400));
   if (findUserByUsername)
-    return next(new expressError("Username Exists.", 400));
+    return next(new expressError("Trh Different Username.", 400));
 
   const createUser = new User(req.body);
   const hash = await bcrypt.hash(createUser.password, 10);
@@ -54,11 +55,11 @@ const login = catchAsync(async (req, res, next) => {
   const findUser = await User.findOne({
     $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
   });
-  if (!findUser) return next(new expressError("User Does Not Exist.", 404));
+  if (!findUser) return next(new expressError("Wrong Password Or Email.", 404));
 
   const comparePassword = await bcrypt.compare(password, findUser.password);
   if (!comparePassword)
-    return next(new expressError("Invalid Credentials.", 400));
+    return next(new expressError("Wrong Password Or Email.", 400));
 
   const token = jwt.sign({ id: findUser._id }, process.env.SECRET, {
     expiresIn: "5d",
@@ -119,7 +120,7 @@ const updateUserData = catchAsync(async (req, res, next) => {
     $or: [{ username: req.body.username }, { email: req.body.email }],
   });
   if (getUsers.length > 0)
-    return next(new expressError("User Already exists.", 400));
+    return next(new expressError("Try Different Username or Email.", 400));
   const file = req.file;
   const { removePhoto } = req.body;
   const updateUser = await User.findOneAndUpdate(
