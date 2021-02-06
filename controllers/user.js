@@ -97,6 +97,19 @@ const resetPassword = catchAsync(async (req, res, next) => {
   if (!isMatch) return next(new expressError("Wrong Password.", 400));
   const hashPassword = await bcrypt.hash(newPassword, 10);
   await User.findByIdAndUpdate(req.user.id, { password: hashPassword });
+  const emailOptions = {
+    from: process.env.EMAIL,
+    to: findUser.email,
+    subject: "Email Changed.",
+    text: `Your password has changed.`,
+  };
+  transporter.sendMail(emailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info);
+    }
+  });
   res.json("Password Changed.");
 });
 
