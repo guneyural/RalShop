@@ -18,12 +18,22 @@ const passwordLimiter = rateLimit({
 
 Router.get("/p/:username", userController.getUserByUsername);
 Router.get("/current", isUser, userController.getCurrentUser);
+Router.get(
+  "/changePassword/:usernameOrEmail/:userToken",
+  passwordLimiter,
+  userController.checkResetPasswordToken
+);
 Router.post("/register", limiter, userController.register);
 Router.post("/login", userController.login);
 Router.post(
   "/sendEmail",
   passwordLimiter,
   userController.sendForgetPasswordEmail
+);
+Router.post(
+  "/newPassword/:emailOrUsername",
+  passwordLimiter,
+  userController.changePassword
 );
 Router.put(
   "/resetPassword",
