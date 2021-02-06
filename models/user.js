@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const expressError = require("../utils/expressError");
 
 const imageSchema = new mongoose.Schema({
   url: String,
@@ -29,6 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 6,
+    },
+    resetPassword: {
+      token: String,
+      expiration: Date,
     },
   },
   { timestamps: true }

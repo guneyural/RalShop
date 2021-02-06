@@ -193,11 +193,18 @@ const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
     $or: [{ username: emailOrUsername }, { email: emailOrUsername }],
   });
   if (getAccount) {
+    const token = generateId(8);
+    const hashedToken = await bcrypt.hash(token, 2);
+    let currentDate = new Date();
+    let futureDate = new Date(currentDate.getTime() + 5 * 60000);
+    getAccount.resetPassword = { token: hashedToken, expiration: futureDate };
+    await getAccount.save();
+
     const emailOptions = {
       from: process.env.EMAIL,
       to: getAccount.email,
       subject: "Password Reset Request.",
-      text: generateId(8),
+      text: token,
     };
 
     transporter.sendMail(emailOptions, function (error, info) {
@@ -216,6 +223,12 @@ const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
   }
 });
 
+const checkResetPasswordToken = catchAsync(async (req, res, next) => {
+  // Get Mail Address in url param
+  // Check expiration date
+  // Get id from url param compare it if true return true
+});
+
 module.exports = {
   login,
   register,
@@ -223,6 +236,7 @@ module.exports = {
   getCurrentUser,
   resetPassword,
   sendForgetPasswordEmail,
+  checkResetPasswordToken,
   removeUser,
   updateUserData,
 };
