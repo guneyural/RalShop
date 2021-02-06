@@ -4,18 +4,39 @@ const { isUser } = require("../middlewares/isAuth");
 const multer = require("multer");
 const { storage } = require("../cloudinary");
 const upload = multer({ storage });
+const rateLimit = require("express-rate-limit");
 
-Router.post("/register", userController.register);
-Router.post("/login", userController.login);
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+});
+const passwordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 1,
+  message: "Rate Limit Exceeded.",
+});
+
 Router.get("/p/:username", userController.getUserByUsername);
 Router.get("/current", isUser, userController.getCurrentUser);
-Router.put("/resetPassword", isUser, userController.resetPassword);
-Router.delete("/remove", isUser, userController.removeUser);
+Router.post("/register", limiter, userController.register);
+Router.post("/login", userController.login);
+Router.post(
+  "/sendEmail",
+  passwordLimiter,
+  userController.sendForgetPasswordEmail
+);
+Router.put(
+  "/resetPassword",
+  passwordLimiter,
+  isUser,
+  userController.resetPassword
+);
 Router.put(
   "/update",
   upload.single("profilePhoto"),
   isUser,
   userController.updateUserData
 );
+Router.delete("/remove", limiter, isUser, userController.removeUser);
 
 module.exports = Router;
