@@ -31,7 +31,7 @@ const register = catchAsync(async (req, res, next) => {
   if (findUserByEmail)
     return next(new expressError("Try Different Email.", 400));
   if (findUserByUsername)
-    return next(new expressError("Trh Different Username.", 400));
+    return next(new expressError("Try Different Username.", 400));
 
   const createUser = new User(req.body);
   const hash = await bcrypt.hash(createUser.password, 10);
