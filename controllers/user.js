@@ -74,8 +74,8 @@ const login = catchAsync(async (req, res, next) => {
 const getUserByUsername = catchAsync(async (req, res, next) => {
   const getUser = await User.findOne({ username: req.params.username });
   if (!getUser) return next(new expressError("User Not Found", 404));
-  const { username, email, _id } = getUser;
-  res.json({ _id, username, email });
+  const { username, email, _id, profilePhoto, createdAt, hasPhoto } = getUser;
+  res.json({ _id, username, email, profilePhoto, createdAt, hasPhoto });
 });
 
 const getCurrentUser = catchAsync(async (req, res, next) => {
@@ -84,8 +84,15 @@ const getCurrentUser = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(req.user.id);
   if (!currentUser)
     return next(new expressError("Current User Not Found", 404));
-  const { username, email, _id } = currentUser;
-  res.json({ _id, username, email });
+  const {
+    username,
+    email,
+    _id,
+    createdAt,
+    hasPhoto,
+    profilePhoto,
+  } = currentUser;
+  res.json({ _id, username, email, createdAt, hasPhoto, profilePhoto });
 });
 
 const resetPassword = catchAsync(async (req, res, next) => {
