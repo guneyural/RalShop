@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./redux/actions/authActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
+import ProfileSettingsPage from "./pages/ProfileSettings";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,12 @@ const App = () => {
             auth={isAuthenticated}
           />
           <Route path="/user/:username" exact component={ProfilePage} />
+          <PrivateRoute
+            path="/account/settings"
+            exact
+            component={ProfileSettingsPage}
+            auth={isAuthenticated}
+          />
           <Route component={NotFound} />
         </Switch>
       </div>

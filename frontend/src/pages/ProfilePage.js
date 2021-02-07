@@ -8,6 +8,7 @@ import styled from "styled-components";
 import moment from "moment";
 import { BiLogOut } from "react-icons/bi";
 import MessageBox from "../components/messageBox";
+import { Link } from "react-router-dom";
 
 const TextMuted = styled.p`
   color: var(--text-muted);
@@ -108,10 +109,12 @@ const ProfilePage = () => {
                 </TextMuted>
               </section>
               {user !== null && user._id === profile._id && (
-                <button className="default-btn settings-btn">
-                  <MdSettings />
-                  Settings
-                </button>
+                <Link to="/account/settings">
+                  <button className="default-btn settings-btn">
+                    <MdSettings />
+                    Settings
+                  </button>
+                </Link>
               )}
             </div>
           </section>
