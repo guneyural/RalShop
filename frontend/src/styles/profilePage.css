@@ -1,0 +1,84 @@
+.profile-pic-section {
+  position: relative;
+  background: gray;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.profile-picture {
+  object-fit: cover;
+  width: 180px;
+  border-radius: 50%;
+}
+
+.profile-section {
+  display: flex;
+}
+
+.profile-body {
+  margin-left: 80px;
+  margin-top: 10px;
+}
+
+.profile-body .settings-btn {
+  width: 100%;
+}
+
+.profile-username + .default-btn {
+  padding: 2px 8px;
+  border: transparent;
+  border-radius: 8px;
+}
+
+@media only screen and (max-width: 540px) {
+  .profile-picture {
+    width: 120px;
+  }
+  .profile-body {
+    margin-left: 50px;
+    margin-top: 0;
+  }
+}
+
+@media only screen and (max-width: 440px) {
+  .profile-picture {
+    width: 90px;
+  }
+  .profile-body {
+    margin-left: 120px;
+    margin-top: 0;
+  }
+  .profile-pic-section {
+    position: absolute;
+  }
+}
+
+@media only screen and (max-width: 380px) {
+  .profile-picture {
+    width: 75px;
+  }
+  .profile-body {
+    margin-left: 100px;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .profile-username {
+    font-size: 24px;
+  }
+  .profile-username + .default-btn {
+    padding: 2px 5px;
+  }
+  .profile-body {
+    margin-left: 95px;
+  }
+}
+
+@media only screen and (max-width: 330px) {
+  .profile-username + .default-btn {
+    padding: 2px 4px;
+  }
+  .profile-body {
+    margin-left: 90px;
+  }
+}

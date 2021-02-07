@@ -4,6 +4,7 @@ import App from "./app";
 import "./styles/navbar.css";
 import "./styles/auth.css";
 import "./styles/footer.css";
+import "./styles/profilePage.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
