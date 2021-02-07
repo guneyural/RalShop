@@ -133,6 +133,11 @@ const removeUser = catchAsync(async (req, res, next) => {
   res.json("User Deleted.");
 });
 
+const validateEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
 const updateUserData = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.user.id))
     return next(new expressError("Enter Valid ID", 400));
@@ -144,6 +149,12 @@ const updateUserData = catchAsync(async (req, res, next) => {
   });
   if (getUsers.length > 0)
     return next(new expressError("Try Different Username or Email.", 400));
+  if (req.body.email) {
+    if (req.body.email.length < 1)
+      return next(new expressError("Email Can't Be Blank.", 400));
+    if (!validateEmail(req.body.email))
+      return next(new expressError("Enter Valid Email.", 400));
+  }
   const file = req.file;
   const { removePhoto } = req.body;
   const updateUser = await User.findOneAndUpdate(
