@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile, logoutUser } from "../redux/actions/authActions";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,7 @@ import { MdSettings } from "react-icons/md";
 import styled from "styled-components";
 import moment from "moment";
 import { BiLogOut } from "react-icons/bi";
+import MessageBox from "../components/messageBox";
 
 const TextMuted = styled.p`
   color: var(--text-muted);
@@ -21,10 +22,29 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const { user, profile, loading, error } = useSelector((state) => state.Auth);
   const { username } = useParams();
+  const [message, setMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalHeader, setModalHeader] = useState("");
+  const [btnText, setBtnText] = useState("");
 
   useEffect(() => {
     dispatch(getProfile(username));
   }, [dispatch, username]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.querySelector("body").style.overflow = "hidden";
+    } else {
+      document.querySelector("body").style.overflow = "auto";
+    }
+  }, [isModalOpen]);
+
+  const clickLogout = () => {
+    setMessage("Do You Want To Logout?");
+    setIsModalOpen(true);
+    setModalHeader("Logout ?");
+    setBtnText("Logout");
+  };
 
   if (error.msg !== null && error.msg === "User Not Found") {
     return (
@@ -47,6 +67,16 @@ const ProfilePage = () => {
   if (!loading) {
     return (
       <div>
+        {isModalOpen && (
+          <MessageBox
+            action={logoutUser}
+            message={message}
+            header={modalHeader}
+            setIsModalOpen={setIsModalOpen}
+            btnText={btnText}
+            isModalOpen={isModalOpen}
+          />
+        )}
         {profile !== null && (
           <section className="profile-section">
             <div className="profile-pic-section">
@@ -67,7 +97,7 @@ const ProfilePage = () => {
                   {user !== null && user._id === profile._id && (
                     <button
                       className="default-btn"
-                      onClick={() => dispatch(logoutUser())}
+                      onClick={() => clickLogout()}
                     >
                       <BiLogOut /> Logout
                     </button>
