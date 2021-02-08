@@ -81,20 +81,16 @@ const ProfilePage = () => {
         {profile !== null && (
           <section className="profile-section">
             <div className="profile-pic-section">
-              {profile.hasPhoto ? (
-                <img src="" alt="profile" className="profile-picture" />
-              ) : (
-                <img
-                  src={noPicture}
-                  alt="profile"
-                  className="profile-picture"
-                />
-              )}
+              <img
+                src={profile.hasPhoto ? profile.profilePhoto.url : noPicture}
+                alt="profile"
+                className="profile-picture"
+              />
             </div>
             <div className="profile-body">
               <section>
                 <ProfileSection>
-                  <h1 className="profile-username">{profile.username}</h1>
+                  <h3 className="profile-username">{profile.username}</h3>
                   {user !== null && user._id === profile._id && (
                     <button
                       className="default-btn"

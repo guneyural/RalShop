@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import NoPhoto from "../assets/noProfilePic.jpg";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import axios from "axios";
+import Loading from "../assets/loading.gif";
 
 const StyledSection = styled.section`
   display: flex;
@@ -25,34 +27,63 @@ const Colorful = styled.span`
   text-decoration: underline;
   font-size: 15px;
 `;
+const InfoText = styled.span`
+  display: inline-block;
+  margin-left: 10px;
+`;
 
 const ProfileSettings = () => {
   const { user } = useSelector((state) => state.Auth);
-  const [fileData, setFileData] = useState(null);
   const [removePhoto, setRemovePhoto] = useState(false);
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  };
-
-  const getFileData = (e) => {
-    const getFile = document.querySelector(`input[type="file"]`);
-    setFileData(getFile.files[0]);
-    setRemovePhoto(false);
+    let formData = new FormData();
+    let imagefile = document.querySelector(`input[type="file"]`);
+    if (!removePhoto && imagefile.files[0] !== undefined)
+      formData.append("profilePhoto", imagefile.files[0]);
+    if (removePhoto) formData.append("removePhoto", removePhoto);
+    formData.append("username", username);
+    formData.append("email", email);
+    setIsLoading(true);
+    setIsSuccess(false);
+    axios
+      .put("/api/user/update", formData, {
+        headers: {
+          "user-token": localStorage.getItem("user-token"),
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => res.data)
+      .then((data) => {
+        setErr(null);
+        setIsLoading(false);
+        setIsSuccess(true);
+        setTimeout(() => {
+          window.location.href = window.origin;
+        }, 1500);
+      })
+      .catch((err) => {
+        setErr(err.response.data.errorMessage);
+        setIsLoading(false);
+        setIsSuccess(false);
+      });
   };
 
   const handleRemovePhoto = () => {
     setRemovePhoto(!removePhoto);
-    setFileData(null);
   };
 
   return (
     <div style={{ paddingTop: "10px" }}>
       <StyledSection>
         <img
-          src={user && user.hasPhoto ? "senbildin" : NoPhoto}
+          src={user && user.hasPhoto ? user.profilePhoto.url : NoPhoto}
           alt="profile"
           className="profile-pic-section settings"
         />
@@ -65,12 +96,7 @@ const ProfileSettings = () => {
           >
             Change Profile picture
           </label>
-          <input
-            className="form-control"
-            type="file"
-            id="formFile"
-            onChange={(e) => getFileData(e)}
-          />
+          <input className="form-control" type="file" id="formFile" />
           <section
             style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
           >
@@ -96,7 +122,10 @@ const ProfileSettings = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <div className="form-text">Spaces will be replaced with dot(.)</div>
+          <div className="form-text">
+            Username must be less than 15 characters. Spaces will be replaced
+            with dot(.)
+          </div>
         </div>
         <div className="form-section">
           <label htmlFor="username">Email</label>
@@ -114,7 +143,18 @@ const ProfileSettings = () => {
           </div>
         </div>
         <button className="default-btn w-25">Save</button>
+        {isSuccess && (
+          <InfoText className="text-success">
+            <b>Changes Saved.</b>
+          </InfoText>
+        )}
+        {err !== null && (
+          <InfoText className="text-danger">
+            <b>{err}</b>
+          </InfoText>
+        )}
       </form>
+      {isLoading && <img src={Loading} alt="loading" width="100" />}
     </div>
   );
 };
