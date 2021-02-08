@@ -8,14 +8,27 @@ const Message = styled.p`
   font-weight: 500;
 `;
 
-const MessageBox = ({ action, message, setIsModalOpen, header, btnText }) => {
+const MessageBox = ({
+  isRedux,
+  action,
+  message,
+  setIsModalOpen,
+  header,
+  btnText,
+}) => {
   const dispatch = useDispatch();
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const logoutUser = () => {
-    dispatch(action());
-    setIsModalOpen(false);
+
+  const handleAction = () => {
+    if (!isRedux) {
+      action();
+      setIsModalOpen(false);
+    } else {
+      dispatch(action());
+      setIsModalOpen(false);
+    }
   };
 
   return (
@@ -29,7 +42,7 @@ const MessageBox = ({ action, message, setIsModalOpen, header, btnText }) => {
         </section>
         <section className="modal-body">
           <Message>{message}</Message>
-          <button className="default-btn" onClick={() => logoutUser()}>
+          <button className="default-btn" onClick={() => handleAction()}>
             {btnText}
           </button>
         </section>

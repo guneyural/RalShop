@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NoPhoto from "../assets/noProfilePic.jpg";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import axios from "axios";
 import Loading from "../assets/loading.gif";
+import Modal from "./messageBox";
 
 const StyledSection = styled.section`
   display: flex;
@@ -40,6 +41,18 @@ const ProfileSettings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [removeAccountError, setRemoveAccountError] = useState(null);
+
+  useEffect(() => {
+    const body = document.querySelector("body");
+    if (isModalOpen) {
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
+    }
+  }, [isModalOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -79,14 +92,64 @@ const ProfileSettings = () => {
     setRemovePhoto(!removePhoto);
   };
 
+  const removeAccount = () => {
+    setIsLoading(true);
+    axios
+      .post(
+        "/api/user/remove",
+        { password },
+        {
+          headers: {
+            "user-token": localStorage.getItem("user-token"),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => res.data)
+      .then((data) => {
+        localStorage.removeItem("user-token");
+        setIsLoading(false);
+        setRemoveAccountError(null);
+        window.location.href = window.origin;
+      })
+      .catch((err) => {
+        setRemoveAccountError(err.response.data.errorMessage);
+        setIsLoading(false);
+      });
+    setIsLoading(false);
+  };
+
+  const openModal = (e) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
   return (
     <div style={{ paddingTop: "10px" }}>
-      <StyledSection>
-        <img
-          src={user && user.hasPhoto ? user.profilePhoto.url : NoPhoto}
-          alt="profile"
-          className="profile-pic-section settings"
+      {isModalOpen && (
+        <Modal
+          setIsModalOpen={setIsModalOpen}
+          message="Do You Really Want To Delete Your Account?"
+          header="Delete Account"
+          btnText="Delete My Account"
+          action={removeAccount}
+          isRedux={false}
         />
+      )}
+      <StyledSection>
+        {!removePhoto ? (
+          <img
+            src={user && user.hasPhoto ? user.profilePhoto.url : NoPhoto}
+            alt="profile"
+            className="profile-pic-section settings"
+          />
+        ) : (
+          <img
+            src={NoPhoto}
+            alt="profile"
+            className="profile-pic-section settings"
+          />
+        )}
         <ColumnSection>
           <h2>{user.username}</h2>
           <label
@@ -101,7 +164,7 @@ const ProfileSettings = () => {
             style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
           >
             <Colorful onClick={() => handleRemovePhoto()}>
-              Remove Photo
+              {removePhoto ? "Don't remove photo" : "Remove photo"}
             </Colorful>
             <span className="text-danger" style={{ fontSize: "13px" }}>
               {removePhoto &&
@@ -155,6 +218,41 @@ const ProfileSettings = () => {
         )}
       </form>
       {isLoading && <img src={Loading} alt="loading" width="100" />}
+      <hr />
+      <section className="delete-account">
+        <h3 className="text-danger">Delete Account</h3>
+        <p className="text-danger">
+          This action is irreversible. Once you delete your account all of your
+          data will be lost.
+        </p>
+        <form onSubmit={(e) => openModal(e)}>
+          <div className="form-section">
+            <label htmlFor="password" className="text-danger">
+              <b>Password</b>
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="password"
+              className="text-danger"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button
+            className="default-btn text-danger"
+            disabled={password.length < 6 ? true : false}
+          >
+            Delete Account
+          </button>
+          {removeAccountError !== null && (
+            <InfoText className="text-danger">
+              <b>{removeAccountError}</b>
+            </InfoText>
+          )}
+        </form>
+      </section>
     </div>
   );
 };
