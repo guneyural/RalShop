@@ -35,7 +35,6 @@ const ProfileSettings = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(fileData);
   };
 
   const getFileData = (e) => {
