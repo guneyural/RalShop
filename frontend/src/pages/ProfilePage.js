@@ -76,6 +76,7 @@ const ProfilePage = () => {
             setIsModalOpen={setIsModalOpen}
             btnText={btnText}
             isModalOpen={isModalOpen}
+            isRedux={true}
           />
         )}
         {profile !== null && (
