@@ -7,7 +7,8 @@
 
 .profile-picture {
   object-fit: cover;
-  width: 180px;
+  width: 170px;
+  height: 170px;
   border-radius: 50%;
 }
 
@@ -88,7 +89,8 @@
 
 @media only screen and (max-width: 540px) {
   .profile-picture {
-    width: 120px;
+    width: 150px;
+    height: 150px;
   }
   .profile-body {
     margin-left: 50px;
@@ -108,10 +110,11 @@
 
 @media only screen and (max-width: 441px) {
   .profile-picture {
-    width: 90px;
+    width: 120px;
+    height: 120px;
   }
   .profile-body {
-    margin-left: 120px;
+    margin-left: 140px;
     margin-top: 0;
   }
   .profile-pic-section {
@@ -121,7 +124,8 @@
 
 @media only screen and (max-width: 380px) {
   .profile-picture {
-    width: 75px;
+    width: 90px;
+    height: 90px;
   }
   .profile-body {
     margin-left: 100px;
@@ -144,6 +148,11 @@
 }
 
 @media only screen and (max-width: 340px) {
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+  }
+
   .profile-pic-section.settings {
     width: 85px;
     height: 85px;
@@ -155,6 +164,6 @@
     padding: 2px 4px;
   }
   .profile-body {
-    margin-left: 88px;
+    margin-left: 95px;
   }
 }
