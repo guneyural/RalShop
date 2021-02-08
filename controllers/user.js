@@ -113,6 +113,10 @@ const resetPassword = catchAsync(async (req, res, next) => {
     return next(
       new expressError("New Password Can't Be Same With Old Password.", 400)
     );
+  if (newPassword.length < 6)
+    return next(
+      new expressError("Password Must Be More Than 6 Characters.", 400)
+    );
   const isMatch = await bcrypt.compare(oldPassword, findUser.password);
   if (!isMatch) return next(new expressError("Wrong Password.", 400));
   const hashPassword = await bcrypt.hash(newPassword, 10);
