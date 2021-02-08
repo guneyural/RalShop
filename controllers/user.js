@@ -8,6 +8,7 @@ const mongoId = require("mongoose").Types.ObjectId;
 const transporter = require("../nodemailer");
 const generateId = require("../utils/generateId");
 const moment = require("moment");
+const { cloudinary } = require("../cloudinary");
 
 const register = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -105,7 +106,13 @@ const resetPassword = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const findUser = await User.findById(req.user.id);
   if (!findUser) return next(new expressError("User Not Found.", 404));
-  const { oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  if (!oldPassword || !newPassword || !confirmPassword)
+    return next(new expressError("Enter All Fields.", 400));
+  if (oldPassword === newPassword)
+    return next(
+      new expressError("New Password Can't Be Same With Old Password.", 400)
+    );
   const isMatch = await bcrypt.compare(oldPassword, findUser.password);
   if (!isMatch) return next(new expressError("Wrong Password.", 400));
   const hashPassword = await bcrypt.hash(newPassword, 10);
@@ -148,6 +155,8 @@ const updateUserData = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID", 400));
   const findUser = await User.findById(req.user.id);
   if (!findUser) return next(new expressError("User Not Found.", 404));
+  if (req.body.username.length < 1)
+    return next(new expressError("Username Cant Be Blank.", 400));
   const getUsers = await User.find({
     _id: { $ne: req.user.id },
     $or: [{ username: req.body.username }, { email: req.body.email }],
@@ -189,6 +198,7 @@ const updateUserData = catchAsync(async (req, res, next) => {
     updateUser.profilePhoto = {};
     updateUser.hasPhoto = false;
     await updateUser.save();
+    cloudinary.uploader.destroy(findUser.profilePhoto.filename);
   }
   if (updateUser.email !== findUser.email) {
     const emailOptions = {
