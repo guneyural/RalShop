@@ -35,6 +35,7 @@ Router.post(
   passwordLimiter,
   userController.changePassword
 );
+Router.post("/remove", limiter, isUser, userController.removeUser);
 Router.put(
   "/resetPassword",
   passwordLimiter,
@@ -47,6 +48,5 @@ Router.put(
   isUser,
   userController.updateUserData
 );
-Router.delete("/remove", limiter, isUser, userController.removeUser);
 
 module.exports = Router;

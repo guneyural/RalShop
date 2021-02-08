@@ -145,7 +145,9 @@ const removeUser = catchAsync(async (req, res, next) => {
   const { password } = req.body;
   const isMatch = await bcrypt.compare(password, findUser.password);
   if (!isMatch) return next(new expressError("Wrong Password", 400));
-  await User.findOneAndDelete({ _id: req.user.id });
+  await User.deleteOne({ _id: req.user.id });
+  if (findUser.hasPhoto)
+    cloudinary.uploader.destroy(findUser.profilePhoto.filename);
   res.json("User Deleted.");
 });
 
