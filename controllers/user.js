@@ -35,6 +35,11 @@ const register = catchAsync(async (req, res, next) => {
     return next(new expressError("Try Different Email.", 400));
   if (findUserByUsername)
     return next(new expressError("Try Different Username.", 400));
+  if (req.body.username.length > 15) {
+    return next(
+      new expressError("Username Can't Be More Than 15 Characters.", 400)
+    );
+  }
 
   const createUser = new User(req.body);
   const hash = await bcrypt.hash(createUser.password, 10);
@@ -157,11 +162,21 @@ const updateUserData = catchAsync(async (req, res, next) => {
   }
   const file = req.file;
   const { removePhoto } = req.body;
+  if (req.body.username.length > 15) {
+    return next(
+      new expressError("Username Can't Be More Than 15 Characters.", 400)
+    );
+  }
   const updateUser = await User.findOneAndUpdate(
     { _id: req.user.id },
     req.body,
     { new: true }
   );
+  if (req.body.username) {
+    let newUsername = updateUser.username.split(" ").join(".");
+    updateUser.username = newUsername;
+    await updateUser.save();
+  }
   if (file) {
     updateUser.profilePhoto = {
       url: file.path.replace("/upload", "/upload/w_400"),
