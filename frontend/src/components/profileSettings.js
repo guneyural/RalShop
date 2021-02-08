@@ -85,6 +85,7 @@ const ProfileSettings = () => {
           </section>
         </ColumnSection>
       </StyledSection>
+      <hr />
       <form onSubmit={(e) => handleSubmit(e)}>
         <div className="form-section">
           <label htmlFor="username">Username</label>
