@@ -163,7 +163,10 @@ const updateUserData = catchAsync(async (req, res, next) => {
     { new: true }
   );
   if (file) {
-    updateUser.profilePhoto = { url: file.path, filename: file.filename };
+    updateUser.profilePhoto = {
+      url: file.path.replace("/upload", "/upload/w_400"),
+      filename: file.filename,
+    };
     updateUser.hasPhoto = true;
     await updateUser.save();
   }
