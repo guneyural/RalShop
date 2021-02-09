@@ -12,13 +12,16 @@ import { getUser } from "./redux/actions/authActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettingsPage from "./pages/ProfileSettings";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import PasswordCodeConfirmationPage from "./pages/ForgotPasswordCodePage";
+import PasswordResetRoute from "./privateRoutes/passwordResetRoutes";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.Auth);
+  const User = useSelector((state) => state.Auth);
   useEffect(() => {
     dispatch(getUser());
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, User.isAuthenticated]);
 
   return (
     <Router>
@@ -30,20 +33,32 @@ const App = () => {
             path="/auth"
             exact
             component={AuthPage}
-            auth={isAuthenticated}
+            auth={User.isAuthenticated}
+          />
+          <PrivateLogin
+            path="/account/forgot_password"
+            exact
+            component={ForgotPasswordPage}
+            auth={User.isAuthenticated}
           />
           <PrivateRoute
             path="/wishlist"
             exact
             component={WishlistPage}
-            auth={isAuthenticated}
+            auth={User.isAuthenticated}
           />
           <Route path="/user/:username" exact component={ProfilePage} />
           <PrivateRoute
             path="/account/settings"
             exact
             component={ProfileSettingsPage}
-            auth={isAuthenticated}
+            auth={User.isAuthenticated}
+          />
+          <PasswordResetRoute
+            path="/account/forgot_password/confirmation"
+            component={PasswordCodeConfirmationPage}
+            isPasswordReset={User.forgotPassword.isPasswordReset}
+            exact
           />
           <Route component={NotFound} />
         </Switch>
