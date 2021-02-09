@@ -6,6 +6,8 @@ import {
   LOADING,
   AUTH_ERROR,
   GET_USER_BY_USERNAME,
+  SEND_FORGOT_PASSWORD_EMAIL,
+  SEND_FORGOT_PASSWORD_EMAIL_ERROR,
 } from "../actions/types";
 
 const initialState = {
@@ -18,6 +20,17 @@ const initialState = {
     status: null,
   },
   profile: null,
+  forgotPassword: {
+    isPasswordReset:
+      localStorage.getItem("password_reset") === null
+        ? false
+        : localStorage.getItem("password_reset") === "true" && true,
+    confirmationCode: null,
+    success:
+      localStorage.getItem("password_reset") === null
+        ? null
+        : localStorage.getItem("password_reset") === "true" && true,
+  },
 };
 
 export const Auth = (state = initialState, action) => {
@@ -63,6 +76,26 @@ export const Auth = (state = initialState, action) => {
         error: {
           msg: null,
           status: null,
+        },
+      };
+    case SEND_FORGOT_PASSWORD_EMAIL:
+      return {
+        ...state,
+        loading: false,
+        forgotPassword: {
+          ...state.forgotPassword,
+          isPasswordReset: true,
+          success: true,
+        },
+      };
+    case SEND_FORGOT_PASSWORD_EMAIL_ERROR:
+      return {
+        ...state,
+        loading: false,
+        forgotPassword: {
+          isPasswordReset: false,
+          confirmationCode: null,
+          success: false,
         },
       };
     case AUTH_ERROR:
