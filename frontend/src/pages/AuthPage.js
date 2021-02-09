@@ -3,6 +3,7 @@ import Logo from "../assets/logo.png";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogin, registerUser } from "../redux/actions/authActions";
+import { Link } from "react-router-dom";
 
 const BrandName = styled.h1`
   font-weight: 300;
@@ -108,7 +109,11 @@ const AuthPage = () => {
                 </div>
               )}
             </div>
-            {isLogin && <Colorful>Forget Password ?</Colorful>}
+            {isLogin && (
+              <Link to="/account/forgot_password">
+                <Colorful>Forgot Password ?</Colorful>
+              </Link>
+            )}
             <div className="form-section mt-2">
               <button
                 className="default-btn"
