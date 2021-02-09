@@ -288,10 +288,11 @@ const sendForgetPasswordEmail = catchAsync(async (req, res) => {
       transporter.close();
     });
     res.json({
-      msg: "Email Has Been Sent If Account Exists.",
+      msg: "Email Has Been Sent.",
+      success: true,
     });
   } else {
-    res.json({ msg: "Email Has Been Sent If Account Exists." });
+    res.status(404).json({ msg: "Account Does Not Exist.", success: false });
   }
 });
 
