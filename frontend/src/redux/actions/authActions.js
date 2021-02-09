@@ -6,6 +6,8 @@ import {
   LOADING,
   AUTH_ERROR,
   GET_USER_BY_USERNAME,
+  SEND_FORGOT_PASSWORD_EMAIL,
+  SEND_FORGOT_PASSWORD_EMAIL_ERROR,
 } from "./types";
 import axios from "axios";
 
@@ -86,6 +88,20 @@ export const getProfile = (username) => (dispatch) => {
           status: err.response.status,
         },
       });
+    });
+};
+
+export const sendForgotPasswordEmail = (emailOrUsername) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .post("/api/user/sendEmail", { emailOrUsername })
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL });
+    })
+    .catch((err) => {
+      dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL_ERROR });
     });
 };
 
