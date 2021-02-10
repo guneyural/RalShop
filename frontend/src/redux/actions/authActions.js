@@ -8,6 +8,9 @@ import {
   GET_USER_BY_USERNAME,
   SEND_FORGOT_PASSWORD_EMAIL,
   SEND_FORGOT_PASSWORD_EMAIL_ERROR,
+  CANCEL_FORGOT_PASSWORD,
+  CONFIRMATION_CODE_ERROR,
+  CONFIRMATION_CODE_SUCCESS,
 } from "./types";
 import axios from "axios";
 
@@ -108,8 +111,27 @@ export const sendForgotPasswordEmail = (emailOrUsername) => (dispatch) => {
     });
 };
 
-export const cancelForgotPassword = (dispatch) => {
-  dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL_ERROR });
+export const cancelForgotPassword = () => {
+  return { type: CANCEL_FORGOT_PASSWORD };
+};
+
+export const confirmPasswordResetCode = (resetCode) => (dispatch) => {
+  dispatch({ type: LOADING });
+  axios
+    .post(`/api/user/checkPasswordResetCode`, {
+      usernameOrEmail: localStorage.getItem("emailOrUsername"),
+      userToken: resetCode,
+    })
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: CONFIRMATION_CODE_SUCCESS,
+        payload: { confirmationCode: resetCode },
+      });
+    })
+    .catch((err) => {
+      dispatch({ type: CONFIRMATION_CODE_ERROR });
+    });
 };
 
 export const loading = () => (dispatch) => {
