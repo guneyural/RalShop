@@ -57,6 +57,7 @@ const App = () => {
           <PasswordResetRoute
             path="/account/forgot_password/confirmation"
             component={PasswordCodeConfirmationPage}
+            auth={User.isAuthenticated}
             isPasswordReset={User.forgotPassword.isPasswordReset}
             exact
           />
