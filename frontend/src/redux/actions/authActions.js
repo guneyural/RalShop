@@ -108,6 +108,10 @@ export const sendForgotPasswordEmail = (emailOrUsername) => (dispatch) => {
     });
 };
 
+export const cancelForgotPassword = (dispatch) => {
+  dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL_ERROR });
+};
+
 export const loading = () => (dispatch) => {
   dispatch({ type: LOADING });
 };
