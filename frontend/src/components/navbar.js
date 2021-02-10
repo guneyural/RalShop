@@ -121,12 +121,14 @@ const Navbar = () => {
                 <input
                   type="text"
                   name="searchQuery"
+                  id="search-bar"
+                  aria-label={"search"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search Product, Brand, Category or Seller"
                   className="search-bar"
                 />
-                <button className="navbar-search-icon">
+                <button className="navbar-search-icon" aria-label="search-icon">
                   <FaSearch />
                 </button>
               </form>
@@ -149,6 +151,7 @@ const Navbar = () => {
               </Link>
               <button
                 className="burger-icon"
+                aria-label="menu-button"
                 onClick={() => setIsNavOpen(true)}
               >
                 <GiHamburgerMenu />
@@ -184,7 +187,11 @@ const Navbar = () => {
       </div>
       <div className="nav-mobile">
         <section className="nav-mobile-top">
-          <button className="burger-icon" onClick={() => setIsNavOpen(false)}>
+          <button
+            className="burger-icon"
+            aria-label="menu-button"
+            onClick={() => setIsNavOpen(false)}
+          >
             <GiHamburgerMenu />
           </button>
           <span className="mobile-logo-text">UralShop</span>
