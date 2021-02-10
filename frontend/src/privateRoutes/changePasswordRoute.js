@@ -1,16 +1,21 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
-const PasswordResetRoute = ({
+const ChangePasswordRoute = ({
   component: Component,
   isPasswordReset,
+  confirmationCode,
+  confirmationSuccess,
   isAuthenticated,
   ...rest
 }) => (
   <Route
     {...rest}
     render={(props) =>
-      isPasswordReset === false || isAuthenticated === true ? (
+      !isPasswordReset ||
+      !confirmationSuccess ||
+      isAuthenticated ||
+      confirmationCode === null ? (
         <Redirect to="/auth" />
       ) : (
         <Component {...props} />
@@ -19,4 +24,4 @@ const PasswordResetRoute = ({
   />
 );
 
-export default PasswordResetRoute;
+export default ChangePasswordRoute;

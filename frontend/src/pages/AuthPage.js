@@ -112,7 +112,9 @@ const AuthPage = () => {
             {isLogin &&
               (Auth.forgotPassword.confirmationCode ||
               Auth.forgotPassword.confirmationCodeSuccess ? (
-                ""
+                <Link to={"/account/forgot_password/change_password"}>
+                  <Colorful>Forgot Password ?</Colorful>
+                </Link>
               ) : (
                 <Link
                   to={
