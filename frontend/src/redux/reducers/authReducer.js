@@ -30,6 +30,7 @@ const initialState = {
       localStorage.getItem("password_reset") === null
         ? null
         : localStorage.getItem("password_reset") === "true" && true,
+    emailOrUsername: null,
   },
 };
 
@@ -64,6 +65,11 @@ export const Auth = (state = initialState, action) => {
           msg: null,
           status: null,
         },
+        forgotPassword: {
+          isPasswordReset: false,
+          confirmationCode: null,
+          success: null,
+        },
       };
     case LOGOUT_USER:
       localStorage.removeItem("user-token");
@@ -89,6 +95,8 @@ export const Auth = (state = initialState, action) => {
         },
       };
     case SEND_FORGOT_PASSWORD_EMAIL_ERROR:
+      localStorage.removeItem("emailOrUsername");
+      localStorage.removeItem("password_reset");
       return {
         ...state,
         loading: false,
@@ -96,6 +104,7 @@ export const Auth = (state = initialState, action) => {
           isPasswordReset: false,
           confirmationCode: null,
           success: false,
+          emailOrUsername: null,
         },
       };
     case AUTH_ERROR:

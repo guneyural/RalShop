@@ -62,6 +62,7 @@ const ForgotPassword = () => {
     if (User.forgotPassword.success && User.forgotPassword.isPasswordReset) {
       window.location.href = `${window.origin}/account/forgot_password/confirmation`;
       localStorage.setItem("password_reset", true);
+      localStorage.setItem("emailOrUsername", emailOrUsername);
     }
   }, [User, dispatch]);
 

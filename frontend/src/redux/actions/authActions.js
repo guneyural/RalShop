@@ -98,7 +98,10 @@ export const sendForgotPasswordEmail = (emailOrUsername) => (dispatch) => {
     .post("/api/user/sendEmail", { emailOrUsername })
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL });
+      dispatch({
+        type: SEND_FORGOT_PASSWORD_EMAIL,
+        payload: { emailOrUsername },
+      });
     })
     .catch((err) => {
       dispatch({ type: SEND_FORGOT_PASSWORD_EMAIL_ERROR });
