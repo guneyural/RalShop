@@ -297,22 +297,22 @@ const sendForgetPasswordEmail = catchAsync(async (req, res) => {
 });
 
 const checkResetPasswordToken = catchAsync(async (req, res, next) => {
-  const { usernameOrEmail, userToken } = req.params;
+  const { usernameOrEmail, userToken } = req.body;
   const getUser = await User.findOne({
     $or: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
   });
-  if (!getUser) return next(new expressError("redirect", 403));
+  if (!getUser) return next(new expressError(false, 403));
   const {
     resetPassword: { token, expiration },
   } = getUser;
   if (moment(expiration).isAfter(Date.now())) {
     const compareToken = await bcrypt.compare(userToken, token);
-    if (!compareToken) return next(new expressError("redirect tutmadı", 403));
-    return res.json("success");
+    if (!compareToken) return next(new expressError(false, 403));
+    return res.json(true);
   } else {
     getUser.resetPassword = {};
     await getUser.save();
-    return next(new expressError("redirect", 403));
+    return next(new expressError(false, 403));
   }
 });
 
