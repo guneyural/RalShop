@@ -60,6 +60,9 @@ const PasswordConfirmation = () => {
       dispatch(cancelForgotPassword());
       window.location.href = `${window.origin}/auth`;
     }
+    if (User.forgotPassword.confirmationCodeSuccess) {
+      window.location.href = `${window.origin}/account/forgot_password/change_password`;
+    }
   }, [User]);
 
   const confirmCode = (e) => {
@@ -86,13 +89,15 @@ const PasswordConfirmation = () => {
             fontSize: "15px",
           }}
         >
-          Enter the confirmation code we sent to your mail.
+          Enter the confirmation code we sent to your mail. If you didn't get
+          mail click cancel.
         </p>
         <form style={{ margin: "auto" }} onSubmit={(e) => confirmCode(e)}>
           <InputField
             type="text"
             name="passwordCode"
             id="passwordCode"
+            aria-label="confirmation code input"
             value={passwordCode}
             placeholder="Confirmation Code"
             onChange={(e) => setPasswordCode(e.target.value)}

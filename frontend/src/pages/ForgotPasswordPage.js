@@ -89,6 +89,7 @@ const ForgotPassword = () => {
             type="text"
             name="emailOrUsername"
             id="emailOrUsername"
+            aria-label="email or username input"
             value={emailOrUsername}
             placeholder="Email or Username"
             onChange={(e) => setEmailOrUsername(e.target.value)}
