@@ -109,11 +109,21 @@ const AuthPage = () => {
                 </div>
               )}
             </div>
-            {isLogin && (
-              <Link to="/account/forgot_password">
-                <Colorful>Forgot Password ?</Colorful>
-              </Link>
-            )}
+            {isLogin &&
+              (Auth.forgotPassword.confirmationCode ||
+              Auth.forgotPassword.confirmationCodeSuccess ? (
+                ""
+              ) : (
+                <Link
+                  to={
+                    Auth.forgotPassword.isPasswordReset
+                      ? "/account/forgot_password/confirmation"
+                      : "/account/forgot_password"
+                  }
+                >
+                  <Colorful>Forgot Password ?</Colorful>
+                </Link>
+              ))}
             <div className="form-section mt-2">
               <button
                 className="default-btn"
