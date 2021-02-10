@@ -18,8 +18,8 @@ const passwordLimiter = rateLimit({
 
 Router.get("/p/:username", userController.getUserByUsername);
 Router.get("/current", isUser, userController.getCurrentUser);
-Router.get(
-  "/changePassword/:usernameOrEmail/:userToken",
+Router.post(
+  "/checkPasswordResetCode",
   passwordLimiter,
   userController.checkResetPasswordToken
 );
