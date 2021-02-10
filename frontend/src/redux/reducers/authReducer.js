@@ -8,6 +8,9 @@ import {
   GET_USER_BY_USERNAME,
   SEND_FORGOT_PASSWORD_EMAIL,
   SEND_FORGOT_PASSWORD_EMAIL_ERROR,
+  CANCEL_FORGOT_PASSWORD,
+  CONFIRMATION_CODE_ERROR,
+  CONFIRMATION_CODE_SUCCESS,
 } from "../actions/types";
 
 const initialState = {
@@ -25,12 +28,15 @@ const initialState = {
       localStorage.getItem("password_reset") === null
         ? false
         : localStorage.getItem("password_reset") === "true" && true,
-    confirmationCode: null,
-    success:
-      localStorage.getItem("password_reset") === null
-        ? null
-        : localStorage.getItem("password_reset") === "true" && true,
+    confirmationCode:
+      localStorage.getItem("confirmation_code") !== null
+        ? localStorage.getItem("confirmation_code")
+        : null,
+    sendEmailSuccess: null,
+    confirmationCodeSuccess:
+      localStorage.getItem("confirmation_code") !== null ? true : null,
     emailOrUsername: null,
+    confirmationCodeTries: 3,
   },
 };
 
@@ -68,7 +74,10 @@ export const Auth = (state = initialState, action) => {
         forgotPassword: {
           isPasswordReset: false,
           confirmationCode: null,
-          success: null,
+          sendEmailSuccess: null,
+          emailOrUsername: null,
+          confirmationCodeSuccess: null,
+          confirmationCodeTries: 3,
         },
       };
     case LOGOUT_USER:
@@ -91,20 +100,63 @@ export const Auth = (state = initialState, action) => {
         forgotPassword: {
           ...state.forgotPassword,
           isPasswordReset: true,
-          success: true,
+          sendEmailSuccess: true,
+        },
+      };
+    case CONFIRMATION_CODE_SUCCESS:
+      localStorage.setItem(
+        "confirmation_code",
+        action.payload.confirmationCode
+      );
+      return {
+        ...state,
+        loading: false,
+        forgotPassword: {
+          ...state.forgotPassword,
+          confirmationCodeSuccess: true,
+          confirmationCode: action.payload.confirmationCode,
         },
       };
     case SEND_FORGOT_PASSWORD_EMAIL_ERROR:
-      localStorage.removeItem("emailOrUsername");
-      localStorage.removeItem("password_reset");
       return {
         ...state,
         loading: false,
         forgotPassword: {
           isPasswordReset: false,
           confirmationCode: null,
-          success: false,
+          sendEmailSuccess: false,
+          confirmationCodeSuccess: null,
           emailOrUsername: null,
+          confirmationCodeTries: 3,
+        },
+      };
+    case CONFIRMATION_CODE_ERROR:
+      let tries = Number(state.forgotPassword.confirmationCodeTries);
+      return {
+        ...state,
+        loading: false,
+        forgotPassword: {
+          ...state.forgotPassword,
+          isPasswordReset: true,
+          confirmationCode: null,
+          sendEmailSuccess: null,
+          confirmationCodeSuccess: false,
+          confirmationCodeTries: tries - 1,
+        },
+      };
+    case CANCEL_FORGOT_PASSWORD:
+      localStorage.removeItem("emailOrUsername");
+      localStorage.removeItem("password_reset");
+      localStorage.removeItem("confirmation_code");
+      return {
+        ...state,
+        forgotPassword: {
+          isPasswordReset: false,
+          confirmationCode: null,
+          sendEmailSuccess: null,
+          confirmationCodeSuccess: null,
+          emailOrUsername: null,
+          confirmationCodeTries: 3,
         },
       };
     case AUTH_ERROR:

@@ -59,10 +59,11 @@ const ForgotPassword = () => {
   };
 
   useEffect(() => {
-    if (User.forgotPassword.success && User.forgotPassword.isPasswordReset) {
+    if (User.forgotPassword.isPasswordReset) {
       window.location.href = `${window.origin}/account/forgot_password/confirmation`;
       localStorage.setItem("password_reset", true);
-      localStorage.setItem("emailOrUsername", emailOrUsername);
+      if (emailOrUsername !== "")
+        localStorage.setItem("emailOrUsername", emailOrUsername);
     }
   }, [User, dispatch]);
 
@@ -98,10 +99,10 @@ const ForgotPassword = () => {
           >
             {User.loading ? "Loading..." : "Send Login Code"}
           </button>
-          {User.forgotPassword.success === false && (
+          {User.forgotPassword.sendEmailSuccess === false && (
             <span className="text-danger">Account Does Not Exist.</span>
           )}
-          {User.forgotPassword.success && (
+          {User.forgotPassword.sendEmailSuccess && (
             <span className="text-success">Email Has Been Sent.</span>
           )}
         </form>
