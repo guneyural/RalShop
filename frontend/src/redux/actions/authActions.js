@@ -13,6 +13,9 @@ import {
   CONFIRMATION_CODE_SUCCESS,
   CHANGE_PASSWORD,
   CHANGE_PASSWORD_ERROR,
+  UPDATE_USER_DATA,
+  USER_ADD_PROFILE_PHOTO,
+  REMOVE_PROFILE_PHOTO,
 } from "./types";
 import axios from "axios";
 
@@ -147,9 +150,6 @@ export const changePassword = (
   newPassword,
   confirmPassword
 ) => (dispatch) => {
-  // POST /api/user/:emailOrUsername HEADERS: {confirmationCode}
-  // SUCCESS CHANGE_PASSWORD
-  // ERROR CHANGE_PASSWORD_ERROR
   axios
     .post(
       "/api/user/newPassword",
@@ -160,6 +160,68 @@ export const changePassword = (
       dispatch({ type: CHANGE_PASSWORD });
     })
     .catch((err) => dispatch({ type: CHANGE_PASSWORD_ERROR }));
+};
+
+export const updateUserData = ({ username, data }) => (dispatch) => {
+  dispatch({ type: LOADING });
+  axios
+    .put("/api/user/update", { username, data }, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: UPDATE_USER_DATA, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const addProfilePhoto = (formData) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .put("/api/user/updatePhoto", formData, {
+      headers: {
+        "user-token": localStorage.getItem("user-token"),
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: USER_ADD_PROFILE_PHOTO, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const removeProfilePhoto = () => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .delete("/api/user/profilePhoto", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => dispatch({ type: REMOVE_PROFILE_PHOTO, payload: data }))
+    .catch((err) => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const loading = () => (dispatch) => {
