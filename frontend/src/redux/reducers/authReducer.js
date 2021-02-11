@@ -13,6 +13,9 @@ import {
   CONFIRMATION_CODE_SUCCESS,
   CHANGE_PASSWORD_ERROR,
   CHANGE_PASSWORD,
+  UPDATE_USER_DATA,
+  USER_ADD_PROFILE_PHOTO,
+  REMOVE_PROFILE_PHOTO,
 } from "../actions/types";
 
 const initialState = {
@@ -24,6 +27,7 @@ const initialState = {
     msg: null,
     status: null,
   },
+  userDataUpdated: false,
   profile: null,
   forgotPassword: {
     isPasswordReset:
@@ -54,6 +58,27 @@ export const Auth = (state = initialState, action) => {
         isAuthenticated: true,
         user: action.payload,
         loading: false,
+      };
+    case UPDATE_USER_DATA:
+      return {
+        ...state,
+        userDataUpdated: true,
+        loading: false,
+        user: action.payload,
+      };
+    case USER_ADD_PROFILE_PHOTO:
+      return {
+        ...state,
+        loading: false,
+        userDataUpdated: true,
+        user: action.payload,
+      };
+    case REMOVE_PROFILE_PHOTO:
+      return {
+        ...state,
+        loading: false,
+        userDataUpdated: true,
+        user: action.payload,
       };
     case GET_USER_BY_USERNAME:
       return {
@@ -212,6 +237,7 @@ export const Auth = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+        userDataUpdated: false,
         error: {
           msg: action.payload.msg,
           status: action.payload.status,

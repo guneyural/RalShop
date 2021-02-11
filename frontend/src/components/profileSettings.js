@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import NoPhoto from "../assets/noProfilePic.jpg";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import axios from "axios";
 import Loading from "../assets/loading.gif";
 import Modal from "./messageBox";
+import {
+  updateUserData,
+  addProfilePhoto,
+  removeProfilePhoto,
+} from "../redux/actions/authActions";
 
 const StyledSection = styled.section`
   display: flex;
@@ -34,7 +39,9 @@ const InfoText = styled.span`
 `;
 
 const ProfileSettings = () => {
-  const { user } = useSelector((state) => state.Auth);
+  const { user, loading, error, userDataUpdated } = useSelector(
+    (state) => state.Auth
+  );
   const [removePhoto, setRemovePhoto] = useState(false);
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
@@ -44,6 +51,7 @@ const ProfileSettings = () => {
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [removeAccountError, setRemoveAccountError] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const body = document.querySelector("body");
@@ -54,42 +62,23 @@ const ProfileSettings = () => {
     }
   }, [isModalOpen]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const autoSavePhoto = () => {
     let formData = new FormData();
     let imagefile = document.querySelector(`input[type="file"]`);
     if (!removePhoto && imagefile.files[0] !== undefined)
       formData.append("profilePhoto", imagefile.files[0]);
-    if (removePhoto) formData.append("removePhoto", removePhoto);
-    formData.append("username", username);
-    formData.append("email", email);
-    setIsLoading(true);
-    setIsSuccess(false);
-    axios
-      .put("/api/user/update", formData, {
-        headers: {
-          "user-token": localStorage.getItem("user-token"),
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => res.data)
-      .then((data) => {
-        setErr(null);
-        setIsLoading(false);
-        setIsSuccess(true);
-        setTimeout(() => {
-          window.location.href = window.origin;
-        }, 1500);
-      })
-      .catch((err) => {
-        setErr(err.response.data.errorMessage);
-        setIsLoading(false);
-        setIsSuccess(false);
-      });
+    dispatch(addProfilePhoto(formData));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateUserData({ username, email }));
   };
 
   const handleRemovePhoto = () => {
-    setRemovePhoto(!removePhoto);
+    setRemovePhoto(true);
+    dispatch(removeProfilePhoto());
+    setRemovePhoto(false);
   };
 
   const removeAccount = () => {
@@ -159,16 +148,20 @@ const ProfileSettings = () => {
           >
             Change Profile picture
           </label>
-          <input className="form-control" type="file" id="formFile" />
+          <input
+            className="form-control"
+            type="file"
+            id="formFile"
+            onChange={() => autoSavePhoto()}
+          />
           <section
             style={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
           >
             <Colorful onClick={() => handleRemovePhoto()}>
-              {removePhoto ? "Don't remove photo" : "Remove photo"}
+              Remove photo
             </Colorful>
             <span className="text-danger" style={{ fontSize: "13px" }}>
-              {removePhoto &&
-                "Profile picture will be removed if you save changes"}
+              {removePhoto && "Profile picture will be removed."}
             </span>
           </section>
         </ColumnSection>
@@ -206,18 +199,18 @@ const ProfileSettings = () => {
           </div>
         </div>
         <button className="default-btn w-25">Save</button>
-        {isSuccess && (
+        {userDataUpdated && (
           <InfoText className="text-success">
             <b>Changes Saved.</b>
           </InfoText>
         )}
-        {err !== null && (
+        {error.msg !== null && (
           <InfoText className="text-danger">
-            <b>{err}</b>
+            <b>{error.msg}</b>
           </InfoText>
         )}
       </form>
-      {isLoading && <img src={Loading} alt="loading" width="100" />}
+      {loading && <img src={Loading} alt="loading" width="100" />}
       <hr />
       <section className="delete-account">
         <h3 className="text-danger">Delete Account</h3>
