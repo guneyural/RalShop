@@ -162,10 +162,10 @@ export const changePassword = (
     .catch((err) => dispatch({ type: CHANGE_PASSWORD_ERROR }));
 };
 
-export const updateUserData = ({ username, data }) => (dispatch) => {
+export const updateUserData = ({ username, email }) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .put("/api/user/update", { username, data }, tokenConfig())
+    .put("/api/user/update", { username, email }, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: UPDATE_USER_DATA, payload: data });

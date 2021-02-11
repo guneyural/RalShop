@@ -47,7 +47,6 @@ const ProfileSettings = () => {
   const [email, setEmail] = useState(user.email);
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [removeAccountError, setRemoveAccountError] = useState(null);
