@@ -124,7 +124,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
   const emailOptions = {
     from: process.env.EMAIL,
     to: findUser.email,
-    subject: "Email Changed.",
+    subject: "Password Changed.",
     text: `Your password has changed.`,
   };
   transporter.sendMail(emailOptions, function (error, info) {
@@ -156,6 +156,58 @@ const validateEmail = (email) => {
   return re.test(String(email).toLowerCase());
 };
 
+const removeProfilePhoto = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID", 400));
+  const findUser = await User.findById(req.user.id);
+  if (!findUser) return next(new expressError("User Not Found.", 404));
+  findUser.profilePhoto = {};
+  findUser.hasPhoto = false;
+  await findUser.save();
+  cloudinary.uploader.destroy(findUser.profilePhoto.filename);
+  const { _id, username, email, createdAt, hasPhoto, profilePhoto } = findUser;
+  res.json({
+    _id,
+    username,
+    email,
+    createdAt,
+    hasPhoto,
+    profilePhoto,
+  });
+});
+
+const updatePhoto = catchAsync(async (req, res, next) => {
+  if (!mongoId.isValid(req.user.id))
+    return next(new expressError("Enter Valid ID", 400));
+  const findUser = await User.findById(req.user.id);
+  if (!findUser) return next(new expressError("User Not Found.", 404));
+  const file = req.file;
+  const { removePhoto } = req.body;
+  if (file) {
+    findUser.profilePhoto = {
+      url: file.path.replace("/upload", "/upload/w_400"),
+      filename: file.filename,
+    };
+    findUser.hasPhoto = true;
+    await findUser.save();
+  }
+  if (removePhoto) {
+    findUser.profilePhoto = {};
+    findUser.hasPhoto = false;
+    await findUser.save();
+    cloudinary.uploader.destroy(findUser.profilePhoto.filename);
+  }
+  const { _id, username, email, createdAt, hasPhoto, profilePhoto } = findUser;
+  res.json({
+    _id,
+    username,
+    email,
+    createdAt,
+    hasPhoto,
+    profilePhoto,
+  });
+});
+
 const updateUserData = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.user.id))
     return next(new expressError("Enter Valid ID", 400));
@@ -175,8 +227,6 @@ const updateUserData = catchAsync(async (req, res, next) => {
     if (!validateEmail(req.body.email))
       return next(new expressError("Enter Valid Email.", 400));
   }
-  const file = req.file;
-  const { removePhoto } = req.body;
   if (req.body.username.length > 15) {
     return next(
       new expressError("Username Can't Be More Than 15 Characters.", 400)
@@ -191,20 +241,6 @@ const updateUserData = catchAsync(async (req, res, next) => {
     let newUsername = updateUser.username.split(" ").join(".");
     updateUser.username = newUsername;
     await updateUser.save();
-  }
-  if (file) {
-    updateUser.profilePhoto = {
-      url: file.path.replace("/upload", "/upload/w_400"),
-      filename: file.filename,
-    };
-    updateUser.hasPhoto = true;
-    await updateUser.save();
-  }
-  if (removePhoto) {
-    updateUser.profilePhoto = {};
-    updateUser.hasPhoto = false;
-    await updateUser.save();
-    cloudinary.uploader.destroy(findUser.profilePhoto.filename);
   }
   if (updateUser.email !== findUser.email) {
     const emailOptions = {
@@ -248,7 +284,22 @@ const updateUserData = catchAsync(async (req, res, next) => {
       }
     });
   }
-  res.json(updateUser);
+  const {
+    _id,
+    username,
+    email,
+    createdAt,
+    hasPhoto,
+    profilePhoto,
+  } = updateUser;
+  res.json({
+    _id,
+    username,
+    email,
+    createdAt,
+    hasPhoto,
+    profilePhoto,
+  });
 });
 
 const sendForgetPasswordEmail = catchAsync(async (req, res) => {
@@ -352,9 +403,11 @@ module.exports = {
   getUserByUsername,
   getCurrentUser,
   resetPassword,
+  updatePhoto,
   sendForgetPasswordEmail,
   checkResetPasswordToken,
   removeUser,
+  removeProfilePhoto,
   changePassword,
   updateUserData,
 };

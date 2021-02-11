@@ -33,16 +33,18 @@ Router.post(
 Router.post("/newPassword", passwordLimiter, userController.changePassword);
 Router.post("/remove", limiter, isUser, userController.removeUser);
 Router.put(
+  "/updatePhoto",
+  isUser,
+  upload.single("profilePhoto"),
+  userController.updatePhoto
+);
+Router.put(
   "/resetPassword",
   passwordLimiter,
   isUser,
   userController.resetPassword
 );
-Router.put(
-  "/update",
-  upload.single("profilePhoto"),
-  isUser,
-  userController.updateUserData
-);
+Router.delete("/profilePhoto", isUser, userController.removeProfilePhoto);
+Router.put("/update", isUser, userController.updateUserData);
 
 module.exports = Router;
