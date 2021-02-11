@@ -6,6 +6,7 @@ const ChangePasswordRoute = ({
   isPasswordReset,
   confirmationCode,
   confirmationSuccess,
+  emailOrUsername,
   isAuthenticated,
   ...rest
 }) => (
@@ -15,6 +16,7 @@ const ChangePasswordRoute = ({
       !isPasswordReset ||
       !confirmationSuccess ||
       isAuthenticated ||
+      emailOrUsername === null ||
       confirmationCode === null ? (
         <Redirect to="/auth" />
       ) : (

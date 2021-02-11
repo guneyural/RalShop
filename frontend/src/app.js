@@ -15,6 +15,8 @@ import ProfileSettingsPage from "./pages/ProfileSettings";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import PasswordCodeConfirmationPage from "./pages/ForgotPasswordCodePage";
 import PasswordResetRoute from "./privateRoutes/passwordResetRoutes";
+import ChangePasswordRoute from "./privateRoutes/changePasswordRoute";
+import ChangePasswordPage from "./pages/changePasswordPage";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -59,6 +61,16 @@ const App = () => {
             component={PasswordCodeConfirmationPage}
             auth={User.isAuthenticated}
             isPasswordReset={User.forgotPassword.isPasswordReset}
+            exact
+          />
+          <ChangePasswordRoute
+            isPasswordReset={User.forgotPassword.isPasswordReset}
+            confirmationCode={User.forgotPassword.confirmationCode}
+            confirmationSuccess={User.forgotPassword.confirmationCodeSuccess}
+            isAuthenticated={User.isAuthenticated}
+            emailOrUsername={User.forgotPassword.emailOrUsername}
+            path="/account/forgot_password/change_password"
+            component={ChangePasswordPage}
             exact
           />
           <Route component={NotFound} />
