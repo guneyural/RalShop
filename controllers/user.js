@@ -318,7 +318,7 @@ const checkResetPasswordToken = catchAsync(async (req, res, next) => {
 
 const changePassword = catchAsync(async (req, res, next) => {
   const token = req.headers["password-token"];
-  const { emailOrUsername } = req.params;
+  const { emailOrUsername } = req.body;
   const { newPassword, confirmPassword } = req.body;
   if (!newPassword || !confirmPassword)
     return next(new expressError("Password can't be blank.", 400));

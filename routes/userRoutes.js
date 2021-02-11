@@ -12,7 +12,7 @@ const limiter = rateLimit({
 });
 const passwordLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 5,
+  max: 6,
   message: "Rate Limit Exceeded.",
 });
 
@@ -30,11 +30,7 @@ Router.post(
   passwordLimiter,
   userController.sendForgetPasswordEmail
 );
-Router.post(
-  "/newPassword/:emailOrUsername",
-  passwordLimiter,
-  userController.changePassword
-);
+Router.post("/newPassword", passwordLimiter, userController.changePassword);
 Router.post("/remove", limiter, isUser, userController.removeUser);
 Router.put(
   "/resetPassword",
