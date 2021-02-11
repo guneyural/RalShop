@@ -11,6 +11,8 @@ import {
   CANCEL_FORGOT_PASSWORD,
   CONFIRMATION_CODE_ERROR,
   CONFIRMATION_CODE_SUCCESS,
+  CHANGE_PASSWORD,
+  CHANGE_PASSWORD_ERROR,
 } from "./types";
 import axios from "axios";
 
@@ -115,7 +117,9 @@ export const cancelForgotPassword = () => {
   return { type: CANCEL_FORGOT_PASSWORD };
 };
 
-export const confirmPasswordResetCode = (resetCode) => (dispatch) => {
+export const confirmPasswordResetCode = (resetCode, isImportant = false) => (
+  dispatch
+) => {
   dispatch({ type: LOADING });
   axios
     .post(`/api/user/checkPasswordResetCode`, {
@@ -130,8 +134,32 @@ export const confirmPasswordResetCode = (resetCode) => (dispatch) => {
       });
     })
     .catch((err) => {
+      if (isImportant) {
+        return dispatch({ type: CANCEL_FORGOT_PASSWORD });
+      }
       dispatch({ type: CONFIRMATION_CODE_ERROR });
     });
+};
+
+export const changePassword = (
+  emailOrUsername,
+  confirmationCode,
+  newPassword,
+  confirmPassword
+) => (dispatch) => {
+  // POST /api/user/:emailOrUsername HEADERS: {confirmationCode}
+  // SUCCESS CHANGE_PASSWORD
+  // ERROR CHANGE_PASSWORD_ERROR
+  axios
+    .post(
+      "/api/user/newPassword",
+      { emailOrUsername, newPassword, confirmPassword },
+      { headers: { "password-token": confirmationCode } }
+    )
+    .then(() => {
+      dispatch({ type: CHANGE_PASSWORD });
+    })
+    .catch((err) => dispatch({ type: CHANGE_PASSWORD_ERROR }));
 };
 
 export const loading = () => (dispatch) => {
