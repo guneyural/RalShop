@@ -47,6 +47,12 @@ const AuthPage = () => {
       <div className="col-sm-6 forms">
         <section>
           <h2>{isLogin ? "Login" : "Register"}</h2>
+          {Auth.forgotPassword.changePasswordSuccess && (
+            <span className="text-success" style={{ fontSize: "15px" }}>
+              Successfully changed the password. Now <br /> you can login with
+              your new password.
+            </span>
+          )}
           {Auth.error.msg !== null && (
             <span className="text-danger">
               {Auth.error.msg !== "Login To See The Content." && Auth.error.msg}
