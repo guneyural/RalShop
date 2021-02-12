@@ -16,7 +16,7 @@ const CenterDiv = styled.div`
 
 const CenterBox = styled.div`
   border: 1px solid #c2c2c2;
-
+  background: white;
   margin: auto;
   padding: 10px 40px;
   width: 400px;
