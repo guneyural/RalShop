@@ -93,6 +93,7 @@ export const Auth = (state = initialState, action) => {
     case USER_LOGIN:
     case REGISTER_USER:
       localStorage.setItem("user-token", action.payload);
+      localStorage.removeItem("shop-token");
       localStorage.removeItem("confirmation_code");
       localStorage.removeItem("password_reset");
       localStorage.removeItem("emailOrUsername");

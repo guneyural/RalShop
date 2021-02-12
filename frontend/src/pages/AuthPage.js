@@ -33,10 +33,15 @@ const AuthPage = () => {
   useEffect(() => {
     if (password.length >= 6) {
       setBtnDisabled(false);
+      if (Auth.loading) {
+        setBtnDisabled(true);
+      } else {
+        setBtnDisabled(false);
+      }
     } else {
       setBtnDisabled(true);
     }
-  }, [password]);
+  }, [password, Auth]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -142,7 +147,7 @@ const AuthPage = () => {
                     : dispatch(registerUser({ email, username, password }))
                 }
               >
-                {isLogin ? "Login" : "Register"}
+                {Auth.loading ? "Loading..." : isLogin ? "Login" : "Register"}
               </button>
             </div>
           </form>
