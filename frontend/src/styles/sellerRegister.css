@@ -1,0 +1,34 @@
+.mapboxgl-control-container {
+  display: none;
+}
+
+.location-search-results {
+  background: white;
+  width: 90%;
+  border: 1px solid #c2c2c2;
+  height: 120px;
+  position: absolute;
+  overflow-y: auto;
+  z-index: 3;
+  top: 50px;
+  display: none;
+}
+
+.form-section {
+  position: relative;
+}
+
+.location-search-results.active {
+  display: block;
+}
+
+.location-result:hover {
+  background: #c2c2c2;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 768px) {
+  .location-search-results {
+    width: 100%;
+  }
+}
