@@ -17,6 +17,10 @@ import PasswordCodeConfirmationPage from "./pages/ForgotPasswordCodePage";
 import PasswordResetRoute from "./privateRoutes/passwordResetRoutes";
 import ChangePasswordRoute from "./privateRoutes/changePasswordRoute";
 import ChangePasswordPage from "./pages/changePasswordPage";
+import SellerRegisterPage from "./pages/seller/registerPage";
+import mapboxgl from "mapbox-gl";
+
+require("dotenv").config();
 
 const App = () => {
   const dispatch = useDispatch();
@@ -24,6 +28,7 @@ const App = () => {
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch, User.isAuthenticated]);
+  mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
   return (
     <Router>
@@ -49,6 +54,7 @@ const App = () => {
             component={WishlistPage}
             auth={User.isAuthenticated}
           />
+          <Route path="/seller/register" exact component={SellerRegisterPage} />
           <Route path="/user/:username" exact component={ProfilePage} />
           <PrivateRoute
             path="/account/settings"
