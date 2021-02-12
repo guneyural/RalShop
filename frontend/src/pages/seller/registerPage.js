@@ -100,14 +100,14 @@ const RegisterPage = () => {
     if (!map) {
       initializeMap({ setMap, mapContainer });
     }
-    if (map !== null) {
+    if (map !== null && location.length > 0) {
       map.flyTo({
         center,
         essential: true,
         zoom: 12,
       });
     }
-  }, [map, center, location]);
+  }, [map, center]);
 
   const changeLocation = (placeName, coordinate) => {
     setLocation(placeName);
