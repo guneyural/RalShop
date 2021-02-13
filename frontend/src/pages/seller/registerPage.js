@@ -125,6 +125,14 @@ const RegisterPage = () => {
         .classList.add("active");
   };
 
+  const removeResults = () => {
+    setTimeout(() => {
+      document
+        .querySelector(".location-search-results")
+        .classList.remove("active");
+    }, 100);
+  };
+
   const searchAddress = (e) => {
     setLocation(e.target.value);
     setIsLoading(true);
@@ -252,7 +260,9 @@ const RegisterPage = () => {
                     aria-label="location"
                     placeholder="Location"
                     value={location}
+                    onFocus={() => displayResults()}
                     onChange={(e) => searchAddress(e)}
+                    onBlur={() => removeResults()}
                     autoComplete="off"
                     required
                   />
