@@ -7,11 +7,15 @@ const UserValidation = Joi.object({
 });
 
 const ShopValidation = Joi.object({
-  name: Joi.string().required(),
+  fullname: Joi.string().required(),
   email: Joi.string().email().required(),
-  password: Joi.string().required(),
-  description: Joi.string(),
-  image: Joi.string(),
+  country: Joi.string().required(),
+  category: Joi.string().required(),
+  companyName: Joi.string().required(),
+  location: Joi.string().required(),
+  coordinate: Joi.array().items(Joi.number()),
+  links: Joi.array().items(Joi.string()),
+  password: Joi.string().min(6).required(),
 });
 
 const CartValidation = Joi.object({
