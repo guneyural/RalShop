@@ -33,6 +33,12 @@ const InputField = styled.input`
     width: 100%;
   }
 `;
+const TextField = styled.textarea`
+  padding: 4px 12px;
+  border-radius: 3px;
+  background: #efefef;
+  border: 1px solid #c2c2c2;
+`;
 const Select = styled.select`
   padding: 4px 5px;
   border-radius: 3px;
@@ -89,17 +95,18 @@ const RegisterPage = () => {
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v11",
         center,
-        zoom: 4.5,
+        zoom: 5,
       });
-
       map.on("load", () => {
         setMap(map);
         map.resize();
       });
     };
+
     if (!map) {
       initializeMap({ setMap, mapContainer });
     }
+
     if (map !== null && location.length > 0) {
       map.flyTo({
         center,
@@ -116,6 +123,18 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    console.log({
+      fullname,
+      email,
+      country,
+      phoneNumber,
+      category,
+      companyName,
+      location,
+      links,
+      password,
+    });
   };
 
   const displayResults = () => {
@@ -194,7 +213,9 @@ const RegisterPage = () => {
                     name="country"
                     id="country"
                     onChange={(e) => setCountry(e.target.value)}
+                    required
                   >
+                    <option value="">Select Your Country</option>
                     {countries.map((item, idx) => {
                       return (
                         <option
@@ -211,7 +232,9 @@ const RegisterPage = () => {
                     name="category"
                     id="category"
                     onChange={(e) => setCategory(e.target.value)}
+                    required
                   >
+                    <option value="">Select Category</option>
                     {categories.map((item, idx) => {
                       return (
                         <option value={item} key={idx}>
@@ -303,11 +326,46 @@ const RegisterPage = () => {
                 </div>
               </div>
             </div>
+            <div
+              ref={(el) => (mapContainer.current = el)}
+              style={{ height: "300px" }}
+            />
+            <Labels htmlFor="links" className="mt-4">
+              Enter The Links Of Your Shop If You Have
+            </Labels>
+            <div className="form-section">
+              <TextField
+                name="links"
+                id="links"
+                cols="10"
+                rows="5"
+                style={{ color: "#0d6efd", textDecoration: "underline" }}
+                placeholder="If you sell products on different websites or if your company have website, enter links of them. Seperate links with space. If you don't have link to enter leave it blank."
+                onChange={(e) => setLinks(e.target.value)}
+              >
+                {links}
+              </TextField>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-section">
+                  <Labels htmlFor="password">Password</Labels>
+                  <InputField
+                    type="password"
+                    name="password"
+                    id="password"
+                    value={password}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button className="default-btn seller">
+                  Register As Seller
+                </button>
+              </div>
+            </div>
           </form>
-          <div
-            ref={(el) => (mapContainer.current = el)}
-            style={{ height: "300px" }}
-          />
         </div>
         <div className="col-md-4">
           <img

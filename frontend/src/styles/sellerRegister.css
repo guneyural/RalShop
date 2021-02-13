@@ -2,6 +2,10 @@
   display: none;
 }
 
+.mapboxgl-map {
+  overflow: hidden;
+}
+
 .location-search-results {
   background: white;
   width: 90%;
@@ -27,8 +31,16 @@
   cursor: pointer;
 }
 
+.default-btn.seller {
+  width: 90%;
+}
+
 @media only screen and (max-width: 768px) {
   .location-search-results {
+    width: 100%;
+  }
+
+  .default-btn.seller {
     width: 100%;
   }
 }
