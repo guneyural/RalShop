@@ -5,6 +5,8 @@ import { categories } from "../../data/category";
 import { countries } from "../../data/countries";
 import mapboxgl from "mapbox-gl";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { sellerRegister } from "../../redux/actions/sellerActions";
 
 const PageHeader = styled.h1`
   font-weight: 300;
@@ -68,6 +70,8 @@ const RegisterPage = () => {
   const [center, setCenter] = useState([35, 39]);
   const mapContainer = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const Seller = useSelector((state) => state.Seller);
 
   useEffect(() => {
     if (location.length > 0) {
@@ -123,18 +127,20 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log({
-      fullname,
-      email,
-      country,
-      phoneNumber,
-      category,
-      companyName,
-      location,
-      links,
-      password,
-    });
+    const splittedLinks = links.split(" ");
+    dispatch(
+      sellerRegister({
+        fullname,
+        email,
+        country,
+        phoneNumber,
+        category,
+        companyName,
+        location,
+        links: splittedLinks,
+        password,
+      })
+    );
   };
 
   const displayResults = () => {
@@ -360,10 +366,16 @@ const RegisterPage = () => {
                     required
                   />
                 </div>
-                <button className="default-btn seller">
-                  Register As Seller
+                <button
+                  className="default-btn seller"
+                  disabled={Seller.loading ? true : false}
+                >
+                  {Seller.loading ? "Loading..." : "Register As Seller"}
                 </button>
               </div>
+              {Seller.error.message !== null && (
+                <span className="text-danger">{Seller.error.message}</span>
+              )}
             </div>
           </form>
         </div>
