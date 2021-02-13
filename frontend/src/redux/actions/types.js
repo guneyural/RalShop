@@ -1,3 +1,4 @@
+//===USER===
 export const GET_USER = "GET_USER";
 export const USER_LOGIN = "USER_LOGIN";
 export const REGISTER_USER = "REGISTER_USER";
@@ -18,3 +19,12 @@ export const CHANGE_PASSWORD_ERROR = "CHANGE_PASSWORD_ERRROR";
 export const UPDATE_USER_DATA = "UPDATE_USER_DATA";
 export const USER_ADD_PROFILE_PHOTO = "USER_ADD_PROFILE_PHOTO";
 export const REMOVE_PROFILE_PHOTO = "REMOVE_PROFILE_PHOTO";
+//===USER===
+
+//===SELLER===
+export const SELLER_REGISTER = "SELLER_REGISTER";
+export const SELLER_LOADING = "SELLER_LOADING";
+export const SELLER_LOGIN = "SELLER_LOGIN";
+export const SELLER_ERROR = "SELLER_ERROR";
+export const SELLER_LOGOUT = "SELLER_LOGOUT";
+//===SELLER===
