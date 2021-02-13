@@ -14,7 +14,7 @@ const ShopValidation = Joi.object({
   companyName: Joi.string().required(),
   location: Joi.string().required(),
   coordinate: Joi.array().items(Joi.number()),
-  links: Joi.array().items(Joi.string()),
+  links: Joi.array(),
   password: Joi.string().min(6).required(),
 });
 

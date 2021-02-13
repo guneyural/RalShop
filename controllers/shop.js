@@ -50,7 +50,8 @@ const createShop = catchAsync(async (req, res, next) => {
     return next(
       new expressError("Password Must Be At Least 6 Characters.", 400)
     );
-  if (error)
+  if (error) {
+    console.log(error);
     return next(
       new expressError(
         error.details[0].message.split(" ")[
@@ -59,14 +60,18 @@ const createShop = catchAsync(async (req, res, next) => {
         400
       )
     );
+  }
   var expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
   var regex = new RegExp(expression);
 
-  links.forEach((url) => {
-    if (!url.match(regex)) {
-      return next(new expressError("Enter Valid Link", 400));
-    }
-  });
+  console.log(links[0]);
+  if (links[0] !== "") {
+    links.forEach((url) => {
+      if (!url.match(regex)) {
+        return next(new expressError("Enter Valid Link", 400));
+      }
+    });
+  }
 
   let newPhone = "";
   const checkPhone = phone
