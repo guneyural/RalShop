@@ -5,11 +5,51 @@ const expressError = require("../utils/expressError");
 const Shop = require("../models/shop");
 const bcrypt = require("bcrypt");
 const mongoId = require("mongoose").Types.ObjectId;
+const Joi = require("joi");
+const phone = Joi.extend(require("joi-phone-number"));
 
 const createShop = catchAsync(async (req, res, next) => {
-  const { name, email, password, description, image } = req.body;
-  const { error } = ShopValidation.validate(req.body);
-  if (!name) return next(new expressError("Shop Name Required.", 400));
+  const {
+    fullname,
+    email,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    links,
+    password,
+    coordinate,
+  } = req.body;
+  const { error } = ShopValidation.validate({
+    fullname,
+    email,
+    country,
+    category,
+    companyName,
+    location,
+    coordinate,
+    links,
+    password,
+  });
+  if (
+    category === "" ||
+    !category ||
+    country === "" ||
+    !country ||
+    !fullname ||
+    !email ||
+    !companyName ||
+    !location ||
+    !password ||
+    !phoneNumber
+  ) {
+    return next(new expressError("Enter All Fields.", 400));
+  }
+  if (password.length < 6)
+    return next(
+      new expressError("Password Must Be At Least 6 Characters.", 400)
+    );
   if (error)
     return next(
       new expressError(
@@ -19,19 +59,34 @@ const createShop = catchAsync(async (req, res, next) => {
         400
       )
     );
-  const findShopByName = await Shop.findOne({ name });
+  let newPhone = "";
+  const checkPhone = phone
+    .string()
+    .phoneNumber({
+      defaultCountry: country,
+      strict: true,
+      format: "international",
+    })
+    .validate(phoneNumber);
+  if (checkPhone.error)
+    return next(new expressError("Enter Valid Phone Number.", 400));
+  else newPhone = checkPhone.value;
+
+  const findShopByName = await Shop.findOne({ companyName });
   const findShopByEmail = await Shop.findOne({ email });
   if (findShopByName)
-    return next(new expressError("Shop With That Name Exists.", 400));
+    return next(new expressError("Shop With That Company Name Exists.", 400));
   if (findShopByEmail)
     return next(new expressError("Shop With That Email Exists.", 400));
 
   const newShop = new Shop(req.body);
+  const hashed = await bcrypt.hash(newShop.password, 10);
+  newShop.password = hashed;
+  newShop.phoneNumber = newPhone;
   let saveShop = await newShop.save();
   const token = jwt.sign({ id: saveShop._id }, process.env.SECRET, {
     expiresIn: "1d",
   });
-
   res.status(201).json(token);
 });
 
