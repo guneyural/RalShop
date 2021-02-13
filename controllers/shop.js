@@ -59,6 +59,15 @@ const createShop = catchAsync(async (req, res, next) => {
         400
       )
     );
+  var expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+  var regex = new RegExp(expression);
+
+  links.forEach((url) => {
+    if (!url.match(regex)) {
+      return next(new expressError("Enter Valid Link", 400));
+    }
+  });
+
   let newPhone = "";
   const checkPhone = phone
     .string()
@@ -90,10 +99,17 @@ const createShop = catchAsync(async (req, res, next) => {
   res.status(201).json(token);
 });
 
+const validateEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
 const loginShop = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password)
     return next(new expressError("Fill All Fields", 400));
+  if (!validateEmail(email))
+    return next(new expressError("Enter Valid Email.", 400));
   const getShop = await Shop.findOne({ email });
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 404));
 
@@ -112,13 +128,29 @@ const getShopById = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const getShop = await Shop.findById(req.params.id);
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
-  const { _id, name, email, description, image } = getShop;
+  const {
+    _id,
+    fullName,
+    email,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    coordinate,
+    links,
+  } = getShop;
   res.json({
     id: _id,
-    name,
+    fullName,
     email,
-    description,
-    image,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    coordinate,
+    links,
   });
 });
 
