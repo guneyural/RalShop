@@ -367,7 +367,7 @@ const RegisterPage = () => {
             </div>
           </form>
         </div>
-        <div className="col-md-4">
+        <div className="col-md-4 register-page-col">
           <img
             src={RegisterPhoto}
             alt="online shopping"

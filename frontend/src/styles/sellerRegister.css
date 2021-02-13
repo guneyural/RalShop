@@ -39,8 +39,10 @@
   .location-search-results {
     width: 100%;
   }
-
   .default-btn.seller {
     width: 100%;
+  }
+  .col-md-4.register-page-col {
+    display: none;
   }
 }
