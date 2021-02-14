@@ -21,6 +21,8 @@ import ChangePasswordPage from "./pages/changePasswordPage";
 import SellerRegisterPage from "./pages/seller/registerPage";
 import SellerLoginPage from "./pages/seller/loginPage";
 import SellerHome from "./pages/seller/sellerHomePage";
+import SellerForgotPasswordSendEmailPage from "./pages/seller/ForgotPasswordSendEmailPage";
+import SellerChangePasswordPage from "./pages/seller/changePasswordPage";
 import mapboxgl from "mapbox-gl";
 
 require("dotenv").config();
@@ -55,6 +57,18 @@ const App = () => {
             exact
             component={ForgotPasswordPage}
             auth={User.isAuthenticated}
+          />
+          <PrivateLogin
+            path="/seller/forgot_password"
+            exact
+            component={SellerForgotPasswordSendEmailPage}
+            isSeller={true}
+            auth={Seller.isAuthenticated}
+          />
+          <Route
+            path="/seller/forgot_password/reset_password/:token"
+            exact
+            component={SellerChangePasswordPage}
           />
           <PrivateRoute
             path="/seller/home"

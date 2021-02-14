@@ -109,9 +109,11 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Colorful style={{ textDecoration: "underline" }}>
-              Forgot Password?
-            </Colorful>
+            <Link to="/seller/forgot_password">
+              <Colorful style={{ textDecoration: "underline" }}>
+                Forgot Password?
+              </Colorful>
+            </Link>
             <button className="default-btn w-100 mt-2" disabled={btnDisabled}>
               {Seller.loading ? "Loading..." : "Login"}
             </button>
