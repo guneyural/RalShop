@@ -86,6 +86,11 @@ const LoginPage = () => {
       <CenterDiv>
         <CenterBox>
           <p style={{ textAlign: "center", fontSize: "32px" }}>Login</p>
+          {Seller.forgotPassword.successText && (
+            <span className="text-success">
+              {Seller.forgotPassword.successText}
+            </span>
+          )}
           <form onSubmit={(e) => handleSubmit(e)}>
             <div className="form-section">
               <Labels htmlFor="email">Email</Labels>
