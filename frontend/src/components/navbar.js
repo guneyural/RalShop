@@ -27,6 +27,7 @@ const Navbar = () => {
   const [scroll, setScroll] = useState(window.scrollY);
   const [searchQuery, setSearchQuery] = useState("");
   const { user, isAuthenticated } = useSelector((state) => state.Auth);
+  const Seller = useSelector((state) => state.Seller);
 
   useEffect(() => {
     document.querySelectorAll(".nav-mobile a").forEach((item) => {
@@ -86,19 +87,30 @@ const Navbar = () => {
           <div className="container">
             <section className="tiny-nav-left">
               <p className="text-muted">
-                Become a seller and grow your business.
+                {Seller.isAuthenticated
+                  ? "Logged in as seller."
+                  : "Become a seller and grow your business."}
               </p>
             </section>
             <section className="tiny-nav-right">
-              <Link
-                to="/seller/register"
-                style={{ textDecoration: "none", marginRight: "10px" }}
-              >
-                <TinyNavLink>Be A Seller</TinyNavLink>
-              </Link>
-              <Link to="/seller/login" style={{ textDecoration: "none" }}>
-                <TinyNavLink>Login As Seller</TinyNavLink>
-              </Link>
+              {Seller.isAuthenticated ? (
+                <Link to="/seller/home" style={{ textDecoration: "none" }}>
+                  <span style={{ fontWeight: "500" }}>Go To Your Shop</span>
+                </Link>
+              ) : (
+                <>
+                  {" "}
+                  <Link
+                    to="/seller/register"
+                    style={{ textDecoration: "none", marginRight: "10px" }}
+                  >
+                    <TinyNavLink>Be A Seller</TinyNavLink>
+                  </Link>
+                  <Link to="/seller/login" style={{ textDecoration: "none" }}>
+                    <TinyNavLink>Login As Seller</TinyNavLink>
+                  </Link>
+                </>
+              )}
             </section>
           </div>
         </div>
