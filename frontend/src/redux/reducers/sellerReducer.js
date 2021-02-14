@@ -5,6 +5,9 @@ import {
   SELLER_LOGOUT,
   SELLER_ERROR,
   GET_CURRENT_SELLER,
+  SELLER_CHANGE_PASSWORD,
+  SELLER_CHECK_PASSWORD_TOKEN,
+  SELLER_SEND_FORGOT_PASSWORD_EMAIL,
 } from "../actions/types";
 
 const initialState = {
@@ -15,6 +18,14 @@ const initialState = {
   error: {
     message: null,
     status: null,
+  },
+  forgotPassword: {
+    isPasswordReset:
+      localStorage.getItem("seller_password_reset") === null
+        ? false
+        : localStorage.getItem("seller_password_reset") === "true" && true,
+    email: localStorage.getItem("seller_email"),
+    sendEmailSuccess: null,
   },
 };
 
@@ -53,6 +64,17 @@ export const Seller = (state = initialState, action) => {
         ...state,
         loading: false,
         error: { message: action.payload.msg, status: action.payload.status },
+      };
+    case SELLER_SEND_FORGOT_PASSWORD_EMAIL:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        forgotPassword: {
+          ...state.forgotPassword,
+          sendEmailSuccess: true,
+          isPasswordReset: true,
+        },
       };
     default:
       return state;
