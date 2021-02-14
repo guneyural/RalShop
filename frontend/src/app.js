@@ -9,6 +9,7 @@ import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./redux/actions/authActions";
+import { getCurrentSeller } from "./redux/actions/sellerActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettingsPage from "./pages/ProfileSettings";
@@ -18,6 +19,8 @@ import PasswordResetRoute from "./privateRoutes/passwordResetRoutes";
 import ChangePasswordRoute from "./privateRoutes/changePasswordRoute";
 import ChangePasswordPage from "./pages/changePasswordPage";
 import SellerRegisterPage from "./pages/seller/registerPage";
+import SellerLoginPage from "./pages/seller/loginPage";
+import SellerHome from "./pages/seller/sellerHomePage";
 import mapboxgl from "mapbox-gl";
 
 require("dotenv").config();
@@ -25,9 +28,14 @@ require("dotenv").config();
 const App = () => {
   const dispatch = useDispatch();
   const User = useSelector((state) => state.Auth);
+  const Seller = useSelector((state) => state.Seller);
+
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch, User.isAuthenticated]);
+  useEffect(() => {
+    dispatch(getCurrentSeller());
+  }, [dispatch, Seller.isAuthenticated]);
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
   return (
@@ -49,12 +57,32 @@ const App = () => {
             auth={User.isAuthenticated}
           />
           <PrivateRoute
+            path="/seller/home"
+            exact
+            component={SellerHome}
+            isSeller={true}
+            auth={Seller.isAuthenticated}
+          />
+          <PrivateRoute
             path="/wishlist"
             exact
             component={WishlistPage}
             auth={User.isAuthenticated}
           />
-          <Route path="/seller/register" exact component={SellerRegisterPage} />
+          <PrivateLogin
+            path="/seller/register"
+            exact
+            isSeller={true}
+            auth={Seller.isAuthenticated}
+            component={SellerRegisterPage}
+          />
+          <PrivateLogin
+            path="/seller/login"
+            exact
+            auth={Seller.isAuthenticated}
+            isSeller={true}
+            component={SellerLoginPage}
+          />
           <Route path="/user/:username" exact component={ProfilePage} />
           <PrivateRoute
             path="/account/settings"
