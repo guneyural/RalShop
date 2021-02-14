@@ -242,8 +242,6 @@ const updateUserData = catchAsync(async (req, res, next) => {
     updateUser.username = newUsername;
     await updateUser.save();
   }
-  console.log(updateUser.email);
-  console.log(findUser.email);
   if (updateUser.email !== findUser.email) {
     const emailOptions = {
       from: process.env.EMAIL,

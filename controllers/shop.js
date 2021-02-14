@@ -7,6 +7,9 @@ const bcrypt = require("bcrypt");
 const mongoId = require("mongoose").Types.ObjectId;
 const Joi = require("joi");
 const phone = Joi.extend(require("joi-phone-number"));
+const transporter = require("../nodemailer");
+const generateId = require("../utils/generateId");
+const moment = require("moment");
 
 const createShop = catchAsync(async (req, res, next) => {
   const {
@@ -189,9 +192,100 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   });
 });
 
+const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
+  const { email, origin } = req.body;
+  const getShop = await Shop.findOne({ email });
+  if (getShop) {
+    const token = generateId(8);
+    const hashedToken = await bcrypt.hash(token, 2);
+    let currentDate = new Date();
+    let futureDate = new Date(currentDate.getTime() + 5 * 60000);
+    getShop.resetPassword = { token: hashedToken, expiration: futureDate };
+    await getShop.save();
+
+    const emailOptions = {
+      from: process.env.EMAIL,
+      to: getShop.email,
+      subject: "Password Reset Request.",
+      html: `<div style="margin:auto;background:white;border:1px solid #dedede;width:400px;padding:20px">
+        <h1>Reset Your Password?</h1>
+        <p>If you have sent password reset request for shop named ${getShop.companyName} click link below which sends you to password reset page.</p>
+        <p>If you didn't make this request ignore this email.</p>
+        <a href="${origin}/seller/forgot_password/reset_password/${token}">Reset Your Password</a>
+        <hr />
+        <h3 style="text-align:center">UralShop</h3>
+        <p style="text-align:center; font-size:11px;">Guney Ural @2021</p>
+      </div>`,
+    };
+
+    transporter.sendMail(emailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+      transporter.close();
+    });
+    res.json({
+      msg: "Email Has Been Sent.",
+      success: true,
+    });
+  } else {
+    return next(new expressError("Shop Does Not Exists.", 404));
+  }
+});
+
+const checkResetPasswordToken = catchAsync(async (req, res, next) => {
+  const { email, shopToken } = req.body;
+  const getShop = await Shop.findOne({ email });
+  if (!getShop) return next(new expressError(false, 404));
+  const {
+    resetPassword: { token, expiration },
+  } = getShop;
+  if (moment(expiration).isAfter(Date.now())) {
+    const compareToken = await bcrypt.compare(shopToken, token);
+    if (!compareToken) return next(new expressError(false, 403));
+    return res.json(true);
+  } else {
+    getShop.resetPassword = {};
+    await getShop.save();
+    return next(new expressError(false, 403));
+  }
+});
+
+const changePassword = catchAsync(async (req, res, next) => {
+  const token = req.headers["password-token"];
+  const { newPassword, confirmPassword, email } = req.body;
+  if (!newPassword || !confirmPassword)
+    return next(new expressError("Password can't be blank.", 400));
+  if (newPassword.length < 6)
+    return next(
+      new expressError("Password must be at least 6 characters.", 400)
+    );
+  if (token.length > 8 || token.length < 8)
+    return next(new expressError("redirect", 403));
+  const getShop = await Shop.findOne({ email });
+  if (!getShop) return next(new expressError(false, 404));
+  const { resetPassword } = getShop;
+  if (moment(resetPassword.expiration).isBefore(Date.now()))
+    return next(new expressError("redirect", 403));
+  const compareToken = await bcrypt.compare(token, resetPassword.token);
+  if (!compareToken) return next(new expressError("redirect", 403));
+  if (newPassword !== confirmPassword)
+    return next(new expressError("Passwords don't match.", 400));
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  getShop.password = hashedPassword;
+  getShop.resetPassword = {};
+  await getShop.save();
+  res.json("Successfully changed the password.");
+});
+
 module.exports = {
   createShop,
   loginShop,
   getShopById,
   getCurrentShop,
+  sendForgetPasswordEmail,
+  checkResetPasswordToken,
+  changePassword,
 };
