@@ -13,6 +13,10 @@ const shopSchema = new mongoose.Schema(
     coordinate: [Number],
     links: [String],
     password: { type: String, required: true, min: 6 },
+    resetPassword: {
+      token: String,
+      expiration: Date,
+    },
   },
   { timestamps: true }
 );
