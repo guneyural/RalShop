@@ -4,6 +4,7 @@ import {
   SELLER_LOADING,
   SELLER_LOGOUT,
   SELLER_ERROR,
+  GET_CURRENT_SELLER,
 } from "../actions/types";
 
 const initialState = {
@@ -19,6 +20,13 @@ const initialState = {
 
 export const Seller = (state = initialState, action) => {
   switch (action.type) {
+    case GET_CURRENT_SELLER:
+      return {
+        ...state,
+        isAuthenticated: true,
+        shop: action.payload.shop,
+        error: { message: null, status: null },
+      };
     case SELLER_REGISTER:
     case SELLER_LOGIN:
       localStorage.setItem("shop-token", action.payload);

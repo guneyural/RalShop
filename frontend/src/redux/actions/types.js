@@ -27,4 +27,5 @@ export const SELLER_LOADING = "SELLER_LOADING";
 export const SELLER_LOGIN = "SELLER_LOGIN";
 export const SELLER_ERROR = "SELLER_ERROR";
 export const SELLER_LOGOUT = "SELLER_LOGOUT";
+export const GET_CURRENT_SELLER = "GET_CURRENT_SELLER";
 //===SELLER===

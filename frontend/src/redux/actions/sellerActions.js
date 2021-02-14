@@ -4,8 +4,27 @@ import {
   SELLER_LOADING,
   SELLER_LOGOUT,
   SELLER_ERROR,
+  GET_CURRENT_SELLER,
 } from "./types";
 import axios from "axios";
+
+export const getCurrentSeller = () => (dispatch) => {
+  axios
+    .get("/api/shop/current", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_CURRENT_SELLER, payload: { shop: data } });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 export const sellerRegister = (data) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
@@ -27,6 +46,22 @@ export const sellerRegister = (data) => (dispatch) => {
 
 export const sellerLogin = (email, password) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
+
+  axios
+    .post("/api/shop/login", { email, password })
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: SELLER_LOGIN, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const sellerLogout = (dispatch) => {

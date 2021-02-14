@@ -7,6 +7,7 @@ import mapboxgl from "mapbox-gl";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { sellerRegister } from "../../redux/actions/sellerActions";
+import { Link } from "react-router-dom";
 
 const PageHeader = styled.h1`
   font-weight: 300;
@@ -52,6 +53,11 @@ const Select = styled.select`
     flex-direction: column;
     width: 100%;
   }
+`;
+const Colorful = styled.span`
+  color: #346eeb;
+  font-weight: 500;
+  cursor: pointer;
 `;
 
 const RegisterPage = () => {
@@ -137,6 +143,7 @@ const RegisterPage = () => {
         category,
         companyName,
         location,
+        coordinate: center,
         links: splittedLinks,
         password,
       })
@@ -372,9 +379,20 @@ const RegisterPage = () => {
                 >
                   {Seller.loading ? "Loading..." : "Register As Seller"}
                 </button>
+                <p className="mt-2">
+                  Already a seller?{" "}
+                  <Link to="/seller/login">
+                    <Colorful style={{ textDecoration: "underline" }}>
+                      Login as seller
+                    </Colorful>
+                  </Link>
+                </p>
               </div>
               {Seller.error.message !== null && (
-                <span className="text-danger">{Seller.error.message}</span>
+                <span className="text-danger">
+                  {Seller.error.message !== "Login To See The Content." &&
+                    Seller.error.message}
+                </span>
               )}
             </div>
           </form>
