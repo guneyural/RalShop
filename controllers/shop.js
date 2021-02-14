@@ -64,7 +64,6 @@ const createShop = catchAsync(async (req, res, next) => {
   var expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
   var regex = new RegExp(expression);
 
-  console.log(links[0]);
   if (links[0] !== "") {
     links.forEach((url) => {
       if (!url.match(regex)) {
@@ -164,13 +163,29 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const getShop = await Shop.findById(req.shop.id);
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
-  const { _id, name, email, description, image } = getShop;
+  const {
+    _id,
+    fullName,
+    email,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    coordinate,
+    links,
+  } = getShop;
   res.json({
     id: _id,
-    name,
+    fullName,
     email,
-    description,
-    image,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    coordinate,
+    links,
   });
 });
 
