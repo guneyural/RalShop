@@ -5,6 +5,12 @@ import {
   SELLER_LOGOUT,
   SELLER_ERROR,
   GET_CURRENT_SELLER,
+  SELLER_RESET_PASSWORD_ERROR,
+  SELLER_CHANGE_PASSWORD,
+  SELLER_CHECK_PASSWORD_TOKEN,
+  SELLER_SEND_FORGOT_PASSWORD_EMAIL,
+  SELLER_RESET_PASSWORD_TOKEN_ERROR,
+  LOADING,
 } from "./types";
 import axios from "axios";
 
@@ -61,6 +67,56 @@ export const sellerLogin = (email, password) => (dispatch) => {
           status: err.response.status,
         },
       });
+    });
+};
+
+export const sendForgotPasswordEmail = (email, origin) => (dispatch) => {
+  dispatch({ type: LOADING });
+  axios
+    .post("/api/shop/sendEmail", { email, origin })
+    .then(() => {
+      dispatch({ type: SELLER_SEND_FORGOT_PASSWORD_EMAIL });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const confirmPasswordResetToken = (email, shopToken) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .post("/api/shop/checkToken", { email, shopToken })
+    .then(() => {
+      dispatch({ type: SELLER_CHECK_PASSWORD_TOKEN });
+    })
+    .catch((err) => {
+      dispatch({ type: SELLER_RESET_PASSWORD_TOKEN_ERROR });
+    });
+};
+
+export const resetPassword = (newPassword, confirmPassword, email, token) => (
+  dispatch
+) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .post(
+      "/api/shop/changePassword",
+      { newPassword, confirmPassword, email },
+      { headers: { "password-token": token } }
+    )
+    .then(() => {
+      dispatch({ type: SELLER_CHANGE_PASSWORD });
+    })
+    .catch((err) => {
+      dispatch({ type: SELLER_RESET_PASSWORD_ERROR });
     });
 };
 

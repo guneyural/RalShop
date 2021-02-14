@@ -6,8 +6,10 @@ import {
   SELLER_ERROR,
   GET_CURRENT_SELLER,
   SELLER_CHANGE_PASSWORD,
+  SELLER_RESET_PASSWORD_ERROR,
   SELLER_CHECK_PASSWORD_TOKEN,
   SELLER_SEND_FORGOT_PASSWORD_EMAIL,
+  SELLER_RESET_PASSWORD_TOKEN_ERROR,
 } from "../actions/types";
 
 const initialState = {
@@ -26,6 +28,9 @@ const initialState = {
         : localStorage.getItem("seller_password_reset") === "true" && true,
     email: localStorage.getItem("seller_email"),
     sendEmailSuccess: null,
+    checkToken: null,
+    resetPasswordError: null,
+    successText: null,
   },
 };
 
@@ -40,6 +45,8 @@ export const Seller = (state = initialState, action) => {
       };
     case SELLER_REGISTER:
     case SELLER_LOGIN:
+      localStorage.removeItem("seller_password_reset");
+      localStorage.removeItem("seller_email");
       localStorage.setItem("shop-token", action.payload);
       return {
         ...state,
@@ -74,6 +81,51 @@ export const Seller = (state = initialState, action) => {
           ...state.forgotPassword,
           sendEmailSuccess: true,
           isPasswordReset: true,
+        },
+      };
+    case SELLER_CHECK_PASSWORD_TOKEN:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null, checkToken: true },
+      };
+    case SELLER_CHANGE_PASSWORD:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        forgotPassword: {
+          ...state.forgotPassword,
+          resetPasswordError: false,
+          successText: "Your password has changed. Now you can login.",
+        },
+      };
+    case SELLER_RESET_PASSWORD_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        forgotPassword: {
+          ...state.forgotPassword,
+          email: null,
+          isPasswordReset: false,
+          sendEmailSuccess: false,
+          checkToken: false,
+          resetPasswordError: true,
+        },
+      };
+    case SELLER_RESET_PASSWORD_TOKEN_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        forgotPassword: {
+          ...state.forgotPassword,
+          email: null,
+          isPasswordReset: false,
+          sendEmailSuccess: false,
+          checkToken: false,
+          resetPasswordError: null,
         },
       };
     default:
