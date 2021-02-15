@@ -1,22 +1,22 @@
 import React, { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { notSellerRoute } from "../redux/actions/sellerActions";
+import { sellerRoute } from "../redux/actions/sellerActions";
 
-const SellerChangePasswordPage = ({
+const SellerRoute = ({
   component: Component,
-  isResetPasswordSuccess,
+  isSellerAuthenticated,
   ...rest
 }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(notSellerRoute());
+    dispatch(sellerRoute());
   }, []);
   return (
     <Route
       {...rest}
       render={(props) =>
-        isResetPasswordSuccess === true || isResetPasswordSuccess === null ? (
+        isSellerAuthenticated ? (
           <Component {...props} />
         ) : (
           <Redirect to="/seller/login" />
@@ -26,4 +26,4 @@ const SellerChangePasswordPage = ({
   );
 };
 
-export default SellerChangePasswordPage;
+export default SellerRoute;
