@@ -10,6 +10,8 @@ import {
   SELLER_CHECK_PASSWORD_TOKEN,
   SELLER_SEND_FORGOT_PASSWORD_EMAIL,
   SELLER_RESET_PASSWORD_TOKEN_ERROR,
+  NOT_SELLER_ROUTE,
+  SELLER_ROUTE,
   LOADING,
 } from "./types";
 import axios from "axios";
@@ -118,6 +120,14 @@ export const resetPassword = (newPassword, confirmPassword, email, token) => (
     .catch((err) => {
       dispatch({ type: SELLER_RESET_PASSWORD_ERROR });
     });
+};
+
+export const sellerRoute = () => {
+  return { type: SELLER_ROUTE };
+};
+
+export const notSellerRoute = () => {
+  return { type: NOT_SELLER_ROUTE };
 };
 
 export const sellerLogout = (dispatch) => {

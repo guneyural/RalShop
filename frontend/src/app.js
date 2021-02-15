@@ -9,7 +9,10 @@ import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "./redux/actions/authActions";
-import { getCurrentSeller } from "./redux/actions/sellerActions";
+import {
+  getCurrentSeller,
+  notSellerRoute,
+} from "./redux/actions/sellerActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettingsPage from "./pages/ProfileSettings";
@@ -25,6 +28,8 @@ import SellerForgotPasswordSendEmailPage from "./pages/seller/ForgotPasswordSend
 import SellerChangePasswordPage from "./pages/seller/changePasswordPage";
 import ProtectSellerChangePasswordPage from "./privateRoutes/sellerChangePasswordPage";
 import mapboxgl from "mapbox-gl";
+import SellerRoute from "./privateRoutes/sellerRoutes";
+import NormalRoute from "./privateRoutes/NormalRoute";
 
 require("dotenv").config();
 
@@ -33,6 +38,9 @@ const App = () => {
   const User = useSelector((state) => state.Auth);
   const Seller = useSelector((state) => state.Seller);
 
+  useEffect(() => {
+    dispatch(notSellerRoute());
+  }, []);
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch, User.isAuthenticated]);
@@ -46,7 +54,7 @@ const App = () => {
       <Navbar />
       <div className="container main-container" style={{ paddingTop: "120px" }}>
         <Switch>
-          <Route path="/" exact component={Home} />
+          <NormalRoute path="/" exact component={Home} />
           <PrivateLogin
             path="/auth"
             exact
@@ -72,12 +80,11 @@ const App = () => {
             exact
             component={SellerChangePasswordPage}
           />
-          <PrivateRoute
+          <SellerRoute
             path="/seller/home"
             exact
             component={SellerHome}
-            isSeller={true}
-            auth={Seller.isAuthenticated}
+            isSellerAuthenticated={Seller.isAuthenticated}
           />
           <PrivateRoute
             path="/wishlist"
@@ -99,7 +106,7 @@ const App = () => {
             isSeller={true}
             component={SellerLoginPage}
           />
-          <Route path="/user/:username" exact component={ProfilePage} />
+          <NormalRoute path="/user/:username" exact component={ProfilePage} />
           <PrivateRoute
             path="/account/settings"
             exact
@@ -123,7 +130,7 @@ const App = () => {
             component={ChangePasswordPage}
             exact
           />
-          <Route component={NotFound} />
+          <NormalRoute component={NotFound} />
         </Switch>
       </div>
       <Footer />

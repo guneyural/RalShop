@@ -10,6 +10,8 @@ import {
   SELLER_CHECK_PASSWORD_TOKEN,
   SELLER_SEND_FORGOT_PASSWORD_EMAIL,
   SELLER_RESET_PASSWORD_TOKEN_ERROR,
+  SELLER_ROUTE,
+  NOT_SELLER_ROUTE,
 } from "../actions/types";
 
 const initialState = {
@@ -21,6 +23,7 @@ const initialState = {
     message: null,
     status: null,
   },
+  inSellerRoute: false,
   forgotPassword: {
     isPasswordReset:
       localStorage.getItem("seller_password_reset") === null
@@ -127,6 +130,16 @@ export const Seller = (state = initialState, action) => {
           checkToken: false,
           resetPasswordError: null,
         },
+      };
+    case SELLER_ROUTE:
+      return {
+        ...state,
+        inSellerRoute: true,
+      };
+    case NOT_SELLER_ROUTE:
+      return {
+        ...state,
+        inSellerRoute: false,
       };
     default:
       return state;
