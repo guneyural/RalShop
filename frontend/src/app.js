@@ -30,6 +30,7 @@ import ProtectSellerChangePasswordPage from "./privateRoutes/sellerChangePasswor
 import mapboxgl from "mapbox-gl";
 import SellerRoute from "./privateRoutes/sellerRoutes";
 import NormalRoute from "./privateRoutes/NormalRoute";
+import SellerProfile from "./pages/seller/SellerProfilePage";
 
 require("dotenv").config();
 
@@ -52,7 +53,10 @@ const App = () => {
   return (
     <Router>
       <Navbar />
-      <div className="container main-container" style={{ paddingTop: "120px" }}>
+      <div
+        className="container main-container"
+        style={{ paddingTop: Seller.inSellerRoute ? "90px" : "120px" }}
+      >
         <Switch>
           <NormalRoute path="/" exact component={Home} />
           <PrivateLogin
@@ -79,6 +83,12 @@ const App = () => {
             isResetPasswordSuccess={Seller.forgotPassword.resetPasswordError}
             exact
             component={SellerChangePasswordPage}
+          />
+          <SellerRoute
+            path="/seller/profile"
+            exact
+            component={SellerProfile}
+            isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
             path="/seller/home"
