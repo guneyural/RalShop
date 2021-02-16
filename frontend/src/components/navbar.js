@@ -39,48 +39,44 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    if (!Seller.inSellerRoute) {
-      if (isNavOpen) {
-        document.querySelector(".nav-mobile").className += " nav-active";
-        document.querySelector(".bg").style.display = "block";
-        document.body.style.overflow = "hidden";
-      } else {
-        document.querySelector(".nav-mobile").className = "nav-mobile";
-        document.querySelector(".bg").style.display = "none";
-        document.body.style.overflow = "auto";
-      }
+    if (isNavOpen) {
+      document.querySelector(".nav-mobile").className += " nav-active";
+      document.querySelector(".bg").style.display = "block";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.querySelector(".nav-mobile").className = "nav-mobile";
+      document.querySelector(".bg").style.display = "none";
+      document.body.style.overflow = "auto";
     }
   }, [isNavOpen]);
 
   useEffect(() => {
-    if (!Seller.inSellerRoute) {
-      const getWidth = () => {
-        setWindowSize(window.innerWidth);
-      };
-      const getScroll = () => {
-        setScroll(window.scrollY);
-      };
+    const getWidth = () => {
+      setWindowSize(window.innerWidth);
+    };
+    const getScroll = () => {
+      setScroll(window.scrollY);
+    };
 
-      window.addEventListener("scroll", getScroll);
-      window.addEventListener("resize", getWidth);
+    window.addEventListener("scroll", getScroll);
+    window.addEventListener("resize", getWidth);
 
-      if (windowSize > 892) {
-        document.body.style.overflow = "auto";
-        setIsNavOpen(false);
-      } else if (windowSize <= 892 && isNavOpen) {
-        document.body.style.overflow = "hidden";
-      }
-
-      if (scroll > 15) {
-        document.querySelector(".top-nav").classList.add("top-nav-scroll");
-      } else {
-        document.querySelector(".top-nav").classList.remove("top-nav-scroll");
-      }
-
-      return () => {
-        window.removeEventListener("resize", getWidth);
-      };
+    if (windowSize > 892) {
+      document.body.style.overflow = "auto";
+      setIsNavOpen(false);
+    } else if (windowSize <= 892 && isNavOpen) {
+      document.body.style.overflow = "hidden";
     }
+
+    if (scroll > 15) {
+      document.querySelector(".top-nav").classList.add("top-nav-scroll");
+    } else {
+      document.querySelector(".top-nav").classList.remove("top-nav-scroll");
+    }
+
+    return () => {
+      window.removeEventListener("resize", getWidth);
+    };
   }, [windowSize, scroll]);
 
   const getCategory = (idx) => {
@@ -267,7 +263,7 @@ const Navbar = () => {
       </>
     );
   }
-  return <SellerNavbar />;
+  return <SellerNavbar isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} />;
 };
 
 export default Navbar;
