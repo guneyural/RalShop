@@ -73,7 +73,7 @@
   background: #bbbbbb;
 }
 
-@media only screen and (max-width: 830px) {
+@media only screen and (max-width: 860px) {
   .firstLink {
     padding-left: 0;
   }
@@ -90,7 +90,7 @@
   }
 }
 
-@media only screen and (max-width: 748px) {
+@media only screen and (max-width: 768px) {
   .seller-nav .navbar-middle {
     display: none;
   }
