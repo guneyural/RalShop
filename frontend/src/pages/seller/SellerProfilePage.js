@@ -4,6 +4,8 @@ import styled from "styled-components";
 import moment from "moment";
 import ReactMapGL, { Marker } from "react-map-gl";
 import pin from "../../assets/pin.webp";
+import MessageBox from "../../components/messageBox";
+import { sellerLogout } from "../../redux/actions/sellerActions";
 
 const SellerInformation = styled.div`
   border: 1px solid #c2c2c2;
@@ -41,8 +43,8 @@ const Underline = styled.hr`
 const SellerProfilePage = () => {
   const Seller = useSelector((state) => state.Seller);
   const [center, setCenter] = useState([...Seller.shop.coordinate]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewport, setViewport] = useState({
-    width: "100%",
     height: 205,
     latitude: center[1],
     longitude: center[0],
@@ -55,6 +57,17 @@ const SellerProfilePage = () => {
 
   return (
     <div className="row">
+      {isModalOpen && (
+        <MessageBox
+          action={sellerLogout}
+          message={"Do You Want To Logout?"}
+          header={"Logout"}
+          setIsModalOpen={setIsModalOpen}
+          btnText={"Logout"}
+          isModalOpen={isModalOpen}
+          isRedux={true}
+        />
+      )}
       <div className="col-xl-5 col-lg-6 col-md-7">
         <h2>Seller Information</h2>
         <SellerInformation>
@@ -98,10 +111,7 @@ const SellerProfilePage = () => {
           </InformationColumn>
         </SellerInformation>
       </div>
-      <div
-        className="col-xl-7 col-lg-6 col-md-5"
-        style={{ position: "relative" }}
-      >
+      <div className="col-xl-7 col-lg-6 col-md-5">
         <h2>Location</h2>
         <SellerInformation>
           <InformationColumn>
@@ -112,6 +122,7 @@ const SellerProfilePage = () => {
         </SellerInformation>
         <ReactMapGL
           {...viewport}
+          width={"100%"}
           mapStyle="mapbox://styles/mapbox/streets-v11"
           mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
           onViewportChange={(nextViewport) => setViewport(nextViewport)}
@@ -130,6 +141,38 @@ const SellerProfilePage = () => {
           </Marker>
         </ReactMapGL>
       </div>
+      <section className="col-12 mt-3">
+        <h1>Links</h1>
+        <SellerInformation>
+          {Seller.shop.links.map((item, idx) => {
+            return (
+              <>
+                <InformationColumn>
+                  <a
+                    href={item}
+                    style={{
+                      margin: "0 auto",
+                      fontSize: "15px",
+                      padding: "5px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {item.split("/")[2]}
+                  </a>
+                </InformationColumn>
+                {idx !== Seller.shop.links.length - 1 && <Underline />}
+              </>
+            );
+          })}
+        </SellerInformation>
+      </section>
+      <button
+        className="default-btn mt-5 mb-3"
+        style={{ width: "100px", marginLeft: "12px" }}
+        onClick={() => setIsModalOpen(true)}
+      >
+        Logout
+      </button>
     </div>
   );
 };
