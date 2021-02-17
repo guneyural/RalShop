@@ -63,6 +63,7 @@ export const Seller = (state = initialState, action) => {
     case SELLER_LOGOUT:
       localStorage.removeItem("shop-token");
       return {
+        ...state,
         token: null,
         shop: null,
         loading: false,

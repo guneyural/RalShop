@@ -130,12 +130,12 @@ export const notSellerRoute = () => {
   return { type: NOT_SELLER_ROUTE };
 };
 
-export const sellerLogout = (dispatch) => {
-  dispatch({ type: SELLER_LOGOUT });
+export const sellerLogout = () => {
+  return { type: SELLER_LOGOUT };
 };
 
-export const loading = (dispatch) => {
-  dispatch({ type: SELLER_LOADING });
+export const loading = () => {
+  return { type: SELLER_LOADING };
 };
 
 const tokenConfig = () => {
