@@ -23,18 +23,8 @@ const CartValidation = Joi.object({
   cartTotal: Joi.number(),
 });
 
-const ProductValidation = Joi.object({
-  title: Joi.string().required(),
-  price: Joi.number().required(),
-  description: Joi.string().required(),
-  stock: Joi.number().required(),
-  image: Joi.string().required(),
-  shop: Joi.string(),
-});
-
 module.exports = {
   UserValidation,
   ShopValidation,
   CartValidation,
-  ProductValidation,
 };

@@ -2,13 +2,24 @@ const mongoose = require("mongoose");
 const strOptions = { type: String, required: true };
 const numberOptions = { type: Number, required: true, min: 0 };
 
+const imageSchema = new mongoose.Schema({
+  url: String,
+  filename: String,
+});
+
 const productSchema = new mongoose.Schema(
   {
     title: strOptions,
     price: numberOptions,
     description: strOptions,
     stock: numberOptions,
-    image: strOptions,
+    images: [imageSchema],
+    brand: strOptions,
+    colors: [String],
+    location: strOptions,
+    coordinate: [Number],
+    category: strOptions,
+    subCategory: strOptions,
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
