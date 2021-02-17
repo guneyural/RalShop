@@ -168,7 +168,7 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
   const {
     _id,
-    fullName,
+    fullname,
     email,
     country,
     phoneNumber,
@@ -177,10 +177,12 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     location,
     coordinate,
     links,
+    createdAt,
   } = getShop;
   res.json({
     id: _id,
-    fullName,
+    fullname,
+    createdAt,
     email,
     country,
     phoneNumber,
