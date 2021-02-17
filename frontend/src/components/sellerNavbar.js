@@ -99,10 +99,10 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
                     </Link>
                   </div>
                 </span>
-                <Link to="/seller/notifications" className="seller-nav-link">
+                <Link to="/seller/dashboard" className="seller-nav-link">
                   Dashboard
                 </Link>
-                <Link to="/seller/notifications" className="seller-nav-link">
+                <Link to="/seller/products/add" className="seller-nav-link">
                   Add Product
                 </Link>
               </section>
@@ -187,10 +187,10 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
                 </Link>
               </div>
             </span>
-            <Link to="/seller/notifications" className="seller-mobile-link">
+            <Link to="/seller/dashboard" className="seller-mobile-link">
               Dashboard
             </Link>
-            <Link to="/seller/notifications" className="seller-mobile-link">
+            <Link to="/seller/products/add" className="seller-mobile-link">
               Add Product
             </Link>
             <Link to="/seller/messages" className="seller-mobile-link">

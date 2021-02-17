@@ -31,6 +31,7 @@ import mapboxgl from "mapbox-gl";
 import SellerRoute from "./privateRoutes/sellerRoutes";
 import NormalRoute from "./privateRoutes/NormalRoute";
 import SellerProfile from "./pages/seller/SellerProfilePage";
+import AddProductPage from "./pages/seller/AddProductPage";
 
 require("dotenv").config();
 
@@ -88,6 +89,12 @@ const App = () => {
             path="/seller/profile"
             exact
             component={SellerProfile}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/products/add"
+            exact
+            component={AddProductPage}
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
