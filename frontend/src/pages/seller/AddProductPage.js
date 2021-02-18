@@ -6,6 +6,7 @@ import { CompactPicker } from "react-color";
 import JoditEditor from "jodit-react";
 import mapboxgl from "mapbox-gl";
 import axios from "axios";
+import { priceConverter } from "../../utils/helpers";
 
 const PageHeader = styled.h1`
   font-weight: 300;
@@ -90,7 +91,10 @@ const AddProductPage = () => {
   const [notFound, setNotFound] = useState(null);
   const [center, setCenter] = useState([35, 39]);
   const mapContainer = useRef(null);
+  const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [stock, setStock] = useState(0);
+  let formData = new FormData();
   const config = {
     readonly: false,
   };
@@ -183,6 +187,8 @@ const AddProductPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    formData.append("title", name);
   };
 
   const handleChangeComplete = (color) => {
@@ -259,6 +265,19 @@ const AddProductPage = () => {
           </div>
           <div className="col-md-4">
             <div className="form-section">
+              <Labels htmlFor="stock">Stock</Labels>
+              <InputField
+                id="stock"
+                type="number"
+                placeholder="Stock"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                min="1"
+              />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-section">
               <Labels htmlFor="brand">Brand Name</Labels>
               <InputField
                 type="text"
@@ -267,6 +286,19 @@ const AddProductPage = () => {
                 placeholder="Brand Name"
                 onBlur={(e) => setName(e.target.value)}
                 required
+              />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-section">
+              <Labels htmlFor="price">Price ({priceConverter(price)})</Labels>
+              <InputField
+                id="price"
+                type="number"
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                min="1"
               />
             </div>
           </div>
