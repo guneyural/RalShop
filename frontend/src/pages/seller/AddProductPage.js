@@ -94,7 +94,6 @@ const AddProductPage = () => {
   const [price, setPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [stock, setStock] = useState(0);
-  let formData = new FormData();
   const config = {
     readonly: false,
   };
@@ -187,8 +186,23 @@ const AddProductPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    let formData = new FormData();
+    const imageFile = document.querySelector(`input[type='file']`);
+    if (imageFile.files) {
+      for (let i = 0; i < imageFile.files.length; i++) {
+        formData.append("images", imageFile.files[i]);
+      }
+    }
     formData.append("title", name);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("stock", stock);
+    formData.append("brand", brand);
+    formData.append("colors", colors);
+    formData.append("location", location);
+    formData.append("center", center);
+    formData.append("category", category);
+    formData.append("subCategory", subCategory);
   };
 
   const handleChangeComplete = (color) => {
@@ -284,7 +298,7 @@ const AddProductPage = () => {
                 name="brand"
                 id="brand"
                 placeholder="Brand Name"
-                onBlur={(e) => setName(e.target.value)}
+                onBlur={(e) => setBrand(e.target.value)}
                 required
               />
             </div>
