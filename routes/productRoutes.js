@@ -10,7 +10,7 @@ const multer = require("multer");
 const { storage } = require("../cloudinary");
 const upload = multer({ storage });
 
-Router.post("/new", upload.array("photos"), isShop, createProduct);
+Router.post("/new", upload.array("images"), isShop, createProduct);
 Router.put("/:id/update", isShop, updateProduct);
 Router.delete("/:id/delete", isShop, deleteProduct);
 Router.get("/:id", getProductById);
