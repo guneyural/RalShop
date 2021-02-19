@@ -7,6 +7,9 @@ import JoditEditor from "jodit-react";
 import mapboxgl from "mapbox-gl";
 import axios from "axios";
 import { priceConverter } from "../../utils/helpers";
+import { useSelector, useDispatch } from "react-redux";
+import { createProduct } from "../../redux/actions/productActions";
+import { Redirect } from "react-router-dom";
 
 const PageHeader = styled.h1`
   font-weight: 300;
@@ -25,12 +28,6 @@ const InputField = styled.input`
     flex-direction: column;
     width: 100%;
   }
-`;
-const TextField = styled.textarea`
-  padding: 4px 12px;
-  border-radius: 3px;
-  background: #efefef;
-  border: 1px solid #c2c2c2;
 `;
 const Select = styled.select`
   padding: 4px 5px;
@@ -97,6 +94,8 @@ const AddProductPage = () => {
   const config = {
     readonly: false,
   };
+  const Product = useSelector((state) => state.Product);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const initializeMap = ({ setMap, mapContainer }) => {
@@ -200,9 +199,10 @@ const AddProductPage = () => {
     formData.append("brand", brand);
     formData.append("colors", colors);
     formData.append("location", location);
-    formData.append("center", center);
+    formData.append("coordinate", center);
     formData.append("category", category);
     formData.append("subCategory", subCategory);
+    dispatch(createProduct(formData));
   };
 
   const handleChangeComplete = (color) => {
@@ -430,6 +430,23 @@ const AddProductPage = () => {
           />
         </div>
         <button className="default-btn mt-4">Create Product</button>
+        {Product.loading && (
+          <>
+            <img src={LoadingIcon} alt="loading gif" height="70px" />
+            <p className="text-muted">This may take a while.</p>
+          </>
+        )}
+        <section className="mt-1">
+          {Product.error.msg !== null && (
+            <p className="text-danger">{Product.error.msg}</p>
+          )}
+          {Object.keys(Product.createdProduct).length > 1 && (
+            <>
+              <p className="text-success">Product Created Successfully.</p>
+              <Redirect to={`/product/${Product.createdProduct._id}`} />
+            </>
+          )}
+        </section>
       </form>
     </div>
   );
