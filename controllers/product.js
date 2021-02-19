@@ -14,8 +14,10 @@ const createProduct = catchAsync(async (req, res, next) => {
     brand,
     colors,
     location,
+    coordinate,
   } = req.body;
   if (
+    !coordinate ||
     !title ||
     !price ||
     !description ||
@@ -28,6 +30,7 @@ const createProduct = catchAsync(async (req, res, next) => {
   )
     return next(new expressError("Fill All Fields", 400));
   const newProduct = new Product(req.body);
+  newProduct.coordinate = coordinate.split(",");
   newProduct.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
