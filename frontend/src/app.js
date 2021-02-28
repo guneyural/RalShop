@@ -32,6 +32,7 @@ import SellerRoute from "./privateRoutes/sellerRoutes";
 import NormalRoute from "./privateRoutes/NormalRoute";
 import SellerProfile from "./pages/seller/SellerProfilePage";
 import AddProductPage from "./pages/seller/AddProductPage";
+import ProductPage from "./pages/ProductPage";
 
 require("dotenv").config();
 
@@ -124,6 +125,7 @@ const App = () => {
             component={SellerLoginPage}
           />
           <NormalRoute path="/user/:username" exact component={ProfilePage} />
+          <NormalRoute path="/product/:id" exact component={ProductPage} />
           <PrivateRoute
             path="/account/settings"
             exact
