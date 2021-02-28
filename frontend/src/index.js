@@ -8,6 +8,7 @@ import "./styles/profilePage.css";
 import "./styles/modalStyle.css";
 import "./styles/sellerRegister.css";
 import "./styles/sellerNavbar.css";
+import "./styles/ProductPage.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 

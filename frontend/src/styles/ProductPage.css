@@ -1,0 +1,46 @@
+.product-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: relative;
+  border-radius: 3px;
+  max-width: 600px;
+  height: 400px;
+}
+
+.img-arrows {
+  color: white;
+  font-weight: bold;
+  font-size: 40px;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  cursor: pointer;
+}
+
+.img-arrows.right {
+  right: 0;
+}
+
+.img-arrows.left {
+  left: 0;
+}
+
+.product-images-section {
+  overflow: auto;
+  max-width: 600px;
+  border: 0.5px solid #bebebe;
+  white-space: nowrap;
+}
+
+.product-images-section img {
+  height: 80px;
+  width: 80px;
+  object-fit: cover;
+  margin: 1px;
+  border-radius: 2px;
+}
+
+.product-img-active {
+  border: 2px solid black;
+}
