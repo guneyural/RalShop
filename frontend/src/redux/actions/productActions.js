@@ -1,4 +1,9 @@
-import { CREATE_PRODUCT, PRODUCT_ERROR, PRODUCT_LOADING } from "./types";
+import {
+  CREATE_PRODUCT,
+  PRODUCT_ERROR,
+  PRODUCT_LOADING,
+  GET_PRODUCT_BY_ID,
+} from "./types";
 import axios from "axios";
 
 export const createProduct = (data) => (dispatch) => {
@@ -28,6 +33,26 @@ export const createProduct = (data) => (dispatch) => {
 
 export const productLoading = () => {
   return { type: PRODUCT_LOADING };
+};
+
+export const getProductById = (id) => (dispatch) => {
+  dispatch({ type: PRODUCT_LOADING });
+
+  axios
+    .get(`/api/product/${id}`)
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_PRODUCT_BY_ID, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: PRODUCT_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 const tokenConfig = () => {

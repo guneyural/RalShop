@@ -2,6 +2,7 @@ import {
   PRODUCT_ERROR,
   PRODUCT_LOADING,
   CREATE_PRODUCT,
+  GET_PRODUCT_BY_ID,
 } from "../actions/types";
 
 const initialState = {
@@ -36,6 +37,12 @@ export const Product = (state = initialState, action) => {
         error: { msg: null, status: null },
         products: [action.payload, ...state.products],
         createdProduct: action.payload,
+      };
+    case GET_PRODUCT_BY_ID:
+      return {
+        ...state,
+        product: action.payload,
+        loading: false,
       };
     default:
       return state;
