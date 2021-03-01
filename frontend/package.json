@@ -19,6 +19,7 @@
     "react-mapbox-gl": "^5.1.1",
     "react-mapbox-gl-geocoder": "^1.1.0",
     "react-mapbox-wrapper": "^2.6.1",
+    "react-rating-stars-component": "^2.2.0",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
