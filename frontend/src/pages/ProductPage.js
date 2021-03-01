@@ -72,10 +72,10 @@ const ProductPage = () => {
 
   useEffect(() => {
     const listenKeyboard = (e) => {
-      if (e.code === "ArrowLeft" || e.code === "ArrowDown") {
+      if (e.code === "ArrowLeft") {
         prev();
       }
-      if (e.code === "ArrowRight" || e.code === "ArrowUp") {
+      if (e.code === "ArrowRight") {
         next();
       }
     };

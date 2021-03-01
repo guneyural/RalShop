@@ -69,6 +69,12 @@ const FullscreenImage = ({
       if (e.key === "Escape") {
         setIsFullscreen(false);
       }
+      if (e.code === "ArrowDown") {
+        setImagesVisible(false);
+      }
+      if (e.code === "ArrowUp") {
+        setImagesVisible(true);
+      }
     };
     window.addEventListener("keydown", closeFullscreen);
     return function removeListeners() {
