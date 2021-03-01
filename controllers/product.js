@@ -43,7 +43,7 @@ const createProduct = catchAsync(async (req, res, next) => {
 const getProductById = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
-  const getProduct = await Product.findById(req.params.id);
+  const getProduct = await Product.findById(req.params.id).populate("shop");
   if (!getProduct) return next(new expressError("Product Not Found", 404));
   res.json(getProduct);
 });
