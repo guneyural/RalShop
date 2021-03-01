@@ -1,19 +1,28 @@
 import React, { useEffect, useState } from "react";
 import Styled from "styled-components";
 import { FaTimes } from "react-icons/fa";
-import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import {
+  AiFillCaretLeft,
+  AiFillCaretRight,
+  AiFillCaretUp,
+  AiFillCaretDown,
+} from "react-icons/ai";
 
 const Background = Styled.div`
      background:rgb(0, 0, 0, 0.9);
      position:absolute;
      top:0;
      left:0;
-     height:100%;
+     height:100vh;
      width:100%;
      z-index:9999999;
      @media (max-width: 525px) {
           background:black;
      }
+     display:flex;
+     flex-direction:column;
+     justify-content: space-between;
+     align-items:center;
 `;
 
 const CloseButton = Styled.button`
@@ -44,11 +53,15 @@ const FullscreenImage = ({
     const getImageSection = document.querySelector(
       ".product-images-section.fullscreen"
     );
+    const getButton = document.querySelector(".visible-button");
     if (isImagesVisible) {
       getImageSection.classList.remove("images-not-visible");
+      getButton.style.bottom = "100px";
     } else {
       getImageSection.classList.add("images-not-visible");
+      getButton.style.bottom = "10px";
     }
+    if (!isImagesVisible) document.body.style.overflow = "hidden";
   }, [isImagesVisible]);
 
   useEffect(() => {
@@ -67,9 +80,6 @@ const FullscreenImage = ({
       <CloseButton onClick={() => setIsFullscreen(false)}>
         <FaTimes />
       </CloseButton>
-      <button onClick={() => setImagesVisible(!isImagesVisible)}>
-        Not Visible
-      </button>
       <img
         src={images[index].url}
         alt="big product"
@@ -85,6 +95,13 @@ const FullscreenImage = ({
         style={{ fontSize: "40px" }}
         onClick={() => prev()}
       />
+
+      <button
+        className="visible-button"
+        onClick={() => setImagesVisible(!isImagesVisible)}
+      >
+        {isImagesVisible ? <AiFillCaretDown /> : <AiFillCaretUp />}
+      </button>
       <section className="product-images-section fullscreen">
         {images.map((item, idx) => {
           return (
