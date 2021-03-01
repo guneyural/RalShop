@@ -39,8 +39,46 @@
   object-fit: cover;
   margin: 1px;
   border-radius: 2px;
+  cursor: pointer;
+}
+
+.product-images-section.fullscreen {
+  max-width: 100%;
+  width: 100% !important;
+  position: relative;
+  bottom: 60px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  border: 0;
+  border-top: 0.5px solid #bebebe;
+  transition: 0.3s;
+}
+
+.images-not-visible {
+  bottom: -20px !important;
 }
 
 .product-img-active {
   border: 2px solid black;
+}
+
+.big-product-img {
+  display: grid;
+  margin: auto;
+  margin-top: 10px;
+  height: 95%;
+  max-width: 90%;
+  object-fit: contain;
+}
+
+@media only screen and (max-width: 525px) {
+  .big-product-img {
+    width: 100%;
+    height: 100%;
+    margin-top: -150px;
+  }
+  .img-arrows {
+    top: 30%;
+  }
 }
