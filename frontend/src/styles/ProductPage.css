@@ -4,7 +4,6 @@
   object-fit: cover;
   position: relative;
   border-radius: 3px;
-  max-width: 600px;
   height: 400px;
 }
 
@@ -29,7 +28,6 @@
 .product-images-section {
   overflow-y: hidden;
   overflow-x: auto;
-  max-width: 600px;
   border: 0.5px solid #bebebe;
   white-space: nowrap;
 }
@@ -88,6 +86,19 @@
   height: 95%;
   max-width: 90%;
   object-fit: contain;
+}
+
+.seller-section {
+  border: 1px solid #cccccc;
+  padding: 5px;
+}
+
+#product-link {
+  text-decoration: none;
+}
+
+#product-link:hover {
+  text-decoration: underline !important;
 }
 
 @media only screen and (max-width: 525px) {

@@ -7,6 +7,8 @@ import LoadingIcon from "../assets/loading.gif";
 import Styled from "styled-components";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 import FullscreenImage from "./../components/fullscreenImage";
+import { priceConverter } from "../utils/helpers";
+import ReactStars from "react-rating-stars-component";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -17,7 +19,6 @@ const ProductImages = Styled.div`
      height: 100%;
      width: 100%;
      position: relative;
-     max-width: 600px;
      height: 400px;
 `;
 
@@ -25,7 +26,6 @@ const ImageBottomSection = Styled.section`
      display:flex;
      justify-content:space-between;
      align-items:center;
-     max-width:600px;
 `;
 
 const ProductPage = () => {
@@ -35,6 +35,12 @@ const ProductPage = () => {
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const readOnlyRating = {
+    size: 28,
+    isHalf: true,
+    value: 3.8,
+    edit: false,
+  };
 
   useEffect(() => {
     dispatch(getProductById(id));
@@ -124,10 +130,10 @@ const ProductPage = () => {
           <ul style={{ listStyleType: "none", padding: "0" }}>
             <li style={{ display: "inline", textTransform: "capitalize" }}>
               <Link
+                id="product-link"
                 to={`/category/${
                   Product.category && Product.category.toLowerCase()
                 }`}
-                style={{ textDecoration: "none" }}
               >
                 {Product.category}
               </Link>
@@ -141,12 +147,12 @@ const ProductPage = () => {
               }}
             >
               <Link
+                id="product-link"
                 to={`/category/${
                   Product.category &&
                   Product.subCategory &&
                   Product.category.toLowerCase()
                 }/${Product.subCategory}`}
-                style={{ textDecoration: "none" }}
               >
                 {Product.subCategory}
               </Link>
@@ -209,7 +215,76 @@ const ProductPage = () => {
                 })}
             </section>
           </div>
-          <div className="col-md-6">Second-col</div>
+          <div className="col-md-6">
+            <section
+              style={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <section>
+                <p className="lead" style={{ fontSize: "30px" }}>
+                  <strong>{priceConverter(Product.price)}</strong>
+                </p>
+                <p
+                  className="text-muted"
+                  style={{ marginTop: "-15px", fontSize: "14px" }}
+                >
+                  {`${
+                    Product.location.length >= 30
+                      ? `${Product.location.substring(0, 30)}...`
+                      : Product.location
+                  }`}
+                </p>
+              </section>
+              <section>
+                <ReactStars {...readOnlyRating} />
+                <span
+                  className="text-muted"
+                  style={{
+                    textDecoration: "underline",
+                    fontSize: "14px",
+                    marginTop: "-15px",
+                    cursor: "pointer",
+                  }}
+                >
+                  0 Ratings
+                </span>
+              </section>
+            </section>
+            <hr />
+            <div className="seller-section">
+              <section
+                style={{
+                  background: "#efefef",
+                  padding: "15px",
+                  paddingBottom: "5px",
+                }}
+              >
+                <section
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Link to="/" id="product-link">
+                    <h6 style={{ fontSize: "18px" }}>
+                      {Product.shop.companyName}{" "}
+                      <div className="badge bg-primary">9.4</div>
+                    </h6>
+                  </Link>
+                  <Link to="/" id="product-link">
+                    Go To Shop
+                  </Link>
+                </section>
+                <p style={{ marginTop: "-8px" }}>{Product.shop.fullname}</p>
+                <p style={{ marginTop: "-10px" }}>{Product.shop.phoneNumber}</p>
+                <p style={{ marginTop: "-10px", marginBottom: "0px" }}>
+                  <Link to="/" id="product-link">
+                    Send Message About This Product
+                  </Link>
+                </p>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
     );
