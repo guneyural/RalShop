@@ -1,4 +1,4 @@
-const Router = require("express").Router;
+const Router = require("express").Router();
 const {
   getProductReviews,
   getReviewById,
@@ -17,7 +17,7 @@ const limiter = rateLimit({
 Router.get("/product/:id", getProductReviews);
 Router.get("/:id", getReviewById);
 Router.post("/product/:id/review", isUser, limiter, createReview);
-Router.delete("/product/:id/review/:id", isUser, deleteReview);
-Router.put("/product/:id/review/:id", isUser, limiter, updateReview);
+Router.delete("/:id", isUser, deleteReview);
+Router.put("/:id", isUser, limiter, updateReview);
 
 module.exports = Router;
