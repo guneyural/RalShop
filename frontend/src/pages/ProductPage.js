@@ -15,25 +15,24 @@ import { FaHeart } from "react-icons/fa";
 import FullscreenImage from "./../components/fullscreenImage";
 import { priceConverter } from "../utils/helpers";
 import ReactStars from "react-rating-stars-component";
+import ProductLocation from "../components/ProductLocation";
+import ProductDescription from "../components/ProductDescription";
 
 const NavDivider = Styled.span`
      font-weight:bold;
      padding-left:5px;
 `;
-
 const ProductImages = Styled.div`
      height: 100%;
      width: 100%;
      position: relative;
      height: 400px;
 `;
-
 const ImageBottomSection = Styled.section`
      display:flex;
      justify-content:space-between;
      align-items:center;
 `;
-
 const InfoRow = Styled.div`
   display: flex;
   justify-content: space-between;
@@ -41,7 +40,6 @@ const InfoRow = Styled.div`
   padding:8px;
   padding-left:0;
 `;
-
 const TickIcon = Styled.span`
   color: white;
   font-size: 20px;
@@ -52,7 +50,6 @@ const TickIcon = Styled.span`
   text-shadow: -1px -1px black;
   visibility: hidden;
 `;
-
 const ColorPreview = Styled.div`
   height: 20px;
   width: 20px;
@@ -68,12 +65,10 @@ const ColorPreview = Styled.div`
     }
   }
 `;
-
 const QuantitySection = Styled.section`
   display:flex;
   align-items:center;
 `;
-
 const QtyButton = Styled.button`
   background:transparent;
   border:transparent;
@@ -84,14 +79,32 @@ const QtyButton = Styled.button`
     outline: none;
   }
 `;
-
 const QtyNumber = Styled.span`
   font-size:20px;
 `;
-
 const AddButtons = Styled.div`
   display:flex;
   align-items:center;
+`;
+const TabNav = Styled.nav`
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const TabList = Styled.li`
+  display: inline-block;
+  width:100%;
+  text-align:center;
+  font-weight:500;
+  font-size:1.5rem;
+  padding:5px;
+  transition:0.3s;
+  cursor:pointer;
+
+  &:hover{
+    background:#efefef;
+    box-shadow: inset 0 -2px 0 var(--primary-color);
+  }
 `;
 
 const ProductPage = () => {
@@ -100,6 +113,7 @@ const ProductPage = () => {
   const Product = useSelector((state) => state.Product.product);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
+  const [tab, setTab] = useState("description");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState("");
@@ -133,6 +147,12 @@ const ProductPage = () => {
     const x = document.querySelector(".description");
     if (x) {
       x.innerHTML = Product.description;
+      let images = document.querySelectorAll(".description img");
+      if (images) {
+        images.forEach((item) => {
+          item.style.width = "100%";
+        });
+      }
     }
   }, [Product]);
 
@@ -200,6 +220,14 @@ const ProductPage = () => {
       document.body.style.overflow = "auto";
     }
   }, [isFullscreen]);
+
+  useEffect(() => {
+    const getTab = document.querySelector(`.tab-nav-item[data-tab="${tab}"]`);
+    const getTabs = document.querySelectorAll(".tab-nav-item");
+    if (getTabs)
+      getTabs.forEach((item) => item.classList.remove("tab-nav-item-active"));
+    if (getTab) getTab.classList.add("tab-nav-item-active");
+  }, [tab]);
 
   if (loading) {
     return (
@@ -355,7 +383,7 @@ const ProductPage = () => {
                     cursor: "pointer",
                   }}
                 >
-                  0 Ratings
+                  <a href="#reviews">0 Ratings</a>
                 </span>
               </section>
             </section>
@@ -458,7 +486,47 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        <p className="description"></p>
+        <div className="product-details mt-5">
+          <TabNav>
+            <ul
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "0",
+                width: "100%",
+              }}
+            >
+              <TabList
+                data-tab="description"
+                className="tab-nav-item tab-nav-item-active"
+                onClick={() => setTab("description")}
+              >
+                Description
+              </TabList>
+              <TabList
+                data-tab="location-tab"
+                className="tab-nav-item"
+                onClick={() => setTab("location-tab")}
+              >
+                Location
+              </TabList>
+            </ul>
+          </TabNav>
+          {Product && (
+            <section style={{ background: "white" }}>
+              {tab === "description" && (
+                <ProductDescription Product={Product} />
+              )}
+              {tab === "location-tab" && (
+                <ProductLocation coordinate={Product.coordinate} />
+              )}
+            </section>
+          )}
+        </div>
+        <div className="review-section mt-5" id="reviews">
+          <h1>Reviews</h1>
+        </div>
       </div>
     );
   }
