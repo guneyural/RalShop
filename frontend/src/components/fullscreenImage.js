@@ -80,7 +80,7 @@ const FullscreenImage = ({
     return function removeListeners() {
       window.removeEventListener("keydown", closeFullscreen);
     };
-  }, []);
+  }, [setIsFullscreen]);
   return (
     <Background>
       <CloseButton onClick={() => setIsFullscreen(false)}>

@@ -45,8 +45,6 @@ const ProfileSettings = () => {
   const [removePhoto, setRemovePhoto] = useState(false);
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
-  const [isLoading, setIsLoading] = useState(false);
-  const [err, setErr] = useState(null);
   const [password, setPassword] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [removeAccountError, setRemoveAccountError] = useState(null);
@@ -81,7 +79,6 @@ const ProfileSettings = () => {
   };
 
   const removeAccount = () => {
-    setIsLoading(true);
     axios
       .post(
         "/api/user/remove",
@@ -96,15 +93,12 @@ const ProfileSettings = () => {
       .then((res) => res.data)
       .then((data) => {
         localStorage.removeItem("user-token");
-        setIsLoading(false);
         setRemoveAccountError(null);
         window.location.href = window.origin;
       })
       .catch((err) => {
         setRemoveAccountError(err.response.data.errorMessage);
-        setIsLoading(false);
       });
-    setIsLoading(false);
   };
 
   const openModal = (e) => {

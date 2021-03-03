@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch } from "react-router-dom";
 import PrivateRoute from "./privateRoutes/privateRoute";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
@@ -43,7 +43,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(notSellerRoute());
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch, User.isAuthenticated]);

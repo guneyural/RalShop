@@ -36,7 +36,7 @@ const Navbar = () => {
         item.addEventListener("click", () => setIsNavOpen(false));
       });
     }
-  }, []);
+  }, [Seller]);
 
   useEffect(() => {
     if (isNavOpen) {
@@ -77,7 +77,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("resize", getWidth);
     };
-  }, [windowSize, scroll]);
+  }, [windowSize, scroll, isNavOpen]);
 
   const getCategory = (idx) => {
     window.location.href = `http://localhost:3000/category/${idx}`;

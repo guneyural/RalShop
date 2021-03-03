@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "../assets/logo.png";
@@ -11,7 +11,7 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
     document.querySelectorAll(".nav-mobile a").forEach((item) => {
       item.addEventListener("click", () => setIsNavOpen(false));
     });
-  }, []);
+  }, [setIsNavOpen]);
   return (
     <>
       <div className="navbar-section">

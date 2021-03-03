@@ -6,7 +6,6 @@ import {
   changePassword,
   confirmPasswordResetCode,
 } from "../redux/actions/authActions";
-import { cancelForgotPassword } from "../redux/actions/authActions";
 
 const CenterDiv = styled.div`
   margin-top: 30px;
