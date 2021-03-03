@@ -29,6 +29,7 @@ app.use("/api/user", Routes.UserRoutes);
 app.use("/api/shop", Routes.ShopRoutes);
 app.use("/api/cart", Routes.CartRoutes);
 app.use("/api/product", Routes.ProductRoutes);
+app.use("/api/review", Routes.ReviewRoutes);
 app.get("/", (req, res) => {
   res.send("Güney Ural");
 });
