@@ -101,6 +101,15 @@
   text-decoration: underline !important;
 }
 
+.tab-nav-item-active {
+  background: #efefef;
+  box-shadow: inset 0 -2px 0 var(--primary-color);
+}
+
+.product-details img {
+  object-fit: contain;
+}
+
 @media only screen and (max-width: 525px) {
   .big-product-img {
     width: 100%;
