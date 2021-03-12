@@ -106,6 +106,28 @@ const TabList = Styled.li`
     box-shadow: inset 0 -2px 0 var(--primary-color);
   }
 `;
+const StarCount = Styled.p`
+  font-size: 15px;
+  margin-top:15px;
+  color: var(--text-muted);
+  text-decoration:underline;
+`;
+const StarCountSection = Styled.section`
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:-10px;
+  width:80%;
+   @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+const TextField = Styled.textarea`
+  padding: 4px 12px;
+  border-radius: 3px;
+  background: #efefef;
+  border: 1px solid #c2c2c2;
+`;
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -117,16 +139,58 @@ const ProductPage = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState("");
+  const [review, setReview] = useState("");
+  const [rating, setRating] = useState(1);
   const readOnlyRating = {
     size: 28,
     isHalf: true,
     value: 3.8,
     edit: false,
   };
+  const fiveStar = {
+    size: 20,
+    value: 5,
+    edit: false,
+  };
+  const fourStar = {
+    size: 20,
+    value: 4,
+    edit: false,
+  };
+  const threeStar = {
+    size: 20,
+    value: 3,
+    edit: false,
+  };
+  const twoStar = {
+    size: 20,
+    value: 2,
+    edit: false,
+  };
+  const oneStar = {
+    size: 20,
+    value: 1,
+    edit: false,
+  };
+  const starRating = {
+    size: 27,
+    count: 5,
+    isHalf: false,
+    value: rating,
+    onChange: (newRating) => {
+      setRating(newRating);
+    },
+  };
 
   useEffect(() => {
     dispatch(getProductById(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    document.querySelectorAll(".react-stars span").forEach((item) => {
+      item.style.cursor = "pointer";
+    });
+  }, [readOnlyRating]);
 
   useEffect(() => {
     const getImage = document.querySelector(
@@ -525,7 +589,71 @@ const ProductPage = () => {
           )}
         </div>
         <div className="review-section mt-5" id="reviews">
-          <h1>Reviews</h1>
+          <div className="row">
+            <div className="col-md-4 mb-4">
+              <h4>Customer Reviews</h4>
+              <div
+                style={{
+                  marginTop: "-15px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <ReactStars {...readOnlyRating} />
+                <p
+                  style={{
+                    textDecoration: "underline",
+                    marginTop: "15px",
+                    marginLeft: "5px",
+                  }}
+                >
+                  17 Ratings
+                </p>
+              </div>
+              <StarCountSection>
+                <StarCount>5 Star</StarCount>
+                <ReactStars {...fiveStar} />
+                <StarCount>3 Rating</StarCount>
+              </StarCountSection>
+              <StarCountSection>
+                <StarCount>4 Star</StarCount>
+                <ReactStars {...fourStar} />
+                <StarCount>6 Rating</StarCount>
+              </StarCountSection>
+              <StarCountSection>
+                <StarCount>3 Star</StarCount>
+                <ReactStars {...threeStar} />
+                <StarCount>2 Rating</StarCount>
+              </StarCountSection>
+              <StarCountSection>
+                <StarCount>2 Star</StarCount>
+                <ReactStars {...twoStar} />
+                <StarCount>5 Rating</StarCount>
+              </StarCountSection>
+              <StarCountSection>
+                <StarCount>1 Star</StarCount>
+                <ReactStars {...oneStar} />
+                <StarCount>1 Rating</StarCount>
+              </StarCountSection>
+            </div>
+            <div className="col-md-8">
+              <h4>Add Review</h4>
+              <section style={{ marginTop: "-12px" }}>
+                <ReactStars {...starRating} />
+                <TextField
+                  rows="4"
+                  cols="50"
+                  style={{ width: "100%" }}
+                  name="review"
+                  value={review}
+                  onChange={(e) => setReview(e.target.value)}
+                  placeholder="Write at least 10 characters long reviews. Good reviews are usually 100 characters or more."
+                ></TextField>
+                <button className="default-btn mt-1">Add Review</button>
+              </section>
+              <hr />
+            </div>
+          </div>
         </div>
       </div>
     );
