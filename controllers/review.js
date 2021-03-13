@@ -5,7 +5,7 @@ const Review = require("../models/review");
 const Product = require("../models/product");
 
 const getReviewById = catchAsync(async (req, res, next) => {
-  if (mongoId.isValid(req.params.id))
+  if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getReview = await Review.findById(req.params.id);
   if (!getReview) return next(new expressError("Review Could Not Found.", 404));
@@ -13,7 +13,7 @@ const getReviewById = catchAsync(async (req, res, next) => {
 });
 
 const createReview = catchAsync(async (req, res, next) => {
-  if (mongoId.isValid(req.params.id))
+  if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getProduct = await Product.findById(req.params.id);
   if (!getProduct) return next(new expressError("Product Not Found", 404));
@@ -29,12 +29,12 @@ const createReview = catchAsync(async (req, res, next) => {
     productId: req.params.id,
     user: req.user.id,
   });
-  const saveReview = await newReview.save();
+  const saveReview = (await newReview.save()).populate("user");
   res.json(saveReview);
 });
 
 const deleteReview = catchAsync(async (req, res, next) => {
-  if (mongoId.isValid(req.params.id))
+  if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getReview = await Review.findById(req.params.id);
   if (!getReview) return next(new expressError("Review Does Not Exist.", 404));
@@ -45,7 +45,7 @@ const deleteReview = catchAsync(async (req, res, next) => {
 });
 
 const updateReview = catchAsync(async (req, res, next) => {
-  if (mongoId.isValid(req.params.id))
+  if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getReview = await Review.findById(req.params.id);
   if (!getReview) return next(new expressError("Review Does Not Exist.", 404));
@@ -68,11 +68,13 @@ const updateReview = catchAsync(async (req, res, next) => {
 });
 
 const getProductReviews = catchAsync(async (req, res, next) => {
-  if (mongoId.isValid(req.params.id))
+  if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getProduct = await Product.findById(req.params.id);
   if (!getProduct) return next(new expressError("Product Not Found", 404));
-  const getReviews = await Review.find({ productId: getProduct._id });
+  const getReviews = await Review.find({ productId: getProduct._id })
+    .sort({ createdAt: "desc" })
+    .populate("user");
   res.json(getReviews);
 });
 
