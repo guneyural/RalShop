@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, Redirect } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductById } from "../redux/actions/productActions";
 import NotFound from "./NotFound";
@@ -17,6 +17,9 @@ import { priceConverter } from "../utils/helpers";
 import ReactStars from "react-rating-stars-component";
 import ProductLocation from "../components/ProductLocation";
 import ProductDescription from "../components/ProductDescription";
+import { addReview, getReviews } from "../redux/actions/productReviewActions";
+import NoPhoto from "../assets/noProfilePic.jpg";
+import moment from "moment";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -128,11 +131,27 @@ const TextField = Styled.textarea`
   background: #efefef;
   border: 1px solid #c2c2c2;
 `;
+const ProfilePicture = Styled.img`
+  height:50px;
+  width:50px;
+  object-fit:cover;
+  border-radius:50%;
+`;
+const UserInfo = Styled.section`
+  display:flex;
+  flex-direction: column;
+  margin-left: 5px;
+`;
+const UserSection = Styled.section`
+  display:flex;
+`;
 
 const ProductPage = () => {
   const { id } = useParams();
   const { error, loading } = useSelector((state) => state.Product);
   const Product = useSelector((state) => state.Product.product);
+  const Review = useSelector((state) => state.ProductReview);
+  const User = useSelector((state) => state.Auth);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [tab, setTab] = useState("description");
@@ -141,6 +160,8 @@ const ProductPage = () => {
   const [color, setColor] = useState("");
   const [review, setReview] = useState("");
   const [rating, setRating] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [sort, setSort] = useState("default");
   const readOnlyRating = {
     size: 28,
     isHalf: true,
@@ -184,7 +205,12 @@ const ProductPage = () => {
 
   useEffect(() => {
     dispatch(getProductById(id));
+    dispatch(getReviews(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    setReviews(Review.productReviews);
+  }, [Review]);
 
   useEffect(() => {
     document.querySelectorAll(".react-stars span").forEach((item) => {
@@ -243,6 +269,11 @@ const ProductPage = () => {
     } else {
       setIndex(index - 1);
     }
+  };
+
+  const createReview = (e) => {
+    e.preventDefault();
+    dispatch(addReview(rating, review, Product._id));
   };
 
   const showFullscreen = () => {
@@ -637,21 +668,109 @@ const ProductPage = () => {
               </StarCountSection>
             </div>
             <div className="col-md-8">
-              <h4>Add Review</h4>
-              <section style={{ marginTop: "-12px" }}>
-                <ReactStars {...starRating} />
-                <TextField
-                  rows="4"
-                  cols="50"
-                  style={{ width: "100%" }}
-                  name="review"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  placeholder="Write at least 10 characters long reviews. Good reviews are usually 100 characters or more."
-                ></TextField>
-                <button className="default-btn mt-1">Add Review</button>
+              <section
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <h1>Reviews</h1>
+                <section>
+                  <label htmlFor="sort">Sort By:</label>{" "}
+                  <select
+                    name="sort"
+                    id="sort"
+                    onChange={(e) => setSort(e.target.value)}
+                    className="default-btn p-1"
+                    style={{
+                      background: "#e9e9e9",
+                      color: "var(--primary-color)",
+                      cursor: "pointer",
+                    }}
+                    required
+                  >
+                    <option value="default">Default (newest first)</option>
+                    <option value="DATE_OLD">Date (oldest first)</option>
+                    <option value="RATING_LOW">
+                      Rating (lowest rating first)
+                    </option>
+                    <option value="RATING_HIGH">
+                      Rating (highest rating first)
+                    </option>
+                  </select>
+                </section>
               </section>
+              {User.isAuthenticated && (
+                <section>
+                  <h5>Add Review</h5>
+                  <form
+                    onSubmit={(e) => createReview(e)}
+                    style={{ marginTop: "-12px" }}
+                  >
+                    <ReactStars {...starRating} />
+                    <TextField
+                      rows="4"
+                      cols="50"
+                      style={{ width: "100%" }}
+                      name="review"
+                      value={review}
+                      onChange={(e) => setReview(e.target.value)}
+                      placeholder="Write at least 10 characters long reviews. Good reviews are usually 100 characters or more."
+                    ></TextField>
+                    <button className="default-btn mt-1">Add Review</button>
+                  </form>
+                </section>
+              )}
               <hr />
+              {Review.loading && (
+                <img
+                  src={LoadingIcon}
+                  alt="Loading Icon"
+                  height="80px"
+                  style={{ display: "grid", margin: "auto" }}
+                />
+              )}
+              <div className="reviews">
+                {reviews.map((item, id) => {
+                  return (
+                    <div className="review-item mb-4">
+                      <UserSection>
+                        <ProfilePicture
+                          src={
+                            item.user.hasPhoto
+                              ? item.user.profilePhoto.url
+                              : NoPhoto
+                          }
+                          alt="profile"
+                        />
+                        <UserInfo>
+                          <span
+                            className="username"
+                            style={{ fontWeight: "500" }}
+                          >
+                            {item.user.username}
+                          </span>
+                          <span
+                            className="text-muted"
+                            style={{ fontSize: "14px" }}
+                          >
+                            {moment(item.createdAt).format("ll")}
+                          </span>
+                        </UserInfo>
+                      </UserSection>
+                      <ReactStars
+                        {...{
+                          size: 20,
+                          value: item.rating,
+                          edit: false,
+                        }}
+                      />
+                      <section className="review-text">{item.text}</section>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
