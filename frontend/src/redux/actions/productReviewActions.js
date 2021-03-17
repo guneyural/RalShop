@@ -17,7 +17,7 @@ export const getReviews = (productId) => (dispatch) => {
     .then((data) => {
       dispatch({
         type: GET_REVIEWS,
-        payload: data,
+        payload: { reviews: data.reviews, average: data.average },
       });
     })
     .catch((err) => {
@@ -42,7 +42,10 @@ export const addReview = (rating, text, productId) => (dispatch) => {
     )
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: ADD_REVIEW, payload: data });
+      dispatch({
+        type: ADD_REVIEW,
+        payload: { review: data.review, average: data.average },
+      });
     })
     .catch((err) => {
       dispatch({
@@ -56,7 +59,26 @@ export const addReview = (rating, text, productId) => (dispatch) => {
 };
 
 export const updateReview = (id, rating, text) => (dispatch) => {};
-export const deleteReview = (id) => (dispatch) => {};
+
+export const deleteReview = (id) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .delete(`/api/review/${id}`, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: DELETE_REVIEW, payload: { id, average: data.average } });
+    })
+    .catch((err) => {
+      dispatch({
+        type: PRODUCT_REVIEW_ERROR,
+        payload: {
+          message: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 const tokenConfig = () => {
   const token = localStorage.getItem("user-token");

@@ -9,6 +9,7 @@ import {
 
 const initialState = {
   productReviews: [],
+  average: 0,
   loading: false,
   error: {
     message: null,
@@ -21,16 +22,18 @@ export const ProductReview = (state = initialState, action) => {
     case ADD_REVIEW:
       return {
         ...state,
-        productReviews: [action.payload, ...state.productReviews],
+        productReviews: [action.payload.review, ...state.productReviews],
         error: { message: null, status: null },
         loading: false,
+        average: action.payload.average,
       };
     case GET_REVIEWS:
       return {
         ...state,
         loading: false,
         error: { message: null, status: null },
-        productReviews: [...action.payload],
+        productReviews: [...action.payload.reviews],
+        average: action.payload.average,
       };
     case PRODUCT_REVIEW_ERROR:
       return {
@@ -40,6 +43,18 @@ export const ProductReview = (state = initialState, action) => {
           message: action.payload.message,
           status: action.payload.status,
         },
+      };
+    case DELETE_REVIEW:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        productReviews: [
+          ...state.productReviews.filter(
+            (item) => item._id !== action.payload.id
+          ),
+        ],
+        average: action.payload.average,
       };
     case LOADING:
       return { ...state, loading: true };

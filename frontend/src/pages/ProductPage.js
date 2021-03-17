@@ -10,16 +10,24 @@ import {
   AiFillCaretRight,
   AiOutlineMinus,
   AiOutlinePlus,
+  AiFillEdit,
 } from "react-icons/ai";
+import { HiDotsVertical } from "react-icons/hi";
 import { FaHeart } from "react-icons/fa";
 import FullscreenImage from "./../components/fullscreenImage";
 import { priceConverter } from "../utils/helpers";
 import ReactStars from "react-rating-stars-component";
 import ProductLocation from "../components/ProductLocation";
 import ProductDescription from "../components/ProductDescription";
-import { addReview, getReviews } from "../redux/actions/productReviewActions";
+import {
+  addReview,
+  getReviews,
+  deleteReview,
+} from "../redux/actions/productReviewActions";
 import NoPhoto from "../assets/noProfilePic.jpg";
 import moment from "moment";
+import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
+import MessageBox from "../components/messageBox";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -144,6 +152,8 @@ const UserInfo = Styled.section`
 `;
 const UserSection = Styled.section`
   display:flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ProductPage = () => {
@@ -162,12 +172,9 @@ const ProductPage = () => {
   const [rating, setRating] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [sort, setSort] = useState("default");
-  const readOnlyRating = {
-    size: 28,
-    isHalf: true,
-    value: 3.8,
-    edit: false,
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviewId, setReviewId] = useState("");
+  const [average, setAverage] = useState(0);
   const fiveStar = {
     size: 20,
     value: 5,
@@ -209,16 +216,6 @@ const ProductPage = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    setReviews(Review.productReviews);
-  }, [Review]);
-
-  useEffect(() => {
-    document.querySelectorAll(".react-stars span").forEach((item) => {
-      item.style.cursor = "pointer";
-    });
-  }, [readOnlyRating]);
-
-  useEffect(() => {
     const getImage = document.querySelector(
       `.product-images-section img[data-idx="${index}"]`
     );
@@ -245,6 +242,26 @@ const ProductPage = () => {
       }
     }
   }, [Product]);
+
+  useEffect(() => {
+    setReviews(Review.productReviews);
+    setAverage(Review.average);
+  }, [Review, average]);
+
+  const tempStars = Array.from({ length: 5 }, (_, index) => {
+    const number = index + 0.5;
+    return (
+      <span key={index} style={{ fontSize: "24px" }}>
+        {average > number ? (
+          <BsStarFill style={{ color: "rgb(255, 215, 0)" }} />
+        ) : average > index ? (
+          <BsStarHalf style={{ color: "rgb(255, 215, 0)" }} />
+        ) : (
+          <BsStar style={{ color: "rgb(255, 215, 0)" }} />
+        )}
+      </span>
+    );
+  });
 
   const setProductColor = (id) => {
     const getColor = document.querySelectorAll(".color-circle span");
@@ -324,6 +341,20 @@ const ProductPage = () => {
     if (getTab) getTab.classList.add("tab-nav-item-active");
   }, [tab]);
 
+  useEffect(() => {
+    const body = document.querySelector("body");
+    if (isModalOpen) {
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
+    }
+  }, [isModalOpen]);
+
+  const removeReview = (reviewId) => {
+    setReviewId(reviewId);
+    setIsModalOpen(true);
+  };
+
   if (loading) {
     return (
       <img
@@ -340,6 +371,18 @@ const ProductPage = () => {
   if (Object.keys(Product).length > 0) {
     return (
       <div>
+        {isModalOpen && (
+          <MessageBox
+            isRedux={true}
+            action={deleteReview}
+            message={"Do You Want To Delete Your Review ?"}
+            setIsModalOpen={setIsModalOpen}
+            header={"Delete Review"}
+            btnText={"Delete"}
+            param={reviewId}
+          />
+        )}
+
         {isFullscreen && (
           <FullscreenImage
             setIsFullscreen={setIsFullscreen}
@@ -468,7 +511,9 @@ const ProductPage = () => {
                 </p>
               </section>
               <section>
-                <ReactStars {...readOnlyRating} />
+                {/* <ReactStars {...readOnlyRating} /> */}
+                {tempStars}
+                <br />
                 <span
                   className="text-muted"
                   style={{
@@ -478,7 +523,7 @@ const ProductPage = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <a href="#reviews">0 Ratings</a>
+                  <a href="#reviews">{reviews.length} Ratings</a>
                 </span>
               </section>
             </section>
@@ -630,7 +675,8 @@ const ProductPage = () => {
                   alignItems: "center",
                 }}
               >
-                <ReactStars {...readOnlyRating} />
+                {/* <ReactStars {...readOnlyRating} /> */}
+                {tempStars}
                 <p
                   style={{
                     textDecoration: "underline",
@@ -638,33 +684,49 @@ const ProductPage = () => {
                     marginLeft: "5px",
                   }}
                 >
-                  17 Ratings
+                  {reviews.length} Ratings
                 </p>
               </div>
+              <h2>{average}</h2>
               <StarCountSection>
                 <StarCount>5 Star</StarCount>
                 <ReactStars {...fiveStar} />
-                <StarCount>3 Rating</StarCount>
+                <StarCount>
+                  {[...reviews.filter((item) => item.rating === 5)].length}{" "}
+                  Rating
+                </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>4 Star</StarCount>
                 <ReactStars {...fourStar} />
-                <StarCount>6 Rating</StarCount>
+                <StarCount>
+                  {[...reviews.filter((item) => item.rating === 4)].length}{" "}
+                  Rating
+                </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>3 Star</StarCount>
                 <ReactStars {...threeStar} />
-                <StarCount>2 Rating</StarCount>
+                <StarCount>
+                  {[...reviews.filter((item) => item.rating === 3)].length}{" "}
+                  Rating
+                </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>2 Star</StarCount>
                 <ReactStars {...twoStar} />
-                <StarCount>5 Rating</StarCount>
+                <StarCount>
+                  {[...reviews.filter((item) => item.rating === 2)].length}{" "}
+                  Rating
+                </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>1 Star</StarCount>
                 <ReactStars {...oneStar} />
-                <StarCount>1 Rating</StarCount>
+                <StarCount>
+                  {[...reviews.filter((item) => item.rating === 1)].length}{" "}
+                  Rating
+                </StarCount>
               </StarCountSection>
             </div>
             <div className="col-md-8">
@@ -682,7 +744,7 @@ const ProductPage = () => {
                     name="sort"
                     id="sort"
                     onChange={(e) => setSort(e.target.value)}
-                    className="default-btn p-1"
+                    className="default-btn p-1 sort-dropdown"
                     style={{
                       background: "#e9e9e9",
                       color: "var(--primary-color)",
@@ -723,6 +785,9 @@ const ProductPage = () => {
                 </section>
               )}
               <hr />
+              {Review.error.message && (
+                <span className="text-danger">{Review.error.message}</span>
+              )}
               {Review.loading && (
                 <img
                   src={LoadingIcon}
@@ -734,39 +799,89 @@ const ProductPage = () => {
               <div className="reviews">
                 {reviews.map((item, id) => {
                   return (
-                    <div className="review-item mb-4">
+                    <div className="review-item mb-4" key={id}>
                       <UserSection>
-                        <ProfilePicture
-                          src={
-                            item.user.hasPhoto
-                              ? item.user.profilePhoto.url
-                              : NoPhoto
-                          }
-                          alt="profile"
-                        />
-                        <UserInfo>
-                          <span
-                            className="username"
-                            style={{ fontWeight: "500" }}
-                          >
-                            {item.user.username}
-                          </span>
-                          <span
-                            className="text-muted"
-                            style={{ fontSize: "14px" }}
-                          >
-                            {moment(item.createdAt).format("ll")}
-                          </span>
-                        </UserInfo>
+                        <div className="d-flex">
+                          <ProfilePicture
+                            src={
+                              item.user.hasPhoto
+                                ? item.user.profilePhoto.url
+                                : NoPhoto
+                            }
+                            alt="profile"
+                          />
+                          <UserInfo>
+                            <span
+                              className="username"
+                              style={{ fontWeight: "500" }}
+                            >
+                              {item.user.username}
+                            </span>
+                            <span
+                              className="text-muted"
+                              style={{ fontSize: "14px" }}
+                            >
+                              {moment(item.createdAt).format("ll")}
+                            </span>
+                          </UserInfo>
+                        </div>
+                        {User.user &&
+                          item.user &&
+                          User.user._id === item.user._id && (
+                            <div className="review-settings" tabIndex="2">
+                              <button
+                                style={{
+                                  fontSize: "20px",
+                                  background: "transparent",
+                                  border: "transparent",
+                                }}
+                                className="review-settings-btn"
+                              >
+                                <HiDotsVertical />
+                              </button>
+                              <div className="review-settings-list">
+                                <button onMouseDown={() => {}}>
+                                  <AiFillEdit style={{ color: "gray" }} /> Edit
+                                </button>
+                                <button
+                                  onMouseDown={() => removeReview(item._id)}
+                                >
+                                  <BsTrashFill
+                                    style={{
+                                      color: "gray",
+                                      marginRight: "3px",
+                                    }}
+                                  />
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          )}
                       </UserSection>
-                      <ReactStars
-                        {...{
-                          size: 20,
-                          value: item.rating,
-                          edit: false,
-                        }}
-                      />
-                      <section className="review-text">{item.text}</section>
+                      <span>
+                        {[...Array(item.rating)].map((item, index) => {
+                          return (
+                            <BsStarFill
+                              key={index}
+                              style={{
+                                color: "rgb(255, 215, 0)",
+                                margin: "1px",
+                              }}
+                            />
+                          );
+                        })}
+                        {[...Array(5 - item.rating)].map((item, index) => {
+                          return (
+                            <BsStarFill
+                              key={index}
+                              style={{ margin: "1px", color: "gray" }}
+                            />
+                          );
+                        })}
+                      </span>
+                      <section className="mt-2 review-text">
+                        {item.text}
+                      </section>
                     </div>
                   );
                 })}

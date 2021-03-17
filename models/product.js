@@ -20,6 +20,7 @@ const productSchema = new mongoose.Schema(
     coordinate: [Number],
     category: strOptions,
     subCategory: strOptions,
+    rating: { type: Number, min: 0, default: 0 },
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",

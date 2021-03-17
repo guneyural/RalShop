@@ -29,25 +29,48 @@ const createReview = catchAsync(async (req, res, next) => {
     productId: req.params.id,
     user: req.user.id,
   });
-  const saveReview = (await newReview.save()).populate("user");
-  res.json(saveReview);
+  const saveReview = await newReview.save();
+  const createdReview = await Review.findById(saveReview._id).populate("user");
+
+  const getReviews = await Review.find({ productId: req.params.id });
+  let sum = 0;
+  getReviews.forEach((item) => {
+    sum += item.rating;
+  });
+  let average = sum > 0 ? sum / getReviews.length : 0;
+  getProduct.rating = average;
+  getProduct.save();
+
+  res.json({ review: createdReview, average });
 });
 
 const deleteReview = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getReview = await Review.findById(req.params.id);
+  const getProduct = await Product.findById(getReview.productId);
   if (!getReview) return next(new expressError("Review Does Not Exist.", 404));
-  if (getReview.user !== req.user.id)
+  if (getReview.user != req.user.id)
     return next(new expressError("You are not owner of this review.", 403));
   await Review.findByIdAndDelete(req.params.id);
-  res.json("Review Successfully Deleted");
+
+  const getReviews = await Review.find({ productId: getReview.productId });
+  let sum = 0;
+  getReviews.forEach((item) => {
+    sum += item.rating;
+  });
+  let average = sum > 0 ? sum / getReviews.length : 0;
+  getProduct.rating = average;
+  getProduct.save();
+
+  res.json({ message: "Review successfully deleted.", average });
 });
 
 const updateReview = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
   const getReview = await Review.findById(req.params.id);
+  const getProduct = await Product.findById(getReview.productId);
   if (!getReview) return next(new expressError("Review Does Not Exist.", 404));
   if (getReview.user !== req.user.id)
     return next(new expressError("You are not owner of this review.", 403));
@@ -64,7 +87,17 @@ const updateReview = catchAsync(async (req, res, next) => {
     },
     { new: true }
   );
-  res.json(updatedReview);
+
+  const getReviews = await Review.find({ productId: req.params.id });
+  let sum = 0;
+  getReviews.forEach((item) => {
+    sum += item.rating;
+  });
+  let average = sum > 0 ? sum / getReviews.length : 0;
+  getProduct.rating = average;
+  getProduct.save();
+
+  res.json({ updatedReview, average });
 });
 
 const getProductReviews = catchAsync(async (req, res, next) => {
@@ -75,7 +108,16 @@ const getProductReviews = catchAsync(async (req, res, next) => {
   const getReviews = await Review.find({ productId: getProduct._id })
     .sort({ createdAt: "desc" })
     .populate("user");
-  res.json(getReviews);
+
+  let sum = 0;
+  getReviews.forEach((item) => {
+    sum += item.rating;
+  });
+  let average = sum > 0 ? sum / getReviews.length : 0;
+  getProduct.rating = average;
+  getProduct.save();
+
+  res.json({ reviews: getReviews, average });
 });
 
 module.exports = {

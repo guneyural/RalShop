@@ -15,6 +15,7 @@ const MessageBox = ({
   setIsModalOpen,
   header,
   btnText,
+  param,
 }) => {
   const dispatch = useDispatch();
   const closeModal = () => {
@@ -26,7 +27,7 @@ const MessageBox = ({
       action();
       setIsModalOpen(false);
     } else {
-      dispatch(action());
+      dispatch(action(param && param));
       setIsModalOpen(false);
     }
   };
