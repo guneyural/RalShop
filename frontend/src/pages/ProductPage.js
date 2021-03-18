@@ -125,6 +125,7 @@ const StarCount = Styled.p`
 `;
 const StarCountSection = Styled.section`
   display:flex;
+  position:relative;
   justify-content:space-between;
   align-items:center;
   margin-bottom:-10px;
@@ -154,6 +155,22 @@ const UserSection = Styled.section`
   display:flex;
   justify-content: space-between;
   align-items: center;
+`;
+const RatingBar = Styled.div`
+  position:absolute;
+  border-radius: 4px;
+  left: 22%;
+  width: 60%;
+  height: 25px;
+  background: #d9d9d9;
+  transition: 0.3s;
+`;
+const RatingBarYellow = Styled.section`
+  background: rgb(255, 215, 0);
+  border: 1px solid #b39700;
+  border-radius: 4px;
+  height: 25px;
+  transition: 0.3s;
 `;
 
 const ProductPage = () => {
@@ -511,7 +528,6 @@ const ProductPage = () => {
                 </p>
               </section>
               <section>
-                {/* <ReactStars {...readOnlyRating} /> */}
                 {tempStars}
                 <br />
                 <span
@@ -675,7 +691,6 @@ const ProductPage = () => {
                   alignItems: "center",
                 }}
               >
-                {/* <ReactStars {...readOnlyRating} /> */}
                 {tempStars}
                 <p
                   style={{
@@ -687,45 +702,157 @@ const ProductPage = () => {
                   {reviews.length} Ratings
                 </p>
               </div>
-              <h2>{average}</h2>
+              <h3>
+                {average.toFixed(1)}{" "}
+                <span style={{ fontSize: "22px" }}>out of 5</span>
+              </h3>
               <StarCountSection>
                 <StarCount>5 Star</StarCount>
-                <ReactStars {...fiveStar} />
+                <RatingBar>
+                  <RatingBarYellow
+                    style={{
+                      width:
+                        reviews.length > 0
+                          ? Math.round(
+                              ([...reviews.filter((item) => item.rating === 5)]
+                                .length *
+                                100) /
+                                reviews.length
+                            ) + "%"
+                          : "0%",
+                    }}
+                  />
+                </RatingBar>
                 <StarCount>
-                  {[...reviews.filter((item) => item.rating === 5)].length}{" "}
-                  Rating
+                  %
+                  {reviews.length > 0
+                    ? Math.round(
+                        ([...reviews.filter((item) => item.rating === 5)]
+                          .length *
+                          100) /
+                          reviews.length
+                      )
+                    : "0"}{" "}
                 </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>4 Star</StarCount>
-                <ReactStars {...fourStar} />
+                <RatingBar>
+                  {" "}
+                  <RatingBarYellow
+                    style={{
+                      width:
+                        reviews.length > 0
+                          ? Math.round(
+                              ([...reviews.filter((item) => item.rating === 4)]
+                                .length *
+                                100) /
+                                reviews.length
+                            ) + "%"
+                          : "0%",
+                    }}
+                  />
+                </RatingBar>
                 <StarCount>
-                  {[...reviews.filter((item) => item.rating === 4)].length}{" "}
-                  Rating
+                  %
+                  {reviews.length > 0
+                    ? Math.round(
+                        ([...reviews.filter((item) => item.rating === 4)]
+                          .length *
+                          100) /
+                          reviews.length
+                      )
+                    : "0"}{" "}
                 </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>3 Star</StarCount>
-                <ReactStars {...threeStar} />
+                <RatingBar>
+                  {" "}
+                  <RatingBarYellow
+                    style={{
+                      width:
+                        reviews.length > 0
+                          ? Math.round(
+                              ([...reviews.filter((item) => item.rating === 3)]
+                                .length *
+                                100) /
+                                reviews.length
+                            ) + "%"
+                          : "0%",
+                    }}
+                  />
+                </RatingBar>
                 <StarCount>
-                  {[...reviews.filter((item) => item.rating === 3)].length}{" "}
-                  Rating
+                  %
+                  {reviews.length > 0
+                    ? Math.round(
+                        ([...reviews.filter((item) => item.rating === 3)]
+                          .length *
+                          100) /
+                          reviews.length
+                      )
+                    : "0"}{" "}
                 </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>2 Star</StarCount>
-                <ReactStars {...twoStar} />
+                <RatingBar>
+                  {" "}
+                  <RatingBarYellow
+                    style={{
+                      width:
+                        reviews.length > 0
+                          ? Math.round(
+                              ([...reviews.filter((item) => item.rating === 2)]
+                                .length *
+                                100) /
+                                reviews.length
+                            ) + "%"
+                          : "0%",
+                    }}
+                  />
+                </RatingBar>
                 <StarCount>
-                  {[...reviews.filter((item) => item.rating === 2)].length}{" "}
-                  Rating
+                  %
+                  {reviews.length > 0
+                    ? Math.round(
+                        ([...reviews.filter((item) => item.rating === 2)]
+                          .length *
+                          100) /
+                          reviews.length
+                      )
+                    : "0"}{" "}
                 </StarCount>
               </StarCountSection>
               <StarCountSection>
                 <StarCount>1 Star</StarCount>
-                <ReactStars {...oneStar} />
+                <RatingBar>
+                  {" "}
+                  <RatingBarYellow
+                    style={{
+                      width:
+                        reviews.length > 0
+                          ? Math.round(
+                              ([...reviews.filter((item) => item.rating === 1)]
+                                .length *
+                                100) /
+                                reviews.length
+                            ) + "%"
+                          : "0%",
+                    }}
+                  />
+                </RatingBar>
                 <StarCount>
-                  {[...reviews.filter((item) => item.rating === 1)].length}{" "}
-                  Rating
+                  %
+                  {reviews.length > 0
+                    ? Math.round(
+                        ([...reviews.filter((item) => item.rating === 1)]
+                          .length *
+                          100) /
+                          reviews.length
+                      )
+                    : "0"}{" "}
                 </StarCount>
               </StarCountSection>
             </div>
@@ -786,7 +913,12 @@ const ProductPage = () => {
               )}
               <hr />
               {Review.error.message && (
-                <span className="text-danger">{Review.error.message}</span>
+                <span className="text-danger mb-3">{Review.error.message}</span>
+              )}
+              {Review.error.status === 429 && (
+                <span className="text-danger mb-3">
+                  Try again later. You reached your limits.
+                </span>
               )}
               {Review.loading && (
                 <img
