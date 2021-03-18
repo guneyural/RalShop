@@ -56,6 +56,20 @@ export const ProductReview = (state = initialState, action) => {
         ],
         average: action.payload.average,
       };
+    case UPDATE_REVIEW:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        productReviews: [
+          ...state.productReviews.map((item) =>
+            item._id === action.payload.review._id
+              ? action.payload.review
+              : item
+          ),
+        ],
+        average: action.payload.average,
+      };
     case LOADING:
       return { ...state, loading: true };
     default:

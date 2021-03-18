@@ -58,7 +58,28 @@ export const addReview = (rating, text, productId) => (dispatch) => {
     });
 };
 
-export const updateReview = (id, rating, text) => (dispatch) => {};
+export const updateReview = (id, rating, text) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .put(`/api/review/${id}`, { rating, text }, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: UPDATE_REVIEW,
+        payload: { review: data.updatedReview, average: data.average },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: PRODUCT_REVIEW_ERROR,
+        payload: {
+          message: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 export const deleteReview = (id) => (dispatch) => {
   dispatch({ type: LOADING });

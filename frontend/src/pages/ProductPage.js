@@ -23,11 +23,14 @@ import {
   addReview,
   getReviews,
   deleteReview,
+  updateReview,
 } from "../redux/actions/productReviewActions";
 import NoPhoto from "../assets/noProfilePic.jpg";
 import moment from "moment";
 import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
 import MessageBox from "../components/messageBox";
+import dompurify from "dompurify";
+import ReactMarkdown from "react-markdown";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -192,31 +195,12 @@ const ProductPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewId, setReviewId] = useState("");
   const [average, setAverage] = useState(0);
-  const fiveStar = {
-    size: 20,
-    value: 5,
-    edit: false,
-  };
-  const fourStar = {
-    size: 20,
-    value: 4,
-    edit: false,
-  };
-  const threeStar = {
-    size: 20,
-    value: 3,
-    edit: false,
-  };
-  const twoStar = {
-    size: 20,
-    value: 2,
-    edit: false,
-  };
-  const oneStar = {
-    size: 20,
-    value: 1,
-    edit: false,
-  };
+  const [isReviewEdit, setIsReviewEdit] = useState({
+    isEdit: false,
+    productId: null,
+    reviewRating: null,
+    reviewText: null,
+  });
   const starRating = {
     size: 27,
     count: 5,
@@ -226,6 +210,7 @@ const ProductPage = () => {
       setRating(newRating);
     },
   };
+  const sanitizer = dompurify.sanitize;
 
   useEffect(() => {
     dispatch(getProductById(id));
@@ -366,6 +351,18 @@ const ProductPage = () => {
       body.style.overflow = "auto";
     }
   }, [isModalOpen]);
+
+  const editReview = (item) => {
+    dispatch(
+      updateReview(item._id, isReviewEdit.reviewRating, isReviewEdit.reviewText)
+    );
+    setIsReviewEdit({
+      isEdit: false,
+      productId: null,
+      reviewRating: null,
+      reviewText: null,
+    });
+  };
 
   const removeReview = (reviewId) => {
     setReviewId(reviewId);
@@ -528,8 +525,215 @@ const ProductPage = () => {
                 </p>
               </section>
               <section>
-                {tempStars}
-                <br />
+                <section className="product-star">
+                  {tempStars}
+                  <section className="rating-small">
+                    <section style={{ padding: "15px" }}>
+                      <section className="d-flex">
+                        {tempStars}
+                        <h4 style={{ marginTop: "7px", marginLeft: "5px" }}>
+                          {average.toFixed(1)}{" "}
+                          <span style={{ fontSize: "22px" }}>out of 5</span>
+                        </h4>
+                      </section>
+                      <StarCountSection>
+                        <StarCount>5 Star</StarCount>
+                        <RatingBar>
+                          <RatingBarYellow
+                            style={{
+                              width:
+                                reviews.length > 0
+                                  ? Math.round(
+                                      ([
+                                        ...reviews.filter(
+                                          (item) => item.rating === 5
+                                        ),
+                                      ].length *
+                                        100) /
+                                        reviews.length
+                                    ) + "%"
+                                  : "0%",
+                            }}
+                          />
+                        </RatingBar>
+                        <StarCount>
+                          %
+                          {reviews.length > 0
+                            ? Math.round(
+                                ([
+                                  ...reviews.filter(
+                                    (item) => item.rating === 5
+                                  ),
+                                ].length *
+                                  100) /
+                                  reviews.length
+                              )
+                            : "0"}{" "}
+                        </StarCount>
+                      </StarCountSection>
+                      <StarCountSection>
+                        <StarCount>4 Star</StarCount>
+                        <RatingBar>
+                          {" "}
+                          <RatingBarYellow
+                            style={{
+                              width:
+                                reviews.length > 0
+                                  ? Math.round(
+                                      ([
+                                        ...reviews.filter(
+                                          (item) => item.rating === 4
+                                        ),
+                                      ].length *
+                                        100) /
+                                        reviews.length
+                                    ) + "%"
+                                  : "0%",
+                            }}
+                          />
+                        </RatingBar>
+                        <StarCount>
+                          %
+                          {reviews.length > 0
+                            ? Math.round(
+                                ([
+                                  ...reviews.filter(
+                                    (item) => item.rating === 4
+                                  ),
+                                ].length *
+                                  100) /
+                                  reviews.length
+                              )
+                            : "0"}{" "}
+                        </StarCount>
+                      </StarCountSection>
+                      <StarCountSection>
+                        <StarCount>3 Star</StarCount>
+                        <RatingBar>
+                          {" "}
+                          <RatingBarYellow
+                            style={{
+                              width:
+                                reviews.length > 0
+                                  ? Math.round(
+                                      ([
+                                        ...reviews.filter(
+                                          (item) => item.rating === 3
+                                        ),
+                                      ].length *
+                                        100) /
+                                        reviews.length
+                                    ) + "%"
+                                  : "0%",
+                            }}
+                          />
+                        </RatingBar>
+                        <StarCount>
+                          %
+                          {reviews.length > 0
+                            ? Math.round(
+                                ([
+                                  ...reviews.filter(
+                                    (item) => item.rating === 3
+                                  ),
+                                ].length *
+                                  100) /
+                                  reviews.length
+                              )
+                            : "0"}{" "}
+                        </StarCount>
+                      </StarCountSection>
+                      <StarCountSection>
+                        <StarCount>2 Star</StarCount>
+                        <RatingBar>
+                          {" "}
+                          <RatingBarYellow
+                            style={{
+                              width:
+                                reviews.length > 0
+                                  ? Math.round(
+                                      ([
+                                        ...reviews.filter(
+                                          (item) => item.rating === 2
+                                        ),
+                                      ].length *
+                                        100) /
+                                        reviews.length
+                                    ) + "%"
+                                  : "0%",
+                            }}
+                          />
+                        </RatingBar>
+                        <StarCount>
+                          %
+                          {reviews.length > 0
+                            ? Math.round(
+                                ([
+                                  ...reviews.filter(
+                                    (item) => item.rating === 2
+                                  ),
+                                ].length *
+                                  100) /
+                                  reviews.length
+                              )
+                            : "0"}{" "}
+                        </StarCount>
+                      </StarCountSection>
+                      <StarCountSection>
+                        <StarCount>1 Star</StarCount>
+                        <RatingBar>
+                          {" "}
+                          <RatingBarYellow
+                            style={{
+                              width:
+                                reviews.length > 0
+                                  ? Math.round(
+                                      ([
+                                        ...reviews.filter(
+                                          (item) => item.rating === 1
+                                        ),
+                                      ].length *
+                                        100) /
+                                        reviews.length
+                                    ) + "%"
+                                  : "0%",
+                            }}
+                          />
+                        </RatingBar>
+                        <StarCount>
+                          %
+                          {reviews.length > 0
+                            ? Math.round(
+                                ([
+                                  ...reviews.filter(
+                                    (item) => item.rating === 1
+                                  ),
+                                ].length *
+                                  100) /
+                                  reviews.length
+                              )
+                            : "0"}{" "}
+                        </StarCount>
+                      </StarCountSection>
+                    </section>
+                    <hr style={{ marginTop: "-5px" }} />
+                    <section
+                      style={{ textAlign: "center", paddingBottom: "15px" }}
+                    >
+                      <span
+                        className="text-muted"
+                        style={{
+                          textDecoration: "underline",
+                          fontSize: "14px",
+                          marginTop: "-15px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <a href="#reviews">See All Reviews</a>
+                      </span>
+                    </section>
+                  </section>
+                </section>
                 <span
                   className="text-muted"
                   style={{
@@ -898,15 +1102,18 @@ const ProductPage = () => {
                     style={{ marginTop: "-12px" }}
                   >
                     <ReactStars {...starRating} />
-                    <TextField
-                      rows="4"
-                      cols="50"
-                      style={{ width: "100%" }}
-                      name="review"
-                      value={review}
-                      onChange={(e) => setReview(e.target.value)}
-                      placeholder="Write at least 10 characters long reviews. Good reviews are usually 100 characters or more."
-                    ></TextField>
+                    <div className="update-review-section">
+                      <TextField
+                        placeholder="Write at least 10 characters long reviews. Good reviews are usually 100 characters or more."
+                        tabIndex={1}
+                        rows="4"
+                        cols="50"
+                        style={{ width: "100%" }}
+                        name="review"
+                        value={review}
+                        onChange={(e) => setReview(e.target.value)}
+                      />
+                    </div>
                     <button className="default-btn mt-1">Add Review</button>
                   </form>
                 </section>
@@ -972,7 +1179,16 @@ const ProductPage = () => {
                                 <HiDotsVertical />
                               </button>
                               <div className="review-settings-list">
-                                <button onMouseDown={() => {}}>
+                                <button
+                                  onMouseDown={() => {
+                                    setIsReviewEdit({
+                                      isEdit: true,
+                                      productId: item._id,
+                                      reviewRating: item.rating,
+                                      reviewText: item.text,
+                                    });
+                                  }}
+                                >
                                   <AiFillEdit style={{ color: "gray" }} /> Edit
                                 </button>
                                 <button
@@ -990,30 +1206,89 @@ const ProductPage = () => {
                             </div>
                           )}
                       </UserSection>
-                      <span>
-                        {[...Array(item.rating)].map((item, index) => {
-                          return (
-                            <BsStarFill
-                              key={index}
-                              style={{
-                                color: "rgb(255, 215, 0)",
-                                margin: "1px",
-                              }}
-                            />
-                          );
-                        })}
-                        {[...Array(5 - item.rating)].map((item, index) => {
-                          return (
-                            <BsStarFill
-                              key={index}
-                              style={{ margin: "1px", color: "gray" }}
-                            />
-                          );
-                        })}
-                      </span>
-                      <section className="mt-2 review-text">
-                        {item.text}
-                      </section>
+                      {isReviewEdit.productId !== item._id ? (
+                        <>
+                          <span>
+                            {[...Array(item.rating)].map((item, index) => {
+                              return (
+                                <BsStarFill
+                                  key={index}
+                                  style={{
+                                    color: "rgb(255, 215, 0)",
+                                    margin: "1px",
+                                  }}
+                                />
+                              );
+                            })}
+                            {[...Array(5 - item.rating)].map((item, index) => {
+                              return (
+                                <BsStarFill
+                                  key={index}
+                                  style={{ margin: "1px", color: "gray" }}
+                                />
+                              );
+                            })}
+                          </span>
+                          <section className="mt-2 review-text">
+                            <ReactMarkdown>{item.text}</ReactMarkdown>
+                          </section>
+                        </>
+                      ) : (
+                        item._id === isReviewEdit.productId && (
+                          <section>
+                            <form
+                              onSubmit={(e) => e.preventDefault()}
+                              style={{ marginTop: "-12px" }}
+                            >
+                              <ReactStars
+                                {...starRating}
+                                value={isReviewEdit.reviewRating}
+                                onChange={(rating) =>
+                                  setIsReviewEdit({
+                                    ...isReviewEdit,
+                                    reviewRating: rating,
+                                  })
+                                }
+                              />
+                              <div className="update-review-section">
+                                <TextField
+                                  tabIndex={1}
+                                  rows="4"
+                                  cols="50"
+                                  style={{ width: "100%" }}
+                                  name="review"
+                                  value={isReviewEdit.reviewText}
+                                  onChange={(e) =>
+                                    setIsReviewEdit({
+                                      ...isReviewEdit,
+                                      reviewText: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
+                              <button
+                                className="default-btn mt-1"
+                                onClick={() => editReview(item)}
+                              >
+                                Edit
+                              </button>
+                              <span
+                                className="btn"
+                                onClick={() =>
+                                  setIsReviewEdit({
+                                    isEdit: false,
+                                    productId: null,
+                                    reviewRating: null,
+                                    reviewText: null,
+                                  })
+                                }
+                              >
+                                Cancel
+                              </span>
+                            </form>
+                          </section>
+                        )
+                      )}
                     </div>
                   );
                 })}

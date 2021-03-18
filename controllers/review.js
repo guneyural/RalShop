@@ -72,7 +72,7 @@ const updateReview = catchAsync(async (req, res, next) => {
   const getReview = await Review.findById(req.params.id);
   const getProduct = await Product.findById(getReview.productId);
   if (!getReview) return next(new expressError("Review Does Not Exist.", 404));
-  if (getReview.user !== req.user.id)
+  if (getReview.user != req.user.id)
     return next(new expressError("You are not owner of this review.", 403));
   const { rating, text } = req.body;
   if (rating < 1 || rating > 5)
@@ -86,9 +86,9 @@ const updateReview = catchAsync(async (req, res, next) => {
       text,
     },
     { new: true }
-  );
+  ).populate("user");
 
-  const getReviews = await Review.find({ productId: req.params.id });
+  const getReviews = await Review.find({ productId: getProduct._id });
   let sum = 0;
   getReviews.forEach((item) => {
     sum += item.rating;
