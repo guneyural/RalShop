@@ -1,0 +1,60 @@
+.wishlist-top {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 20px;
+  border: 1px solid #dedede;
+  border-radius: 3px;
+}
+
+.wishlist-top .left {
+  display: flex;
+}
+
+.wishlist-top .navbar-middle {
+  display: flex;
+  align-items: center;
+}
+
+.wishlist-container {
+  margin-top: 20px;
+}
+
+.wishlist-container .no-item {
+  text-align: center;
+  margin-top: 50px;
+}
+
+@media only screen and (max-width: 576px) {
+  .wishlist-top .left {
+    display: block;
+  }
+  .wishlist-top .left span {
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 470px) {
+  .wishlist-top .left {
+    display: flex;
+  }
+
+  .wishlist-top .left span {
+    padding-left: 10px;
+    padding-top: 5px;
+  }
+
+  .wishlist-top {
+    display: block;
+  }
+
+  .wishlist-top input {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .wishlist-top {
+    padding: 15px;
+  }
+}
