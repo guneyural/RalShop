@@ -210,7 +210,6 @@ const ProductPage = () => {
       setRating(newRating);
     },
   };
-  const sanitizer = dompurify.sanitize;
 
   useEffect(() => {
     dispatch(getProductById(id));
@@ -292,6 +291,8 @@ const ProductPage = () => {
 
   const createReview = (e) => {
     e.preventDefault();
+    setSort("default");
+    document.querySelector("select[name='sort']").value = "default";
     dispatch(addReview(rating, review, Product._id));
   };
 
@@ -351,6 +352,29 @@ const ProductPage = () => {
       body.style.overflow = "auto";
     }
   }, [isModalOpen]);
+
+  useEffect(() => {
+    if (sort === "default") {
+      let sortedReviews = [...reviews].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setReviews(sortedReviews);
+    }
+    if (sort === "DATE_OLD") {
+      let sortedReviews = [...reviews].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+      setReviews(sortedReviews);
+    }
+    if (sort === "RATING_HIGH") {
+      let sortedReviews = [...reviews].sort((a, b) => b.rating - a.rating);
+      setReviews(sortedReviews);
+    }
+    if (sort === "RATING_LOW") {
+      let sortedReviews = [...reviews].sort((a, b) => a.rating - b.rating);
+      setReviews(sortedReviews);
+    }
+  }, [sort]);
 
   const editReview = (item) => {
     dispatch(
