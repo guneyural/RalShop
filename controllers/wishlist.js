@@ -7,7 +7,7 @@ const getWishlist = catchAsync(async (req, res, next) => {
     "products"
   );
   if (!getWishlist) return next(new expressError("Wishlist Not Found", 404));
-  res.json(getWishlist);
+  res.json(getWishlist.products);
 });
 
 const updateWishlist = catchAsync(async (req, res, next) => {
