@@ -93,6 +93,7 @@ const ProfileSettings = () => {
       .then((res) => res.data)
       .then((data) => {
         localStorage.removeItem("user-token");
+        localStorage.removeItem("Wishlist");
         setRemoveAccountError(null);
         window.location.href = window.origin;
       })

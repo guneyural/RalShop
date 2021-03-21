@@ -13,6 +13,7 @@ import {
   getCurrentSeller,
   notSellerRoute,
 } from "./redux/actions/sellerActions";
+import { getWishlist } from "./redux/actions/wishlistAction";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettingsPage from "./pages/ProfileSettings";
@@ -46,6 +47,7 @@ const App = () => {
   }, [dispatch]);
   useEffect(() => {
     dispatch(getUser());
+    dispatch(getWishlist());
   }, [dispatch, User.isAuthenticated]);
   useEffect(() => {
     dispatch(getCurrentSeller());

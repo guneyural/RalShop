@@ -30,6 +30,7 @@ import moment from "moment";
 import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
 import MessageBox from "../components/messageBox";
 import ReactMarkdown from "react-markdown";
+import { addItem } from "../redux/actions/wishlistAction";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -851,12 +852,24 @@ const ProductPage = () => {
                 >
                   Add To Cart
                 </button>
-                <button
-                  className="default-btn pt-1 pb-1"
-                  style={{ fontSize: "18px", borderLeft: "0" }}
-                >
-                  <FaHeart />
-                </button>
+                {User.isAuthenticated ? (
+                  <button
+                    className="default-btn pt-1 pb-1"
+                    style={{ fontSize: "18px", borderLeft: "0" }}
+                    onClick={() => dispatch(addItem(Product))}
+                  >
+                    <FaHeart />
+                  </button>
+                ) : (
+                  <Link to="/auth">
+                    <button
+                      className="default-btn pt-1 pb-1"
+                      style={{ fontSize: "18px", borderLeft: "0" }}
+                    >
+                      <FaHeart />
+                    </button>
+                  </Link>
+                )}
               </AddButtons>
               <div className="w-100" style={{ position: "relative" }}>
                 <p
