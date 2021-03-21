@@ -1160,6 +1160,7 @@ const ProductPage = () => {
                 />
               )}
               <div className="reviews">
+                {reviews.length < 1 && <p>No review added.</p>}
                 {reviews.map((item, id) => {
                   return (
                     <div className="review-item mb-4" key={id}>
