@@ -1,7 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const expressError = require("../utils/expressError");
 const Cart = require("../models/shoppingCart");
-const mongoId = require("mongoose").Types.ObjectId;
 
 const createCard = catchAsync(async (req, res) => {
   const newCart = new Cart();
