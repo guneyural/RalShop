@@ -4,9 +4,10 @@ const {
   updateWishlist,
   removeAllWishlist,
 } = require("../controllers/wishlist");
+const { isUser } = require("../middlewares/isAuth");
 
-Router.get("/", getWishlist);
-Router.post("/update", updateWishlist);
-Router.delete("/remove_all", removeAllWishlist);
+Router.get("/", isUser, getWishlist);
+Router.post("/update", isUser, updateWishlist);
+Router.delete("/remove_all", isUser, removeAllWishlist);
 
 module.exports = Router;
