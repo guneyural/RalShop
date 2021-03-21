@@ -1,4 +1,7 @@
 const User = require("../models/user");
+const Wishlist = require("../models/wishlist");
+const Review = require("../models/review");
+const Cart = require("../models/shoppingCart");
 const jwt = require("jsonwebtoken");
 const expressError = require("../utils/expressError");
 const catchAsync = require("../utils/catchAsync");
@@ -48,6 +51,9 @@ const register = catchAsync(async (req, res, next) => {
   let newUsername = createUser.username.split(" ").join(".");
   createUser.username = newUsername;
   const saveUser = await createUser.save();
+
+  Wishlist.create({ owner: saveUser._id });
+  Cart.create({ user: saveUser._id });
 
   const token = jwt.sign({ id: saveUser._id }, process.env.SECRET, {
     expiresIn: "5d",
@@ -145,6 +151,9 @@ const removeUser = catchAsync(async (req, res, next) => {
   const { password } = req.body;
   const isMatch = await bcrypt.compare(password, findUser.password);
   if (!isMatch) return next(new expressError("Wrong Password", 400));
+  await Review.deleteMany({ user: req.user.id });
+  await Wishlist.deleteMany({ owner: req.user.id });
+  await Cart.deleteMany({ user: req.user.id });
   await User.deleteOne({ _id: req.user.id });
   if (findUser.hasPhoto)
     cloudinary.uploader.destroy(findUser.profilePhoto.filename);
