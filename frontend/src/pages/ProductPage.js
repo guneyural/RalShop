@@ -29,7 +29,6 @@ import NoPhoto from "../assets/noProfilePic.jpg";
 import moment from "moment";
 import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
 import MessageBox from "../components/messageBox";
-import dompurify from "dompurify";
 import ReactMarkdown from "react-markdown";
 
 const NavDivider = Styled.span`
