@@ -51,10 +51,29 @@
   .wishlist-top input {
     width: 100% !important;
   }
+
+  .wishlist-img {
+    height: 150px !important;
+    width: 150px !important;
+  }
 }
 
 @media only screen and (max-width: 450px) {
   .wishlist-top {
     padding: 15px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .wishlist-img {
+    height: 130px !important;
+    width: 130px !important;
+  }
+}
+
+@media only screen and (max-width: 360px) {
+  .wishlist-options .option-2 {
+    display: block !important;
+    margin-left: 0 !important;
   }
 }

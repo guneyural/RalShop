@@ -9,6 +9,7 @@ const initialState = {
   products: [],
   product: {},
   createdProduct: {},
+  wishlistCount: 0,
   error: { msg: null, status: null },
   loading: false,
 };
@@ -41,7 +42,8 @@ export const Product = (state = initialState, action) => {
     case GET_PRODUCT_BY_ID:
       return {
         ...state,
-        product: action.payload,
+        product: action.payload.Product,
+        wishlistCount: action.payload.wishlistCount,
         loading: false,
       };
     default:

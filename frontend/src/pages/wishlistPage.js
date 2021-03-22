@@ -1,20 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { FiHeart } from "react-icons/fi";
 import Styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { removeAllItems } from "../redux/actions/wishlistAction";
+import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
+import { priceConverter } from "../utils/helpers";
+import { removeItem } from "../redux/actions/wishlistAction";
 
 const ItemCount = Styled.span`
   padding-left: 10px;
   padding-top: 5px;
 `;
 
+const WishlistItem = Styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px
+`;
+
 const WishlistPage = () => {
   const Wishlist = useSelector((state) => state.Wishlist);
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
+  const [wishlistItems, setWishlistItems] = useState([]);
+
+  function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  }
+
+  useEffect(() => {
+    setWishlistItems(Wishlist.products);
+  }, [Wishlist]);
+  useEffect(() => {
+    const regex = new RegExp(escapeRegex(searchQuery), "gi");
+    if (searchQuery.length < 1) {
+      setWishlistItems(Wishlist.products);
+    } else {
+      setWishlistItems(
+        Wishlist.products.filter((item) => item.title.match(regex))
+      );
+    }
+    console.log(wishlistItems.filter((item) => item.title.match(regex)));
+  }, [searchQuery]);
 
   return (
     <>
@@ -48,10 +78,23 @@ const WishlistPage = () => {
           </section>
         </section>
       </div>
+      {Wishlist.products.length > 0 && (
+        <button
+          onClick={() => dispatch(removeAllItems())}
+          style={{
+            color: "#0d6efd",
+            fontSize: "15px",
+            marginTop: "5px",
+            background: "transparent",
+            border: "transparent",
+            padding: "0",
+          }}
+        >
+          Remove All
+        </button>
+      )}
       <div className="wishlist-container">
-        <span onClick={() => dispatch(removeAllItems())}>REMOVE ALL ITEMS</span>
-        {Wishlist.loading && <span>Loading...</span>}
-        {Wishlist.products.length < 1 && (
+        {wishlistItems.length < 1 ? (
           <div className="no-item">
             <FiHeart style={{ fontSize: "4rem" }} />
             <h1 style={{ fontWeight: "300" }}>Wishlist Is Empty</h1>
@@ -62,6 +105,110 @@ const WishlistPage = () => {
               <button className="default-btn">Start Shopping</button>
             </Link>
           </div>
+        ) : (
+          wishlistItems.map((item, idx) => {
+            return (
+              <WishlistItem key={idx}>
+                <section style={{ display: "flex" }}>
+                  <Link to={`/product/${item._id}`}>
+                    <img
+                      className="wishlist-img"
+                      src={item.images[0].url}
+                      alt="product"
+                      style={{
+                        objectFit: "cover",
+                        width: "180px",
+                        height: "170px",
+                        borderRadius: "3px",
+                      }}
+                    />
+                  </Link>
+                  <section style={{ marginLeft: "10px" }}>
+                    <Link
+                      to={`/product/${item._id}`}
+                      style={{
+                        color: "var(--primary-color)",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <h6>{item.title}</h6>
+                      <section
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "15px",
+                          marginTop: "-8px",
+                        }}
+                      >
+                        {item.stock < 1 ? (
+                          <span className="text-danger">Out Of Stock</span>
+                        ) : (
+                          <span className="text-success">In Stock</span>
+                        )}
+                      </section>
+                      <p style={{ marginTop: "-3px" }}>
+                        {Array.from({ length: 5 }, (_, index) => {
+                          const number = index + 0.5;
+                          return (
+                            <span key={index} style={{ fontSize: "18px" }}>
+                              {item.rating > number ? (
+                                <BsStarFill
+                                  style={{ color: "rgb(240, 204, 0)" }}
+                                />
+                              ) : item.rating > index ? (
+                                <BsStarHalf
+                                  style={{ color: "rgb(240, 204, 0)" }}
+                                />
+                              ) : (
+                                <BsStar style={{ color: "rgb(240, 204, 0)" }} />
+                              )}
+                            </span>
+                          );
+                        })}
+                      </p>
+                      <p
+                        style={{
+                          marginTop: "-15px",
+                          fontSize: "15px",
+                        }}
+                        className="text-muted"
+                      >
+                        {item.rating} Out Of 5
+                      </p>
+                      <p
+                        style={{
+                          marginTop: "-10px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {priceConverter(item.price)}
+                      </p>
+                    </Link>
+                    <section
+                      style={{ fontSize: "15px", color: "#0d6efd" }}
+                      className="wishlist-options"
+                    >
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => dispatch(removeItem(item._id))}
+                      >
+                        Delete
+                      </span>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          marginLeft: "8px",
+                          cursor: "pointer",
+                        }}
+                        className="option-2"
+                      >
+                        Move To Cart
+                      </span>
+                    </section>
+                  </section>
+                </section>
+              </WishlistItem>
+            );
+          })
         )}
       </div>
     </>

@@ -11,9 +11,10 @@ import {
   AiOutlineMinus,
   AiOutlinePlus,
   AiFillEdit,
+  AiFillHeart,
 } from "react-icons/ai";
 import { HiDotsVertical } from "react-icons/hi";
-import { FaHeart } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
 import FullscreenImage from "./../components/fullscreenImage";
 import { priceConverter } from "../utils/helpers";
 import ReactStars from "react-rating-stars-component";
@@ -30,7 +31,7 @@ import moment from "moment";
 import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
 import MessageBox from "../components/messageBox";
 import ReactMarkdown from "react-markdown";
-import { addItem } from "../redux/actions/wishlistAction";
+import { addItem, removeItem } from "../redux/actions/wishlistAction";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -178,10 +179,13 @@ const RatingBarYellow = Styled.section`
 
 const ProductPage = () => {
   const { id } = useParams();
-  const { error, loading } = useSelector((state) => state.Product);
+  const { error, loading, wishlistCount } = useSelector(
+    (state) => state.Product
+  );
   const Product = useSelector((state) => state.Product.product);
   const Review = useSelector((state) => state.ProductReview);
   const User = useSelector((state) => state.Auth);
+  const Wishlist = useSelector((state) => state.Wishlist);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [tab, setTab] = useState("description");
@@ -195,6 +199,7 @@ const ProductPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewId, setReviewId] = useState("");
   const [average, setAverage] = useState(0);
+  const [isInWishlist, setIsInWishlist] = useState(false);
   const [isReviewEdit, setIsReviewEdit] = useState({
     isEdit: false,
     productId: null,
@@ -215,6 +220,20 @@ const ProductPage = () => {
     dispatch(getProductById(id));
     dispatch(getReviews(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (Wishlist.products.length < 1) {
+      setIsInWishlist(false);
+    } else {
+      Wishlist.products.map((item) => {
+        if (item._id === id) {
+          setIsInWishlist(true);
+        } else {
+          setIsInWishlist(false);
+        }
+      });
+    }
+  }, [Wishlist, isInWishlist]);
 
   useEffect(() => {
     const getImage = document.querySelector(
@@ -855,18 +874,30 @@ const ProductPage = () => {
                 {User.isAuthenticated ? (
                   <button
                     className="default-btn pt-1 pb-1"
-                    style={{ fontSize: "18px", borderLeft: "0" }}
-                    onClick={() => dispatch(addItem(Product))}
+                    style={{
+                      fontSize: "18px",
+                      borderLeft: "0",
+                      fontWeight: "600",
+                    }}
+                    onClick={() =>
+                      isInWishlist
+                        ? dispatch(removeItem(id))
+                        : dispatch(addItem(Product))
+                    }
                   >
-                    <FaHeart />
+                    {isInWishlist ? <AiFillHeart /> : <FiHeart />}
                   </button>
                 ) : (
                   <Link to="/auth">
                     <button
                       className="default-btn pt-1 pb-1"
-                      style={{ fontSize: "18px", borderLeft: "0" }}
+                      style={{
+                        fontSize: "18px",
+                        borderLeft: "0",
+                        fontWeight: "600",
+                      }}
                     >
-                      <FaHeart />
+                      <FiHeart />
                     </button>
                   </Link>
                 )}
@@ -876,7 +907,7 @@ const ProductPage = () => {
                   style={{ position: "absolute", right: "0" }}
                   className="text-muted"
                 >
-                  In 0 People's Wishlist
+                  In {wishlistCount} People's Wishlist
                 </p>
               </div>
             </div>

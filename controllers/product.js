@@ -1,6 +1,8 @@
+const Product = require("../models/product");
+const Wishlist = require("../models/wishlist");
+const Reviews = require("../models/review");
 const catchAsync = require("../utils/catchAsync");
 const expressError = require("../utils/expressError");
-const Product = require("../models/product");
 const mongoId = require("mongoose").Types.ObjectId;
 
 const createProduct = catchAsync(async (req, res, next) => {
@@ -45,7 +47,13 @@ const getProductById = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid Id.", 400));
   const getProduct = await Product.findById(req.params.id).populate("shop");
   if (!getProduct) return next(new expressError("Product Not Found", 404));
-  res.json(getProduct);
+  const getWishlistCount = await Wishlist.find({
+    products: { $in: [getProduct._id] },
+  });
+  res.json({
+    Product: getProduct,
+    wishlistCount: getWishlistCount.length,
+  });
 });
 
 const updateProduct = catchAsync(async (req, res, next) => {

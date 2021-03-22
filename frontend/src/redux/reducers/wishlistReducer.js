@@ -59,6 +59,14 @@ export const Wishlist = (state = initialState, action) => {
         loading: false,
       };
     case WISHLIST_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: {
+          message: action.payload.message,
+          status: action.payload.status,
+        },
+      };
     case LOADING:
       return {
         ...state,

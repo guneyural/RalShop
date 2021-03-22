@@ -42,7 +42,13 @@ export const getProductById = (id) => (dispatch) => {
     .get(`/api/product/${id}`)
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: GET_PRODUCT_BY_ID, payload: data });
+      dispatch({
+        type: GET_PRODUCT_BY_ID,
+        payload: {
+          Product: data.Product,
+          wishlistCount: data.wishlistCount,
+        },
+      });
     })
     .catch((err) => {
       dispatch({
