@@ -117,7 +117,7 @@ export const Auth = (state = initialState, action) => {
         },
       };
     case LOGOUT_USER:
-      localStorage.setItem("Wishlist", []);
+      localStorage.setItem("Wishlist", JSON.stringify([]));
       localStorage.removeItem("user-token");
       return {
         ...state,

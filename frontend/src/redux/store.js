@@ -2,7 +2,17 @@ import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import reducers from "./reducers";
 import axios from "axios";
-import { GET_WISHLIST, ADD_WISHLIST, REMOVE_WISHLIST } from "./actions/types";
+import {
+  GET_WISHLIST,
+  ADD_WISHLIST,
+  REMOVE_WISHLIST,
+  ADD_CART,
+  REMOVE_ALL_CART_ITEM,
+  REMOVE_CART_ITEM,
+  GET_CART,
+  INCREASE_CART_ITEM,
+  DECREASE_CART_ITEM,
+} from "./actions/types";
 
 const initialState = {};
 const middleware = [thunk];
@@ -32,7 +42,9 @@ Store.subscribe(() => {
     Wishlist: { products },
     lastAction,
     Auth,
+    Cart,
   } = Store.getState();
+  localStorage.setItem("Cart", JSON.stringify(Cart.products));
   if (Auth.isAuthenticated) {
     localStorage.setItem("Wishlist", JSON.stringify(products));
     if (
@@ -41,6 +53,20 @@ Store.subscribe(() => {
       lastAction === GET_WISHLIST
     ) {
       axios.post("/api/wishlist/update", { products }, tokenConfig());
+    }
+    if (
+      lastAction === ADD_CART ||
+      lastAction === REMOVE_ALL_CART_ITEM ||
+      lastAction === REMOVE_CART_ITEM ||
+      lastAction === GET_CART ||
+      lastAction === INCREASE_CART_ITEM ||
+      lastAction === DECREASE_CART_ITEM
+    ) {
+      axios.post(
+        "/api/cart/update",
+        { products: Cart.products },
+        tokenConfig()
+      );
     }
   }
 });

@@ -14,6 +14,7 @@ import {
   notSellerRoute,
 } from "./redux/actions/sellerActions";
 import { getWishlist } from "./redux/actions/wishlistAction";
+import { getCart } from "./redux/actions/ShoppingCartActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileSettingsPage from "./pages/ProfileSettings";
@@ -47,11 +48,16 @@ const App = () => {
     dispatch(notSellerRoute());
   }, [dispatch]);
   useEffect(() => {
-    dispatch(getUser());
-    dispatch(getWishlist());
+    if (User.isAuthenticated) {
+      dispatch(getUser());
+      dispatch(getWishlist());
+      dispatch(getCart());
+    }
   }, [dispatch, User.isAuthenticated]);
   useEffect(() => {
-    dispatch(getCurrentSeller());
+    if (Seller.isAuthenticated) {
+      dispatch(getCurrentSeller());
+    }
   }, [dispatch, Seller.isAuthenticated]);
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 

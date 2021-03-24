@@ -5,6 +5,7 @@ import { Seller } from "./sellerReducer";
 import { Product } from "./productReducer";
 import { ProductReview } from "./productReviewReducer";
 import { Wishlist } from "./wishlistReducer";
+import { Cart } from "./CartReducer";
 
 function lastAction(state = null, action) {
   return action.type;
@@ -17,6 +18,7 @@ const reducers = combineReducers({
   Product,
   ProductReview,
   Wishlist,
+  Cart,
   lastAction,
 });
 

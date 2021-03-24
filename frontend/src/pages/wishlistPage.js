@@ -33,9 +33,8 @@ const WishlistPage = () => {
 
   useEffect(() => {
     setWishlistItems(Wishlist.products);
- 
   }, [Wishlist]);
- 
+
   useEffect(() => {
     const regex = new RegExp(escapeRegex(searchQuery), "gi");
     if (searchQuery.length < 1) {
@@ -173,7 +172,7 @@ const WishlistPage = () => {
                         }}
                         className="text-muted"
                       >
-                        {item.rating} Out Of 5
+                        {item.rating.toFixed(1)} Out Of 5
                       </p>
                       <p
                         style={{
