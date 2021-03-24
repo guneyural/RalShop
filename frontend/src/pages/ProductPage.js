@@ -65,7 +65,7 @@ const TickIcon = Styled.span`
   text-shadow: -1px -1px black;
   visibility: hidden;
 `;
-const ColorPreview = Styled.div`
+const ColorPreview = Styled.span`
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -222,18 +222,16 @@ const ProductPage = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
+    let temp = false;
     if (Wishlist.products.length < 1) {
-      setIsInWishlist(false);
+      setIsInWishlist(temp);
     } else {
-      Wishlist.products.map((item) => {
-        if (item._id === id) {
-          setIsInWishlist(true);
-        } else {
-          setIsInWishlist(false);
-        }
-      });
+      Wishlist.products.some((item) =>
+        item._id === id ? (temp = true) : (temp = false)
+      );
     }
-  }, [Wishlist, isInWishlist]);
+    setIsInWishlist(temp);
+  }, [Wishlist, isInWishlist, id]);
 
   useEffect(() => {
     const getImage = document.querySelector(
@@ -286,9 +284,9 @@ const ProductPage = () => {
   const setProductColor = (id) => {
     const getColor = document.querySelectorAll(".color-circle span");
     getColor.forEach((item) => {
-      item.style.visibility = "visible";
+      item.style.visibility = "hidden";
     });
-    const getCircle = document.querySelector(`${id} span`);
+    const getCircle = document.querySelector(`#${id} span`);
     if (getCircle) getCircle.style.visibility = "visible";
     setColor(id.substring(3));
   };
@@ -834,22 +832,26 @@ const ProductPage = () => {
               </InfoRow>
               <InfoRow>
                 <b>Color</b>
-                {Product.colors.length > 0 &&
-                  Product.colors.map((clr, idx) => {
-                    return (
-                      <ColorPreview
-                        className="color-circle"
-                        style={{ background: clr }}
-                        onClick={() =>
-                          setProductColor(`clr${clr.substring(1, clr.length)}`)
-                        }
-                        key={idx}
-                        id={`clr${clr.substring(1, clr.length)}`}
-                      >
-                        <TickIcon>&#10003;</TickIcon>
-                      </ColorPreview>
-                    );
-                  })}
+                <div style={{ dislay: "flex" }}>
+                  {Product.colors.length > 0 &&
+                    Product.colors[0].split(",").map((clr, idx) => {
+                      return (
+                        <ColorPreview
+                          className="color-circle"
+                          style={{ background: clr }}
+                          onClick={() =>
+                            setProductColor(
+                              `clr${clr.substring(1, clr.length)}`
+                            )
+                          }
+                          key={idx}
+                          id={`clr${clr.substring(1, clr.length)}`}
+                        >
+                          <TickIcon>&#10003;</TickIcon>
+                        </ColorPreview>
+                      );
+                    })}
+                </div>
               </InfoRow>
               <InfoRow>
                 <b>Quantity</b>

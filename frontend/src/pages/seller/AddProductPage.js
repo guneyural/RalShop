@@ -124,6 +124,7 @@ const AddProductPage = () => {
     }
   }, [map, center]);
 
+
   useEffect(() => {
     if (location.length > 0) {
       if (results !== []) {
@@ -377,7 +378,13 @@ const AddProductPage = () => {
         <Labels htmlFor="images" className="mt-3">
           Choose Product Images
         </Labels>
-        <input className="form-control" type="file" id="images" multiple />
+        <input
+          className="form-control"
+          type="file"
+          id="images"
+          multiple
+          required
+        />
         <div className="form-section mt-3">
           <Labels htmlFor="location">Enter Location Of Product</Labels>
           <InputField
