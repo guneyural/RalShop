@@ -33,7 +33,9 @@ const WishlistPage = () => {
 
   useEffect(() => {
     setWishlistItems(Wishlist.products);
+ 
   }, [Wishlist]);
+ 
   useEffect(() => {
     const regex = new RegExp(escapeRegex(searchQuery), "gi");
     if (searchQuery.length < 1) {
@@ -43,7 +45,6 @@ const WishlistPage = () => {
         Wishlist.products.filter((item) => item.title.match(regex))
       );
     }
-    console.log(wishlistItems.filter((item) => item.title.match(regex)));
   }, [searchQuery]);
 
   return (
