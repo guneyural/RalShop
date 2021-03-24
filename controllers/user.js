@@ -14,7 +14,7 @@ const moment = require("moment");
 const { cloudinary } = require("../cloudinary");
 
 const register = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, Products } = req.body;
   const { error } = UserValidation.validate(req.body);
   if (!req.body.username || !email || !password) {
     return next(new expressError("Fill All Fields", 400));
@@ -53,7 +53,20 @@ const register = catchAsync(async (req, res, next) => {
   const saveUser = await createUser.save();
 
   Wishlist.create({ owner: saveUser._id });
-  Cart.create({ user: saveUser._id });
+  const newCart = new Cart({ user: saveUser._id });
+  let sum = 0;
+  if (Products) {
+    Products.forEach((item) => {
+      sum += item.price;
+      newCart.items.push({
+        product: item._id,
+        color: item.color,
+        quantity: item.qty,
+      });
+    });
+    newCart.cartTotal = sum;
+  }
+  newCart.save();
 
   const token = jwt.sign({ id: saveUser._id }, process.env.SECRET, {
     expiresIn: "5d",
@@ -63,7 +76,7 @@ const register = catchAsync(async (req, res, next) => {
 });
 
 const login = catchAsync(async (req, res, next) => {
-  const { emailOrUsername, password } = req.body;
+  const { emailOrUsername, password, Products } = req.body;
   if (!emailOrUsername || !password)
     return next(new expressError("Fill All Fields.", 400));
 
@@ -75,6 +88,23 @@ const login = catchAsync(async (req, res, next) => {
   const comparePassword = await bcrypt.compare(password, findUser.password);
   if (!comparePassword)
     return next(new expressError("Wrong Password Or Email.", 400));
+
+  if (Products) {
+    const getCart = await Cart.findOne({ user: findUser._id });
+    let sum = 0;
+    if (Products) {
+      Products.forEach((item) => {
+        sum += item.price;
+        getCart.items.push({
+          product: item._id,
+          color: item.color,
+          quantity: item.qty,
+        });
+      });
+      getCart.cartTotal = sum;
+    }
+    getCart.save();
+  }
 
   const token = jwt.sign({ id: findUser._id }, process.env.SECRET, {
     expiresIn: "5d",
