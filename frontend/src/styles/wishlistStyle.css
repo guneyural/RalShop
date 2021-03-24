@@ -16,8 +16,13 @@
   align-items: center;
 }
 
-.wishlist-container {
+.wishlist-container,
+.cart-container {
   margin-top: 20px;
+}
+
+.cart-container .no-item {
+  text-align: center;
 }
 
 .wishlist-container .no-item {
