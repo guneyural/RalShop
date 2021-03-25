@@ -54,17 +54,14 @@ const register = catchAsync(async (req, res, next) => {
 
   Wishlist.create({ owner: saveUser._id });
   const newCart = new Cart({ user: saveUser._id });
-  let sum = 0;
   if (Products) {
     Products.forEach((item) => {
-      sum += item.price;
       newCart.items.push({
         product: item._id,
         color: item.color,
         quantity: item.qty,
       });
     });
-    newCart.cartTotal = sum;
   }
   newCart.save();
 
@@ -91,17 +88,14 @@ const login = catchAsync(async (req, res, next) => {
 
   if (Products) {
     const getCart = await Cart.findOne({ user: findUser._id });
-    let sum = 0;
     if (Products) {
       Products.forEach((item) => {
-        sum += item.price;
         getCart.items.push({
           product: item._id,
           color: item.color,
           quantity: item.qty,
         });
       });
-      getCart.cartTotal = sum;
     }
     getCart.save();
   }

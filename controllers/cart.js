@@ -14,16 +14,13 @@ const updateCard = catchAsync(async (req, res, next) => {
   if (!getCart) return next(new expressError("Cart Not Found", 404));
   const { products } = req.body;
   getCart.items = [];
-  let sum = 0;
   products.forEach((item) => {
-    sum += item.price;
     getCart.items.push({
       product: item._id,
       color: item.color,
       quantity: item.qty,
     });
   });
-  getCart.cartTotal = sum;
   const savedCart = await getCart.save();
   const returnedCart = await Cart.findById(savedCart._id).populate("items");
   res.json(returnedCart);
