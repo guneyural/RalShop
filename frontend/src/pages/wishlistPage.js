@@ -8,6 +8,7 @@ import { removeAllItems } from "../redux/actions/wishlistAction";
 import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import { priceConverter } from "../utils/helpers";
 import { removeItem } from "../redux/actions/wishlistAction";
+import { addItem as addCartItem } from "../redux/actions/ShoppingCartActions";
 
 const ItemCount = Styled.span`
   padding-left: 10px;
@@ -45,6 +46,21 @@ const WishlistPage = () => {
       );
     }
   }, [searchQuery]);
+
+  const moveToCart = (product) => {
+    dispatch(
+      addCartItem({
+        product: product._id,
+        price: product.price,
+        stock: product.stock,
+        title: product.title,
+        image: product.images[0].url,
+        color: product.colors.split(",")[0],
+        qty: 1,
+      })
+    );
+    dispatch(removeItem(product._id));
+  };
 
   return (
     <>
@@ -193,16 +209,19 @@ const WishlistPage = () => {
                       >
                         Delete
                       </span>
-                      <span
-                        style={{
-                          display: "inline-block",
-                          marginLeft: "8px",
-                          cursor: "pointer",
-                        }}
-                        className="option-2"
-                      >
-                        Move To Cart
-                      </span>
+                      {item.stock > 0 && (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            marginLeft: "8px",
+                            cursor: "pointer",
+                          }}
+                          className="option-2"
+                          onClick={() => moveToCart(item)}
+                        >
+                          Move To Cart
+                        </span>
+                      )}
                     </section>
                   </section>
                 </section>

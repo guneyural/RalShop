@@ -32,6 +32,7 @@ import { BsStarFill, BsStarHalf, BsStar, BsTrashFill } from "react-icons/bs";
 import MessageBox from "../components/messageBox";
 import ReactMarkdown from "react-markdown";
 import { addItem, removeItem } from "../redux/actions/wishlistAction";
+import { addItem as addCartItem } from "../redux/actions/ShoppingCartActions";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -186,6 +187,7 @@ const ProductPage = () => {
   const Review = useSelector((state) => state.ProductReview);
   const User = useSelector((state) => state.Auth);
   const Wishlist = useSelector((state) => state.Wishlist);
+  const Cart = useSelector((state) => state.Cart);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [tab, setTab] = useState("description");
@@ -869,6 +871,19 @@ const ProductPage = () => {
                 <button
                   className="default-btn w-100 pt-1 pb-1"
                   style={{ fontSize: "18px" }}
+                  onClick={() =>
+                    dispatch(
+                      addCartItem({
+                        product: Product._id,
+                        price: Product.price,
+                        stock: Product.stock,
+                        title: Product.title,
+                        image: Product.images[0].url,
+                        color,
+                        qty,
+                      })
+                    )
+                  }
                   disabled={Product.stock < 1 ? true : false}
                 >
                   Add To Cart
