@@ -48,16 +48,12 @@ const App = () => {
     dispatch(notSellerRoute());
   }, [dispatch]);
   useEffect(() => {
-    if (User.isAuthenticated) {
-      dispatch(getUser());
-      dispatch(getWishlist());
-      dispatch(getCart());
-    }
+    dispatch(getUser());
+    dispatch(getWishlist());
+    dispatch(getCart());
   }, [dispatch, User.isAuthenticated]);
   useEffect(() => {
-    if (Seller.isAuthenticated) {
-      dispatch(getCurrentSeller());
-    }
+    dispatch(getCurrentSeller());
   }, [dispatch, Seller.isAuthenticated]);
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
