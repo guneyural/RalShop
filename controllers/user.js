@@ -26,7 +26,7 @@ const register = catchAsync(async (req, res, next) => {
           error.details[0].message.split(" ").length - 1
         ] === "email"
           ? "Email Must Be A Valid Email"
-          : "Username Must Be Less Than 30 Characters",
+          : "Username Must Be Less Than 15 Characters",
         400
       )
     );
@@ -57,7 +57,7 @@ const register = catchAsync(async (req, res, next) => {
   if (Products) {
     Products.forEach((item) => {
       newCart.items.push({
-        product: item._id,
+        product: item.product,
         color: item.color,
         quantity: item.qty,
       });
@@ -87,16 +87,27 @@ const login = catchAsync(async (req, res, next) => {
     return next(new expressError("Wrong Password Or Email.", 400));
 
   if (Products) {
+    let temp = "",
+      secondTemp = "",
+      isDuplicate = false;
     const getCart = await Cart.findOne({ user: findUser._id });
-    if (Products) {
-      Products.forEach((item) => {
+    Products.forEach((item) => {
+      secondTemp = `${item.product}${item.color}`;
+      getCart.items.forEach((cartItem) => {
+        temp = `${cartItem.product}${cartItem.color}`;
+        if (secondTemp === temp) {
+          isDuplicate = true;
+        }
+      });
+      if (!isDuplicate) {
         getCart.items.push({
-          product: item._id,
+          product: item.product,
           color: item.color,
           quantity: item.qty,
         });
-      });
-    }
+      }
+    });
+
     getCart.save();
   }
 

@@ -55,7 +55,7 @@ const WishlistPage = () => {
         stock: product.stock,
         title: product.title,
         image: product.images[0].url,
-        color: product.colors.split(",")[0],
+        color: product.colors[0].split(",")[0].substring(1),
         qty: 1,
       })
     );
