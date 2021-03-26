@@ -67,6 +67,23 @@ export const Cart = (state = initialState, action) => {
         products: [],
       };
     case GET_CART:
+      action.payload.items.forEach((item) => {
+        tempList.push({
+          product: item.product._id,
+          price: item.product.price,
+          stock: item.product.stock,
+          title: item.product.title,
+          image: item.product.images[0].url,
+          color: item.color,
+          qty: item.quantity,
+        });
+      });
+
+      return {
+        ...state,
+        loading: false,
+        products: [...tempList],
+      };
     case INCREASE_CART_ITEM:
       temp = `${action.payload.id}${action.payload.clr}`;
       state.products.forEach((item) => {

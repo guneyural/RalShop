@@ -11,6 +11,8 @@ import {
   increaseCartItem,
   decreaseCartItem,
 } from "../redux/actions/ShoppingCartActions";
+import { addItem } from "../redux/actions/wishlistAction";
+import axios from "axios";
 
 const ItemCount = Styled.span`
   padding-left: 10px;
@@ -61,11 +63,13 @@ const ColorPreview = Styled.span`
 
 const ShoppingCartPage = () => {
   const Cart = useSelector((state) => state.Cart);
+  const Wishlist = useSelector((state) => state.Wishlist);
   const User = useSelector((state) => state.Auth);
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
+  const [cartItemsLength, setCartItemsLength] = useState(0);
 
   function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -74,8 +78,13 @@ const ShoppingCartPage = () => {
   useEffect(() => {
     setCartItems(Cart.products);
     let sum = 0;
-    Cart.products.map((item) => (sum += item.price));
+    let itemSum = 0;
+    Cart.products.forEach((item) => {
+      sum += item.price * item.qty;
+      itemSum += item.qty;
+    });
     setCartTotal(sum);
+    setCartItemsLength(itemSum);
   }, [Cart]);
 
   useEffect(() => {
@@ -87,12 +96,48 @@ const ShoppingCartPage = () => {
     }
   }, [searchQuery]);
 
+  const moveToWishlist = (product) => {
+    let tempWishlist = [];
+    const wishlistProducts = Wishlist.products;
+    let isInWishlist = false;
+    if (wishlistProducts.length < 1) {
+      isInWishlist = false;
+    } else {
+      wishlistProducts.some((item) =>
+        item._id === product.product
+          ? (isInWishlist = true)
+          : (isInWishlist = false)
+      );
+    }
+    if (!isInWishlist) {
+      tempWishlist = [{ _id: product.product }, ...wishlistProducts];
+      axios
+        .post("/api/wishlist/update", { products: tempWishlist }, tokenConfig())
+        .then((res) => res.data)
+        .then((data) => {
+          dispatch(addItem(data.products[0]));
+        });
+      dispatch(removeCartItem(product.product, product.color));
+    }
+  };
+
+  const tokenConfig = () => {
+    const token = localStorage.getItem("user-token");
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    if (token) config.headers["user-token"] = token;
+    return config;
+  };
+
   return (
     <>
       <div className="wishlist-top">
         <section className="left">
           <h4>Shopping Cart</h4>
-          <ItemCount>({cartItems.length} Items)</ItemCount>
+          <ItemCount>({cartItemsLength} Items)</ItemCount>
         </section>
         <section
           style={{
@@ -126,7 +171,7 @@ const ShoppingCartPage = () => {
         >
           <section>
             <p style={{ fontWeight: "500" }}>
-              Subtotal ({Cart.products.length} items): <br />
+              Subtotal ({cartItemsLength} items): <br />
               <span style={{ fontWeight: "bold" }}>
                 {priceConverter(cartTotal)}
               </span>
@@ -286,16 +331,19 @@ const ShoppingCartPage = () => {
                         >
                           Delete
                         </span>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            marginLeft: "8px",
-                            cursor: "pointer",
-                          }}
-                          className="option-2"
-                        >
-                          Move To Wishlist
-                        </span>
+                        {User.isAuthenticated && (
+                          <span
+                            style={{
+                              display: "inline-block",
+                              marginLeft: "8px",
+                              cursor: "pointer",
+                            }}
+                            className="option-2"
+                            onClick={() => moveToWishlist(item)}
+                          >
+                            Move To Wishlist
+                          </span>
+                        )}
                       </section>
                     </section>
                   </section>

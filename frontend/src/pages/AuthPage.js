@@ -28,6 +28,7 @@ const AuthPage = () => {
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const Auth = useSelector((state) => state.Auth);
+  const Cart = useSelector((state) => state.Cart);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -143,8 +144,21 @@ const AuthPage = () => {
                 disabled={btnDisabled}
                 onClick={() =>
                   isLogin
-                    ? dispatch(userLogin({ emailOrUsername, password }))
-                    : dispatch(registerUser({ email, username, password }))
+                    ? dispatch(
+                        userLogin({
+                          emailOrUsername,
+                          password,
+                          Products: Cart.products,
+                        })
+                      )
+                    : dispatch(
+                        registerUser({
+                          email,
+                          username,
+                          password,
+                          Products: Cart.products,
+                        })
+                      )
                 }
               >
                 {Auth.loading ? "Loading..." : isLogin ? "Login" : "Register"}
