@@ -108,7 +108,7 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
               </section>
             </section>
             <section className="navbar-middle seller">
-              <Link to="/seller/messages">Messages</Link>
+              <Link to="/chat/seller">Chat</Link>
               <Link to="/seller/notifications">Notifications</Link>
               <Link to="/seller/profile">Profile</Link>
             </section>
@@ -193,8 +193,8 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
             <Link to="/seller/products/add" className="seller-mobile-link">
               Add Product
             </Link>
-            <Link to="/seller/messages" className="seller-mobile-link">
-              Messages
+            <Link to="/chat/seller" className="seller-mobile-link">
+              Chat
             </Link>
             <Link to="/seller/notifications" className="seller-mobile-link">
               Notifications

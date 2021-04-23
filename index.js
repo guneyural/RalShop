@@ -9,12 +9,21 @@ const expressError = require("./utils/expressError");
 const Routes = require("./routes");
 const helmet = require("helmet");
 const sanitize = require("express-mongo-sanitize");
+const http = require("http");
+const server = http.createServer(app);
+const socket = require("socket.io");
 
 app.use(helmet());
 app.use(sanitize());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const io = socket(server);
+
+io.on("connection", (socket) => {
+  console.log(socket.id);
+});
 
 mongoose
   .connect(DATABASE, {
@@ -46,4 +55,4 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ statusCode, errorMessage: err.message });
 });
 
-app.listen(PORT, () => console.log(`Server on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server on port ${PORT}`));

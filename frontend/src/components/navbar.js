@@ -8,6 +8,7 @@ import {
   FaShoppingCart,
   FaHeart,
 } from "react-icons/fa";
+import { BsFillChatFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { categories, subCategories } from "../data/category";
 import { CgMenuGridR } from "react-icons/cg";
@@ -162,6 +163,9 @@ const Navbar = () => {
                     <FaUserCircle /> Login
                   </Link>
                 )}
+                <Link to="/chat">
+                  <BsFillChatFill /> Chat
+                </Link>
                 <Link to="/wishlist">
                   <FaHeart /> Wishlist
                 </Link>
@@ -230,6 +234,11 @@ const Navbar = () => {
               <Link to="/categories">
                 <li>
                   <CgMenuGridR className="mobile-nav-icon" /> Categories
+                </li>
+              </Link>
+              <Link to="/chat">
+                <li>
+                  <BsFillChatFill /> Chat
                 </li>
               </Link>
               {isAuthenticated && user !== null ? (
