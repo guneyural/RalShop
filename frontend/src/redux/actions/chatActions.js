@@ -9,7 +9,30 @@ import {
 } from "./types";
 import axios from "axios";
 
-export const createChatroom = (creatorId, participantId) => (dispatch) => {};
+export const createChatroom = (participantId, isShop) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .post(
+      "/api/chat/createRoom",
+      { participantId },
+      isShop ? shopConfig() : userConfig()
+    )
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: CREATE_CHATROOM, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: CHAT_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
 export const getChatrooms = (isShop) => (dispatch) => {
   dispatch({ type: LOADING });
 
@@ -29,7 +52,32 @@ export const getChatrooms = (isShop) => (dispatch) => {
       });
     });
 };
-export const setActiveChatroom = () => (dispatch) => {};
+export const setActiveChatroom = (roomId, isShop) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .get(
+      `/api/chat/getMessages/${roomId}`,
+      isShop ? shopConfig() : userConfig()
+    )
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: SET_ACTIVE_CHATROOM,
+        payload: { roomId, messages: data },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: CHAT_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
 export const sendMessage = () => (dispatch) => {};
 export const getMessages = () => (dispatch) => {};
 
@@ -54,13 +102,3 @@ const userConfig = () => {
   if (userToken) config.headers["user-token"] = userToken;
   return config;
 };
-
-/*
-
-  send message about this product => tıklandığında
-  Backend tarafında yeni bir chatroom oluştur 
-  Frontend için aktif chat room'u oluşturulan oda olarak ayarla 
-
-  Tıklayan kişinin ID'sini ve Satıcının ID'sini al
-
-*/

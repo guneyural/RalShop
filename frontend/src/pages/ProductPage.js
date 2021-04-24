@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductById } from "../redux/actions/productActions";
 import NotFound from "./NotFound";
@@ -33,6 +33,7 @@ import MessageBox from "../components/messageBox";
 import ReactMarkdown from "react-markdown";
 import { addItem, removeItem } from "../redux/actions/wishlistAction";
 import { addItem as addCartItem } from "../redux/actions/ShoppingCartActions";
+import { createChatroom } from "../redux/actions/chatActions";
 
 const NavDivider = Styled.span`
      font-weight:bold;
@@ -180,6 +181,7 @@ const RatingBarYellow = Styled.section`
 
 const ProductPage = () => {
   const { id } = useParams();
+  let history = useHistory();
   const { error, loading, wishlistCount } = useSelector(
     (state) => state.Product
   );
@@ -187,7 +189,7 @@ const ProductPage = () => {
   const Review = useSelector((state) => state.ProductReview);
   const User = useSelector((state) => state.Auth);
   const Wishlist = useSelector((state) => state.Wishlist);
-  const Cart = useSelector((state) => state.Cart);
+  const { inSellerRoute } = useSelector((state) => state.Seller);
   const dispatch = useDispatch();
   const [index, setIndex] = useState(0);
   const [tab, setTab] = useState("description");
@@ -410,6 +412,11 @@ const ProductPage = () => {
   const removeReview = (reviewId) => {
     setReviewId(reviewId);
     setIsModalOpen(true);
+  };
+
+  const communicateSeller = () => {
+    dispatch(createChatroom(Product.shop._id, inSellerRoute));
+    history.push("/chat");
   };
 
   if (loading) {
@@ -819,9 +826,13 @@ const ProductPage = () => {
                 <p style={{ marginTop: "-8px" }}>{Product.shop.fullname}</p>
                 <p style={{ marginTop: "-10px" }}>{Product.shop.phoneNumber}</p>
                 <p style={{ marginTop: "-10px", marginBottom: "0px" }}>
-                  <Link to="/" id="product-link">
+                  <span
+                    style={{ color: "#0d6efd", cursor: "pointer" }}
+                    id="product-link"
+                    onClick={() => communicateSeller()}
+                  >
                     Send Message About This Product
-                  </Link>
+                  </span>
                 </p>
               </section>
             </div>

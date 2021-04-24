@@ -10,10 +10,21 @@ import {
 
 const initialState = {
   chatrooms: [],
+  createdRoom: null,
   activeChat: { roomId: null, messages: [] },
   loading: false,
   error: { msg: null, status: null },
 };
+
+/*
+
+  Chatroom Id geçerli mi kontrol et
+  Chatroom ID ile bul yoksa redirect et /chat sayfasına
+  Request Headerındaki kullanıcının ID'si creator ya da participantId ile eşleşiyorsa devam et yoksa /chat sayfasına redirect
+  Mesajlaşma sayfası açılınca bütün mesajları bir daha fetch et
+  Mesajlaşma sayfası açılınca socket'i bağla
+
+*/
 
 export function Chat(state = initialState, action) {
   switch (action.type) {
@@ -26,12 +37,20 @@ export function Chat(state = initialState, action) {
       return {
         ...state,
         loading: false,
+        createdRoom: action.payload,
+        chatrooms: [action.payload, ...state.chatrooms],
+        error: { msg: null, status: null },
       };
     case GET_CHATROOMS:
+      let tempRooms =
+        state.createdRoom !== null
+          ? [state.createdRoom, ...action.payload]
+          : [...action.payload];
       return {
         ...state,
         loading: false,
-        chatrooms: [...action.payload],
+        chatrooms: [...tempRooms],
+        activeChat: { roomId: null, messages: [] },
         error: { msg: null, status: null },
       };
     case GET_MESSAGES:
@@ -48,6 +67,12 @@ export function Chat(state = initialState, action) {
       return {
         ...state,
         loading: false,
+        createdRoom: null,
+        activeChat: {
+          roomId: action.payload.roomId,
+          messages: [...action.payload.messages],
+        },
+        error: { msg: null, status: null },
       };
     case CHAT_ERROR:
       return {
