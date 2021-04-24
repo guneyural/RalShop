@@ -2,16 +2,8 @@ const mongoose = require("mongoose");
 
 const ChatroomSchema = new mongoose.Schema(
   {
-    creator: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    participant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    participant: { type: mongoose.Schema.Types.ObjectId, ref: "Shop" },
   },
   { timestamps: true }
 );

@@ -24,9 +24,15 @@ const createRoom = catchAsync(async (req, res, next) => {
       participant: req.body.participantId,
     });
     const chatroom = await newChatroom.save();
-    return res.json(chatroom);
+
+    // Return new chatroom as populated
+    const populated = await chatroom.execPopulate("participant");
+    return res.json(populated);
   }
-  return res.json(findChatroom);
+
+  // Return chatroom as populated
+  const populated = await findChatroom.execPopulate("participant");
+  res.json(populated);
 });
 
 const getChatrooms = catchAsync(async (req, res, next) => {
