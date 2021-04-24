@@ -37,6 +37,7 @@ import AddProductPage from "./pages/seller/AddProductPage";
 import ProductPage from "./pages/ProductPage";
 import ShoppingCartPage from "./pages/ShoppingCartPage";
 import Messenger from "./pages/Messenger";
+import Messaging from "./pages/Messaging";
 
 require("dotenv").config();
 
@@ -141,12 +142,26 @@ const App = () => {
           />
           <SellerRoute
             path="/chat/seller"
+            exact
             component={Messenger}
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <PrivateRoute
             path="/chat"
+            exact
             component={Messenger}
+            auth={User.isAuthenticated}
+          />
+          <SellerRoute
+            path="/chat/seller/message/:roomId"
+            exact
+            component={Messaging}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <PrivateRoute
+            path="/chat/message/:roomId"
+            exact
+            component={Messaging}
             auth={User.isAuthenticated}
           />
           <PasswordResetRoute
