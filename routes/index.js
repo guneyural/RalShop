@@ -4,6 +4,7 @@ const ShopRoutes = require("./shopRoutes");
 const UserRoutes = require("./userRoutes");
 const ReviewRoutes = require("./reviewRoutes");
 const WishlistRoutes = require("./wishlistRoutes");
+const ChatRoutes = require("./chatRoutes");
 
 module.exports = {
   CartRoutes,
@@ -12,4 +13,5 @@ module.exports = {
   UserRoutes,
   ReviewRoutes,
   WishlistRoutes,
+  ChatRoutes,
 };
