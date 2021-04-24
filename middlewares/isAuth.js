@@ -35,10 +35,6 @@ module.exports.isLoggedIn = function (req, res, next) {
   const userToken = req.headers["user-token"];
   const shopToken = req.headers["shop-token"];
 
-  if (!userToken && !shopToken) {
-    next(new expressError("Login To See The Content", 401));
-  }
-
   try {
     const decoded = jwt.verify(
       userToken ? userToken : shopToken,
