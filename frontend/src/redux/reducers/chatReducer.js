@@ -12,7 +12,7 @@ import {
 const initialState = {
   chatrooms: [],
   createdRoom: null,
-  activeChat: { roomId: null, messages: [] },
+  activeChat: { roomId: null, participant: null, messages: [] },
   loading: false,
   error: { msg: null, status: null },
 };
@@ -41,7 +41,6 @@ export function Chat(state = initialState, action) {
         ...state,
         loading: false,
         chatrooms: [...tempRooms],
-        activeChat: { roomId: null, messages: [] },
         error: { msg: null, status: null },
       };
     case GET_MESSAGES:
@@ -59,7 +58,7 @@ export function Chat(state = initialState, action) {
         ...state,
         loading: false,
         createdRoom: null,
-        activeChat: { roomId: null, messages: [] },
+        activeChat: { roomId: null, participant: null, messages: [] },
         error: { msg: null, status: null },
       };
     case SET_ACTIVE_CHATROOM:
@@ -69,6 +68,7 @@ export function Chat(state = initialState, action) {
         createdRoom: null,
         activeChat: {
           roomId: action.payload.roomId,
+          participant: action.payload.participant,
           messages: [...action.payload.messages],
         },
         error: { msg: null, status: null },

@@ -53,7 +53,9 @@ export const getChatrooms = (isShop) => (dispatch) => {
       });
     });
 };
-export const setActiveChatroom = (roomId, isShop) => (dispatch) => {
+export const setActiveChatroom = (roomId, participant, isShop) => (
+  dispatch
+) => {
   dispatch({ type: LOADING });
 
   axios
@@ -65,7 +67,7 @@ export const setActiveChatroom = (roomId, isShop) => (dispatch) => {
     .then((data) => {
       dispatch({
         type: SET_ACTIVE_CHATROOM,
-        payload: { roomId, messages: data },
+        payload: { roomId, participant, messages: data },
       });
     })
     .catch((err) => {
