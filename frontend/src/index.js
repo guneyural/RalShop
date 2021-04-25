@@ -10,6 +10,7 @@ import "./styles/sellerRegister.css";
 import "./styles/sellerNavbar.css";
 import "./styles/ProductPage.css";
 import "./styles/wishlistStyle.css";
+import "./styles/chat.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
