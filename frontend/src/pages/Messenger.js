@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import LoadingIcon from "../assets/loading.gif";
 import { getChatrooms, setActiveChatroom } from "../redux/actions/chatActions";
 import Styled from "styled-components";
-import io from "socket.io-client";
 import { BiMessageDetail } from "react-icons/bi";
 import { HiDotsVertical } from "react-icons/hi";
 
@@ -50,21 +49,19 @@ const Messenger = () => {
   const Chat = useSelector((state) => state.Chat);
   const { inSellerRoute } = useSelector((state) => state.Seller);
   const dispatch = useDispatch();
-  const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = io.connect("/");
     dispatch(getChatrooms(inSellerRoute));
   }, []);
 
   useEffect(() => {
     if (Chat.createdRoom !== null) {
-      activeChat(Chat.createdRoom._id);
+      activeChat(Chat.createdRoom._id, Chat.createdRoom.participant);
     }
   }, [Chat]);
 
-  const activeChat = (roomId) => {
-    dispatch(setActiveChatroom(roomId, inSellerRoute));
+  const activeChat = (roomId, participant) => {
+    dispatch(setActiveChatroom(roomId, participant, inSellerRoute));
     history.push(
       inSellerRoute
         ? `/chat/seller/message/${roomId}`
@@ -91,7 +88,7 @@ const Messenger = () => {
               <ChatroomBox
                 key={index}
                 className="border-bottom"
-                onClick={() => activeChat(room._id)}
+                onClick={() => activeChat(room._id, room.participant)}
               >
                 <section>
                   <BiMessageDetail
