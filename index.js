@@ -22,7 +22,14 @@ app.use(express.urlencoded({ extended: true }));
 const io = socket(server);
 
 io.on("connection", (socket) => {
-  console.log(socket.id);
+  socket.on("join room", (roomId) => {
+    console.log(`Bir odaya katılıyoruz. ID:${roomId}`);
+    socket.join(roomId);
+
+    socket.on("send message", (body) => {
+      io.to(roomId).emit("message", body);
+    });
+  });
 });
 
 mongoose
