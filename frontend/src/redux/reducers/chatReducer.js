@@ -4,6 +4,7 @@ import {
   GET_CHATROOMS,
   GET_MESSAGES,
   SET_ACTIVE_CHATROOM,
+  FORBIDDEN_ROOM,
   LOADING,
   CHAT_ERROR,
 } from "../actions/types";
@@ -15,16 +16,6 @@ const initialState = {
   loading: false,
   error: { msg: null, status: null },
 };
-
-/*
-
-  Chatroom Id geçerli mi kontrol et
-  Chatroom ID ile bul yoksa redirect et /chat sayfasına
-  Request Headerındaki kullanıcının ID'si creator ya da participantId ile eşleşiyorsa devam et yoksa /chat sayfasına redirect
-  Mesajlaşma sayfası açılınca bütün mesajları bir daha fetch et
-  Mesajlaşma sayfası açılınca socket'i bağla
-
-*/
 
 export function Chat(state = initialState, action) {
   switch (action.type) {
@@ -62,6 +53,14 @@ export function Chat(state = initialState, action) {
       return {
         ...state,
         loading: true,
+      };
+    case FORBIDDEN_ROOM:
+      return {
+        ...state,
+        loading: false,
+        createdRoom: null,
+        activeChat: { roomId: null, messages: [] },
+        error: { msg: null, status: null },
       };
     case SET_ACTIVE_CHATROOM:
       return {

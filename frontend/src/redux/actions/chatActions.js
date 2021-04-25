@@ -4,6 +4,7 @@ import {
   GET_CHATROOMS,
   GET_MESSAGES,
   SET_ACTIVE_CHATROOM,
+  FORBIDDEN_ROOM,
   LOADING,
   CHAT_ERROR,
 } from "./types";
@@ -80,6 +81,10 @@ export const setActiveChatroom = (roomId, isShop) => (dispatch) => {
 
 export const sendMessage = () => (dispatch) => {};
 export const getMessages = () => (dispatch) => {};
+
+export const forbiddenRoom = () => {
+  return { type: FORBIDDEN_ROOM };
+};
 
 const shopConfig = () => {
   const shopToken = localStorage.getItem("shop-token");

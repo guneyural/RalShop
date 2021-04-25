@@ -16,7 +16,7 @@ const createRoom = catchAsync(async (req, res, next) => {
   }
   const user = req.user ? req.user : req.shop;
   const findChatroom = await Chatroom.findOne({
-    $or: [{ creator: user.id }, { participant: req.body.participantId }],
+    $and: [{ creator: user.id }, { participant: req.body.participantId }],
   });
   if (!findChatroom) {
     const newChatroom = new Chatroom({
@@ -61,6 +61,7 @@ const getChatrooms = catchAsync(async (req, res, next) => {
 });
 
 const getMessages = catchAsync(async (req, res, next) => {
+  // Check if user with that id exists
   if (req.user) {
     const getUser = await User.findById(req.user.id);
     if (!getUser) return next(new expressError("User Does Not Exist", 404));
@@ -69,9 +70,25 @@ const getMessages = catchAsync(async (req, res, next) => {
     const getShop = await Shop.findById(req.shop.id);
     if (!getShop) return next(new expressError("Shop Does Not Exist", 404));
   }
+  // Get userId and roomId
+  const user = req.user ? req.user : req.shop;
   const roomId = req.params.chatroom;
-  const messages = await Message.find({ chatroom: roomId });
-  res.json(messages);
+  //Get Chatroom by id and get participants
+  const getChatroom = await Chatroom.findById(roomId);
+  let participants = [getChatroom.creator, getChatroom.participant];
+  //Check if current user is one of the participants
+  let isParticipant = participants.some((participant) => {
+    return user.id == participant;
+  });
+
+  if (isParticipant) {
+    const messages = await Message.find({ chatroom: roomId }).sort({
+      createdAt: "desc",
+    });
+    return res.json(messages);
+  } else {
+    return next(new expressError("Not Participant Of This Chatroom.", 403));
+  }
 });
 
 module.exports = {

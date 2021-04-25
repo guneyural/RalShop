@@ -79,4 +79,5 @@ export const GET_CHATROOMS = "GET_CHATROOMS";
 export const GET_MESSAGES = "GET_MESSAGES";
 export const SET_ACTIVE_CHATROOM = "SET_ACTIVE_CHATROOM";
 export const CHAT_ERROR = "CHAT_ERROR";
+export const FORBIDDEN_ROOM = "FORBIDDEN_ROOM";
 //===CHAT===
