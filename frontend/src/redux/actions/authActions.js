@@ -17,6 +17,7 @@ import {
   USER_ADD_PROFILE_PHOTO,
   REMOVE_PROFILE_PHOTO,
 } from "./types";
+import { sellerLogout } from "./sellerActions";
 import axios from "axios";
 
 export const getUser = () => (dispatch) => {
@@ -44,6 +45,7 @@ export const userLogin = (loginData) => (dispatch) => {
     .post("/api/user/login", loginData)
     .then((res) => res.data)
     .then((data) => {
+      dispatch(sellerLogout());
       dispatch({ type: USER_LOGIN, payload: data });
     })
     .catch((err) => {
@@ -63,6 +65,7 @@ export const registerUser = (registerData) => (dispatch) => {
     .post("/api/user/register", registerData)
     .then((res) => res.data)
     .then((data) => {
+      dispatch(sellerLogout());
       dispatch({ type: REGISTER_USER, payload: data });
     })
     .catch((err) => {

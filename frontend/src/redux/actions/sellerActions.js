@@ -14,6 +14,7 @@ import {
   SELLER_ROUTE,
   LOADING,
 } from "./types";
+import { logoutUser } from "./authActions";
 import axios from "axios";
 
 export const getCurrentSeller = () => (dispatch) => {
@@ -40,7 +41,10 @@ export const sellerRegister = (data) => (dispatch) => {
   axios
     .post("/api/shop/create", data)
     .then((res) => res.data)
-    .then((data) => dispatch({ type: SELLER_REGISTER, payload: data }))
+    .then((data) => {
+      dispatch(logoutUser());
+      dispatch({ type: SELLER_REGISTER, payload: data });
+    })
     .catch((err) => {
       dispatch({
         type: SELLER_ERROR,
@@ -59,6 +63,7 @@ export const sellerLogin = (email, password) => (dispatch) => {
     .post("/api/shop/login", { email, password })
     .then((res) => res.data)
     .then((data) => {
+      dispatch(logoutUser());
       dispatch({ type: SELLER_LOGIN, payload: data });
     })
     .catch((err) => {
