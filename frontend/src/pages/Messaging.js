@@ -16,26 +16,53 @@ const FullName = Styled.p`
   font-size: 15px;
   font-weight:500;
 `;
+const ActiveIndicator = Styled.div`
+  padding: 0 !important;
+  margin: 0 !important;  
+  height: 10px;
+  width: 10px;
+  border-radius:50%;
+  margin-left: 3px !important;
+`;
 
 const Messaging = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { Seller, Auth } = useSelector((state) => state);
   const Chat = useSelector((state) => state.Chat);
   const { inSellerRoute } = useSelector((state) => state.Seller);
   const socketRef = useRef();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isOnline, setIsOnline] = useState(false);
   let { roomId } = useParams();
 
   useEffect(() => {
     socketRef.current = io.connect("/");
-
-    socketRef.current.on("your id", (myId) => console.log(myId));
-    socketRef.current.emit("join room", roomId);
-    socketRef.current.on("message", (message) =>
-      setMessages((oldMessages) => [...oldMessages, message])
+    socketRef.current.emit(
+      "user connected",
+      inSellerRoute ? Seller.shop._id : Auth.user._id
     );
+    socketRef.current.emit("join room", roomId);
+
+    socketRef.current.on("message sent", (message) => {
+      console.log(message);
+    });
   }, []);
+
+  useEffect(() => {
+    socketRef.current.on("user data", (users) => {
+      if (Chat.activeChat.participant !== null) {
+        if (users[Chat.activeChat.participant._id]) {
+          setIsOnline(true);
+          console.log("SEN VARYA ");
+        } else {
+          setIsOnline(false);
+          console.log("HOCAM BU HERIF OFFLINE ANASINI SATIM");
+        }
+      }
+    });
+  }, [Chat.activeChat]);
 
   useEffect(() => {
     if (Chat.error.status === 403) {
@@ -49,29 +76,41 @@ const Messaging = () => {
     socketRef.current.emit("send message", message);
   };
 
+  const leftRoomButton = () => {
+    socketRef.current.emit("left room", roomId);
+    history.push("/chat");
+  };
+
   return (
     <div className="message-section">
       <div className="message-section-top">
         <section style={{ display: "flex", alignItems: "center" }}>
           <BiLeftArrowAlt
-            onClick={() => history.push("/chat")}
+            onClick={() => leftRoomButton()}
             style={{ fontSize: "30px", cursor: "pointer" }}
             className="chat-back-button"
           />
           <BiMessageDetail style={{ fontSize: "25px", marginLeft: "10px" }} />
           {Chat.activeChat.participant !== null ? (
-            <section
-              style={{ marginLeft: "8px", position: "relative", top: "8px" }}
-            >
-              <CompanyName>
-                {inSellerRoute
-                  ? Chat.activeChat.creator.username
-                  : Chat.activeChat.participant.companyName}
-              </CompanyName>
-              {!inSellerRoute && (
-                <FullName>{Chat.activeChat.participant.fullname}</FullName>
-              )}
-            </section>
+            <>
+              <ActiveIndicator
+                style={
+                  isOnline ? { background: "green" } : { background: "gray" }
+                }
+              ></ActiveIndicator>
+              <section
+                style={{ marginLeft: "8px", position: "relative", top: "8px" }}
+              >
+                <CompanyName>
+                  {inSellerRoute
+                    ? Chat.activeChat.creator.username
+                    : Chat.activeChat.participant.companyName}
+                </CompanyName>
+                {!inSellerRoute && (
+                  <FullName>{Chat.activeChat.participant.fullname}</FullName>
+                )}
+              </section>
+            </>
           ) : (
             "Loading..."
           )}

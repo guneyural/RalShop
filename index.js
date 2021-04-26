@@ -20,14 +20,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const io = socket(server);
-
+let users = {};
 io.on("connection", (socket) => {
-  socket.on("join room", (roomId) => {
-    console.log(`Bir odaya katılıyoruz. ID:${roomId}`);
-    socket.join(roomId);
+  socket.on("user connected", (userId) => {
+    users[userId] = { roomId: null };
+    io.emit("user data", users);
 
-    socket.on("send message", (body) => {
-      io.to(roomId).emit("message", body);
+    socket.on("join room", (roomId) => {
+      users[userId] = { roomId };
+      console.log("User joined " + roomId);
+      socket.join(roomId);
+      io.to(roomId).emit("user data", users);
+
+      socket.on("send message", (message) => {
+        io.to(roomId).emit("message sent", message);
+      });
+    });
+
+    socket.on("left room", (roomId) => {
+      users[userId] = { roomId: null };
+      socket.leave(roomId);
+      io.to(roomId).emit("user data", users);
+    });
+
+    socket.on("disconnect", () => {
+      delete users[userId];
+      io.emit("user data", users);
     });
   });
 });
