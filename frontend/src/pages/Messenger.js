@@ -46,7 +46,7 @@ const FullName = Styled.p`
 
 const Messenger = () => {
   const history = useHistory();
-  const Chat = useSelector((state) => state.Chat);
+  const { Chat } = useSelector((state) => state);
   const { inSellerRoute } = useSelector((state) => state.Seller);
   const dispatch = useDispatch();
 
@@ -88,7 +88,12 @@ const Messenger = () => {
               <ChatroomBox
                 key={index}
                 className="border-bottom"
-                onClick={() => activeChat(room._id, room.participant)}
+                onClick={() =>
+                  activeChat(
+                    room._id,
+                    inSellerRoute ? room.creator._id : room.participant._id
+                  )
+                }
               >
                 <section>
                   <BiMessageDetail
@@ -96,8 +101,14 @@ const Messenger = () => {
                   />
                 </section>
                 <section style={{ paddingLeft: "15px", paddingTop: "5px" }}>
-                  <CompanyName>{room.participant.companyName}</CompanyName>
-                  <FullName>{room.participant.fullname}</FullName>
+                  <CompanyName>
+                    {inSellerRoute
+                      ? room.creator.username
+                      : room.participant.companyName}
+                  </CompanyName>
+                  {!inSellerRoute && (
+                    <FullName>{room.participant.fullname}</FullName>
+                  )}
                   <p>Hocam fiyat düşer mi </p>
                 </section>
                 <HiDotsVertical

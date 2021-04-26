@@ -26,12 +26,12 @@ const createRoom = catchAsync(async (req, res, next) => {
     const chatroom = await newChatroom.save();
 
     // Return new chatroom as populated
-    const populated = await chatroom.execPopulate("participant");
+    const populated = await chatroom.execPopulate("participant creator");
     return res.json(populated);
   }
 
   // Return chatroom as populated
-  const populated = await findChatroom.execPopulate("participant");
+  const populated = await findChatroom.execPopulate("participant creator");
   res.json(populated);
 });
 

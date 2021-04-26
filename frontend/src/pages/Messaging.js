@@ -21,6 +21,7 @@ const Messaging = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const Chat = useSelector((state) => state.Chat);
+  const { inSellerRoute } = useSelector((state) => state.Seller);
   const socketRef = useRef();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -63,9 +64,13 @@ const Messaging = () => {
               style={{ marginLeft: "8px", position: "relative", top: "8px" }}
             >
               <CompanyName>
-                {Chat.activeChat.participant.companyName}
+                {inSellerRoute
+                  ? Chat.activeChat.creator.username
+                  : Chat.activeChat.participant.companyName}
               </CompanyName>
-              <FullName>{Chat.activeChat.participant.fullname}</FullName>
+              {!inSellerRoute && (
+                <FullName>{Chat.activeChat.participant.fullname}</FullName>
+              )}
             </section>
           ) : (
             "Loading..."
