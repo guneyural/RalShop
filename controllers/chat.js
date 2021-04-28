@@ -56,8 +56,17 @@ const getChatrooms = catchAsync(async (req, res, next) => {
   let roomIds = [...rooms];
   const allChatrooms = await Chatroom.find({
     _id: { $in: [...roomIds] },
-  }).sort({ createdAt: "desc" });
-  res.json(allChatrooms);
+  })
+    .sort({ createdAt: "desc" })
+    .populate("participant creator");
+  let chatroomArray = [];
+  allChatrooms.forEach((chatroom) => {
+    chatroomArray.push({
+      chatroom,
+      lastMessage: getRecentMessages[0],
+    });
+  });
+  res.json(chatroomArray);
 });
 
 const getMessages = catchAsync(async (req, res, next) => {
