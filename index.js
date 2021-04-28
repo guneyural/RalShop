@@ -12,6 +12,7 @@ const sanitize = require("express-mongo-sanitize");
 const http = require("http");
 const server = http.createServer(app);
 const socket = require("socket.io");
+const Message = require("./models/message");
 
 app.use(helmet());
 app.use(sanitize());
@@ -23,24 +24,44 @@ const io = socket(server);
 let users = {};
 io.on("connection", (socket) => {
   socket.on("user connected", (userId) => {
+    if (users[userId]) {
+      socket.emit(
+        "error",
+        "UralShop Chat probably opened in another tab. You are disconnected now."
+      );
+      socket.disconnect();
+      delete users[userId];
+    }
     users[userId] = { roomId: null };
     io.emit("user data", users);
 
     socket.on("join room", (roomId) => {
       users[userId] = { roomId };
-      console.log("User joined " + roomId);
+
       socket.join(roomId);
-      io.to(roomId).emit("user data", users);
+      io.emit("user data", users);
 
       socket.on("send message", (message) => {
-        io.to(roomId).emit("message sent", message);
+        const { sender, receiver, chatroom, body } = message;
+        const messageObject = new Message({ sender, receiver, chatroom, body });
+        messageObject.save((err, msg) => {
+          if (err) {
+            socket
+              .to(roomId)
+              .emit("error", "An error occured while sending the message.");
+          } else {
+            io.to(roomId).emit("message sent", msg);
+          }
+        });
       });
     });
 
     socket.on("left room", (roomId) => {
       users[userId] = { roomId: null };
       socket.leave(roomId);
-      io.to(roomId).emit("user data", users);
+      delete users[userId];
+      socket.disconnect();
+      io.emit("user data", users);
     });
 
     socket.on("disconnect", () => {
