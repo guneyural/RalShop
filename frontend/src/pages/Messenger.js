@@ -41,7 +41,12 @@ const FullName = Styled.p`
   margin-top: -20px;
   color: var(--text-muted);
   font-size: 15px;
-  font-weight:500;
+  font-weight:400;
+`;
+const LastMessage = Styled.p`
+  color: var(--text-muted);
+  font-weight: 300;
+  margin-top: -15px;
 `;
 
 const Messenger = () => {
@@ -56,7 +61,10 @@ const Messenger = () => {
 
   useEffect(() => {
     if (Chat.createdRoom !== null) {
-      activeChat(Chat.createdRoom._id, Chat.createdRoom.participant);
+      activeChat(
+        Chat.createdRoom.chatroom._id,
+        Chat.createdRoom.chatroom.participant
+      );
     }
   }, [Chat]);
 
@@ -90,8 +98,10 @@ const Messenger = () => {
                 className="border-bottom"
                 onClick={() =>
                   activeChat(
-                    room._id,
-                    inSellerRoute ? room.creator._id : room.participant._id
+                    room.chatroom._id,
+                    inSellerRoute
+                      ? room.chatroom.creator
+                      : room.chatroom.participant
                   )
                 }
               >
@@ -103,13 +113,19 @@ const Messenger = () => {
                 <section style={{ paddingLeft: "15px", paddingTop: "5px" }}>
                   <CompanyName>
                     {inSellerRoute
-                      ? room.creator.username
-                      : room.participant.companyName}
+                      ? room.chatroom.creator.username
+                      : room.chatroom.participant.companyName}
                   </CompanyName>
                   {!inSellerRoute && (
-                    <FullName>{room.participant.fullname}</FullName>
+                    <FullName>{room.chatroom.participant.fullname}</FullName>
                   )}
-                  <p>Hocam fiyat düşer mi </p>
+                  {room.lastMessage !== null && (
+                    <LastMessage>
+                      {room.lastMessage.body.length > 28
+                        ? `${room.lastMessage.body.substring(0, 28)}...`
+                        : room.lastMessage.body}
+                    </LastMessage>
+                  )}
                 </section>
                 <HiDotsVertical
                   style={{

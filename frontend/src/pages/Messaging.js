@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { forbiddenRoom, sendMessage } from "../redux/actions/chatActions";
+import { forbiddenRoom, receiveMessage } from "../redux/actions/chatActions";
 import { BiLeftArrowAlt, BiMessageDetail, BiSend } from "react-icons/bi";
 import { HiDotsVertical } from "react-icons/hi";
 import Styled from "styled-components";
 import io from "socket.io-client";
+import moment from "moment";
 
 const CompanyName = Styled.p`
   font-weight: 500;
@@ -33,36 +34,46 @@ const Messaging = () => {
   const { inSellerRoute } = useSelector((state) => state.Seller);
   const socketRef = useRef();
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
   const [isOnline, setIsOnline] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isParticipantLoaded, setIsParticipantLoaded] = useState(false);
   let { roomId } = useParams();
 
   useEffect(() => {
-    socketRef.current = io.connect("/");
-    socketRef.current.emit(
-      "user connected",
-      inSellerRoute ? Seller.shop._id : Auth.user._id
-    );
-    socketRef.current.emit("join room", roomId);
-
-    socketRef.current.on("message sent", (message) => {
-      console.log(message);
-    });
-  }, []);
+    if (Chat.activeChat.participant !== null) setIsParticipantLoaded(true);
+  }, [Chat.activeChat.participant]);
 
   useEffect(() => {
-    socketRef.current.on("user data", (users) => {
-      if (Chat.activeChat.participant !== null) {
-        if (users[Chat.activeChat.participant._id]) {
-          setIsOnline(true);
-          console.log("SEN VARYA ");
-        } else {
-          setIsOnline(false);
-          console.log("HOCAM BU HERIF OFFLINE ANASINI SATIM");
-        }
-      }
-    });
-  }, [Chat.activeChat]);
+    if (isParticipantLoaded) {
+      socketRef.current = io.connect("/");
+      socketRef.current.emit(
+        "user connected",
+        inSellerRoute ? Seller.shop.id : Auth.user._id
+      );
+      socketRef.current.emit("join room", roomId);
+
+      socketRef.current.on("message sent", (receivedMessage) => {
+        dispatch(receiveMessage(receivedMessage));
+
+        // Scroll to bottom when message received
+        let messageContainer = document.querySelector(
+          ".message-section-center"
+        );
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+      });
+
+      // Check if the participant is online
+      receiveUserData();
+
+      socketRef.current.on("error", (errorMsg) => setErrorMessage(errorMsg));
+    }
+  }, [isParticipantLoaded]);
+
+  useEffect(() => {
+    // When messages loaded on startup scroll to bottom
+    let messageContainer = document.querySelector(".message-section-center");
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }, [Chat.activeChat.messages]);
 
   useEffect(() => {
     if (Chat.error.status === 403) {
@@ -71,14 +82,50 @@ const Messaging = () => {
     }
   }, [Chat.error]);
 
+  function receiveUserData() {
+    socketRef.current.on("user data", (users) => {
+      console.log("AZ ÖNCE DURUMUNU KONTROL ETTİM");
+      if (Chat.activeChat.participant !== null) {
+        console.log(users);
+        if (users[Chat.activeChat.participant._id]) {
+          setIsOnline(true);
+        } else {
+          setIsOnline(false);
+        }
+      }
+    });
+  }
+
   const sendMessage = (e) => {
     e.preventDefault();
-    socketRef.current.emit("send message", message);
+    if (Chat.activeChat.participant !== null) {
+      const messageObject = {
+        sender: inSellerRoute ? Seller.shop._id : Auth.user._id,
+        receiver: Chat.activeChat.participant._id,
+        chatroom: roomId,
+        createdAt: Date.now(),
+        body: message,
+      };
+
+      // Clear message input
+      setMessage("");
+
+      if (message.length > 0) {
+        // Send message
+        socketRef.current.emit("send message", messageObject);
+      }
+    }
   };
 
   const leftRoomButton = () => {
     socketRef.current.emit("left room", roomId);
-    history.push("/chat");
+    history.push(inSellerRoute ? "/chat/seller" : "/chat");
+  };
+
+  const keyDownListener = (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      sendMessage(e);
+    }
   };
 
   return (
@@ -103,7 +150,7 @@ const Messaging = () => {
               >
                 <CompanyName>
                   {inSellerRoute
-                    ? Chat.activeChat.creator.username
+                    ? Chat.activeChat.participant.username
                     : Chat.activeChat.participant.companyName}
                 </CompanyName>
                 {!inSellerRoute && (
@@ -128,21 +175,43 @@ const Messaging = () => {
         </section>
       </div>
       <div className="message-section-center">
-        {messages.map((message, index) => {
-          return <div key={index}>{message}</div>;
+        {Chat.activeChat.messages.map((message, index) => {
+          return (
+            <div
+              key={index}
+              className={`chat-box-container ${
+                inSellerRoute
+                  ? message.sender === Seller.shop._id
+                    ? "right"
+                    : ""
+                  : message.sender === Auth.user._id
+                  ? "right"
+                  : ""
+              }`}
+            >
+              <div className="chat-box">
+                <p>{message.body}</p>
+                <span className="message-date">
+                  {moment(message.createdAt).format("LT")}
+                </span>
+              </div>
+            </div>
+          );
         })}
       </div>
       <div className="message-section-bottom">
-        <form onSubmit={(e) => sendMessage(e)}>
-          <input
+        {errorMessage && <p className="text-danger">{errorMessage}</p>}
+        <form onSubmit={(e) => sendMessage(e)} autocomplete="off">
+          <textarea
             className="message-input"
             type="text"
             name="message-text"
             placeholder="Write a message."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => keyDownListener(e)}
           />
-          <button type="submit">
+          <button type="submit" disabled={message.length > 0 ? false : true}>
             <BiSend style={{ marginTop: "-3px" }} />
           </button>
         </form>

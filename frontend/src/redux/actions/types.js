@@ -73,10 +73,9 @@ export const CART_ERROR = "CART_ERROR";
 //===SHOPPING CART===
 
 //===CHAT===
-export const SEND_MESSAGE = "SEND_MESSAGE";
+export const RECEIVE_MESSAGE = "RECEIVE_MESSAGE";
 export const CREATE_CHATROOM = "CREATE_CHATROOM";
 export const GET_CHATROOMS = "GET_CHATROOMS";
-export const GET_MESSAGES = "GET_MESSAGES";
 export const SET_ACTIVE_CHATROOM = "SET_ACTIVE_CHATROOM";
 export const CHAT_ERROR = "CHAT_ERROR";
 export const FORBIDDEN_ROOM = "FORBIDDEN_ROOM";

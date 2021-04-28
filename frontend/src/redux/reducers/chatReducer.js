@@ -1,8 +1,7 @@
 import {
-  SEND_MESSAGE,
+  RECEIVE_MESSAGE,
   CREATE_CHATROOM,
   GET_CHATROOMS,
-  GET_MESSAGES,
   SET_ACTIVE_CHATROOM,
   FORBIDDEN_ROOM,
   LOADING,
@@ -19,9 +18,13 @@ const initialState = {
 
 export function Chat(state = initialState, action) {
   switch (action.type) {
-    case SEND_MESSAGE:
+    case RECEIVE_MESSAGE:
       return {
         ...state,
+        activeChat: {
+          ...state.activeChat,
+          messages: [...state.activeChat.messages, action.payload],
+        },
         loading: false,
       };
     case CREATE_CHATROOM:
@@ -42,11 +45,6 @@ export function Chat(state = initialState, action) {
         loading: false,
         chatrooms: [...tempRooms],
         error: { msg: null, status: null },
-      };
-    case GET_MESSAGES:
-      return {
-        ...state,
-        loading: false,
       };
     case LOADING:
       return {
@@ -69,7 +67,7 @@ export function Chat(state = initialState, action) {
         activeChat: {
           roomId: action.payload.roomId,
           participant: action.payload.participant,
-          messages: [...action.payload.messages],
+          messages: action.payload.messages.reverse(),
         },
         error: { msg: null, status: null },
       };

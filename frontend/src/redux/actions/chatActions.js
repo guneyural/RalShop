@@ -1,8 +1,7 @@
 import {
-  SEND_MESSAGE,
+  RECEIVE_MESSAGE,
   CREATE_CHATROOM,
   GET_CHATROOMS,
-  GET_MESSAGES,
   SET_ACTIVE_CHATROOM,
   FORBIDDEN_ROOM,
   LOADING,
@@ -21,7 +20,8 @@ export const createChatroom = (participantId, isShop) => (dispatch) => {
     )
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: CREATE_CHATROOM, payload: data });
+      let chatroomObject = { chatroom: data, lastMessage: null };
+      dispatch({ type: CREATE_CHATROOM, payload: chatroomObject });
     })
     .catch((err) => {
       dispatch({
@@ -81,8 +81,9 @@ export const setActiveChatroom = (roomId, participant, isShop) => (
     });
 };
 
-export const sendMessage = () => (dispatch) => {};
-export const getMessages = () => (dispatch) => {};
+export const receiveMessage = (message) => {
+  return { type: RECEIVE_MESSAGE, payload: message };
+};
 
 export const forbiddenRoom = () => {
   return { type: FORBIDDEN_ROOM };
