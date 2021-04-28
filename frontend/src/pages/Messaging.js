@@ -25,6 +25,12 @@ const ActiveIndicator = Styled.div`
   border-radius:50%;
   margin-left: 3px !important;
 `;
+const TypingInformation = Styled.p`
+  font-size: 15px;
+  color: var(--text-muted);
+  position: absolute;
+  top: 20px;
+`;
 
 const Messaging = () => {
   const history = useHistory();
@@ -37,6 +43,7 @@ const Messaging = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isParticipantLoaded, setIsParticipantLoaded] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   let { roomId } = useParams();
 
   useEffect(() => {
@@ -65,6 +72,10 @@ const Messaging = () => {
       // Check if the participant is online
       receiveUserData();
 
+      socketRef.current.on("typing", (isTyping) =>
+        isTyping ? setIsTyping(true) : setIsTyping(false)
+      );
+
       socketRef.current.on("error", (errorMsg) => setErrorMessage(errorMsg));
     }
   }, [isParticipantLoaded]);
@@ -84,9 +95,7 @@ const Messaging = () => {
 
   function receiveUserData() {
     socketRef.current.on("user data", (users) => {
-      console.log("AZ ÖNCE DURUMUNU KONTROL ETTİM");
       if (Chat.activeChat.participant !== null) {
-        console.log(users);
         if (users[Chat.activeChat.participant._id]) {
           setIsOnline(true);
         } else {
@@ -123,14 +132,19 @@ const Messaging = () => {
   };
 
   const keyDownListener = (e) => {
+    socketRef.current.emit("start typing");
     if (e.keyCode === 13 && !e.shiftKey) {
       sendMessage(e);
     }
   };
 
+  function stopTyping(e) {
+    socketRef.current.emit("stop typing");
+  }
+
   return (
     <div className="message-section">
-      <div className="message-section-top">
+      <div className={`message-section-top ${!inSellerRoute && "not-seller"}`}>
         <section style={{ display: "flex", alignItems: "center" }}>
           <BiLeftArrowAlt
             onClick={() => leftRoomButton()}
@@ -155,6 +169,11 @@ const Messaging = () => {
                 </CompanyName>
                 {!inSellerRoute && (
                   <FullName>{Chat.activeChat.participant.fullname}</FullName>
+                )}
+                {isTyping && (
+                  <TypingInformation className="typing-status">
+                    typing...
+                  </TypingInformation>
                 )}
               </section>
             </>
@@ -210,6 +229,7 @@ const Messaging = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => keyDownListener(e)}
+            onBlur={(e) => stopTyping(e)}
           />
           <button type="submit" disabled={message.length > 0 ? false : true}>
             <BiSend style={{ marginTop: "-3px" }} />

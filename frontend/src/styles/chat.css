@@ -23,7 +23,15 @@
   display: flex;
   padding: 10px !important;
   padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  padding-bottom: 5px !important;
+}
+
+.message-section-top.not-seller {
+  padding-bottom: 10px !important;
+}
+
+.message-section-top.not-seller .typing-status {
+  top: 35px;
 }
 
 .message-section-bottom {

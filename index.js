@@ -41,6 +41,14 @@ io.on("connection", (socket) => {
       socket.join(roomId);
       io.emit("user data", users);
 
+      socket.on("start typing", () => {
+        socket.broadcast.to(roomId).emit("typing", true);
+      });
+
+      socket.on("stop typing", () => {
+        socket.broadcast.to(roomId).emit("typing", false);
+      });
+
       socket.on("send message", (message) => {
         const { sender, receiver, chatroom, body } = message;
         const messageObject = new Message({ sender, receiver, chatroom, body });
@@ -60,11 +68,15 @@ io.on("connection", (socket) => {
       users[userId] = { roomId: null };
       socket.leave(roomId);
       delete users[userId];
+      socket.broadcast.to(roomId).emit("typing", false);
       socket.disconnect();
       io.emit("user data", users);
     });
 
     socket.on("disconnect", () => {
+      if (users[userId].roomId !== undefined) {
+        socket.broadcast.to(users[userId].roomId).emit("typing", false);
+      }
       delete users[userId];
       io.emit("user data", users);
     });
