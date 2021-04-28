@@ -47,6 +47,12 @@ const Messaging = () => {
   let { roomId } = useParams();
 
   useEffect(() => {
+    return history.listen((location) => {
+      socketRef.current.emit("left room", roomId);
+    });
+  }, [history]);
+
+  useEffect(() => {
     if (Chat.activeChat.participant !== null) setIsParticipantLoaded(true);
   }, [Chat.activeChat.participant]);
 
@@ -75,6 +81,14 @@ const Messaging = () => {
       socketRef.current.on("typing", (isTyping) =>
         isTyping ? setIsTyping(true) : setIsTyping(false)
       );
+
+      window.onbeforeunload = function () {
+        socketRef.current.emit("left room", roomId);
+      };
+      /*
+      window.addEventListener("beforeunload", function (e) {
+        socketRef.current.emit("left room", roomId);
+      });*/
 
       socketRef.current.on("error", (errorMsg) => setErrorMessage(errorMsg));
     }
@@ -122,6 +136,7 @@ const Messaging = () => {
       if (message.length > 0) {
         // Send message
         socketRef.current.emit("send message", messageObject);
+        stopTyping(e);
       }
     }
   };

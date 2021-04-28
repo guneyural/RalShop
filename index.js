@@ -74,9 +74,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-      if (users[userId].roomId !== undefined) {
-        socket.broadcast.to(users[userId].roomId).emit("typing", false);
-      }
       delete users[userId];
       io.emit("user data", users);
     });
