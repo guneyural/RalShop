@@ -100,8 +100,26 @@ const getMessages = catchAsync(async (req, res, next) => {
   }
 });
 
+const sendImage = catchAsync(async (req, res) => {
+  const { sender, receiver, chatroom } = req.body;
+  const image = req.file;
+  const createMessageObj = new Message({
+    sender,
+    receiver,
+    chatroom,
+    photo: {
+      photoUrl: image.path,
+      fileName: image.filename,
+    },
+    isPhoto: true,
+  });
+  let newMessage = await createMessageObj.save();
+  res.json(newMessage);
+});
+
 module.exports = {
   createRoom,
   getChatrooms,
   getMessages,
+  sendImage,
 };
