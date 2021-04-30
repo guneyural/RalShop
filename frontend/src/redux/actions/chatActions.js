@@ -89,7 +89,7 @@ export const forbiddenRoom = () => {
   return { type: FORBIDDEN_ROOM };
 };
 
-const shopConfig = () => {
+export const shopConfig = () => {
   const shopToken = localStorage.getItem("shop-token");
   const config = {
     headers: {
@@ -100,7 +100,7 @@ const shopConfig = () => {
   return config;
 };
 
-const userConfig = () => {
+export const userConfig = () => {
   const userToken = localStorage.getItem("user-token");
   const config = {
     headers: {

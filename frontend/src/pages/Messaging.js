@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { forbiddenRoom, receiveMessage } from "../redux/actions/chatActions";
+import {
+  forbiddenRoom,
+  receiveMessage,
+  shopConfig,
+  userConfig,
+} from "../redux/actions/chatActions";
 import { BiLeftArrowAlt, BiMessageDetail, BiSend } from "react-icons/bi";
+import { MdPhotoCamera } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Styled from "styled-components";
 import io from "socket.io-client";
 import moment from "moment";
+import axios from "axios";
 
 const CompanyName = Styled.p`
   font-weight: 500;
@@ -31,6 +38,11 @@ const TypingInformation = Styled.p`
   position: absolute;
   top: 20px;
 `;
+const IsPhotoSending = Styled.p`
+  text-align: right;
+  font-size: 15px;
+  color: var(--text-muted);
+`;
 
 const Messaging = () => {
   const history = useHistory();
@@ -44,6 +56,7 @@ const Messaging = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isParticipantLoaded, setIsParticipantLoaded] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
   let { roomId } = useParams();
 
   useEffect(() => {
@@ -66,6 +79,7 @@ const Messaging = () => {
       socketRef.current.emit("join room", roomId);
 
       socketRef.current.on("message sent", (receivedMessage) => {
+        setIsPhotoLoading(false);
         dispatch(receiveMessage(receivedMessage));
 
         // Scroll to bottom when message received
@@ -98,7 +112,7 @@ const Messaging = () => {
     // When messages loaded on startup scroll to bottom
     let messageContainer = document.querySelector(".message-section-center");
     messageContainer.scrollTop = messageContainer.scrollHeight;
-  }, [Chat.activeChat.messages]);
+  }, [Chat.activeChat.messages, isPhotoLoading]);
 
   useEffect(() => {
     if (Chat.error.status === 403) {
@@ -120,10 +134,11 @@ const Messaging = () => {
   }
 
   const sendMessage = (e) => {
+    setIsPhotoLoading(true);
     e.preventDefault();
     if (Chat.activeChat.participant !== null) {
       const messageObject = {
-        sender: inSellerRoute ? Seller.shop._id : Auth.user._id,
+        sender: inSellerRoute ? Seller.shop.id : Auth.user._id,
         receiver: Chat.activeChat.participant._id,
         chatroom: roomId,
         createdAt: Date.now(),
@@ -155,6 +170,30 @@ const Messaging = () => {
 
   function stopTyping(e) {
     socketRef.current.emit("stop typing");
+  }
+
+  function selectFile(e) {
+    if (e.target.files[0]) {
+      setIsPhotoLoading(true);
+      setMessage(e.target.files[0].name);
+      let formData = new FormData();
+      formData.append("sender", inSellerRoute ? Seller.shop.id : Auth.user._id);
+      formData.append("receiver", Chat.activeChat.participant._id);
+      formData.append("chatroom", roomId);
+      formData.append("image", e.target.files[0]);
+
+      axios
+        .post(
+          "/api/chat/sendImage",
+          formData,
+          inSellerRoute ? shopConfig() : userConfig()
+        )
+        .then((res) => res.data)
+        .then((data) => {
+          socketRef.current.emit("send message", data);
+        })
+        .catch((err) => setIsPhotoLoading(false));
+    }
   }
 
   return (
@@ -210,12 +249,13 @@ const Messaging = () => {
       </div>
       <div className="message-section-center">
         {Chat.activeChat.messages.map((message, index) => {
+          console.log(message);
           return (
             <div
               key={index}
               className={`chat-box-container ${
                 inSellerRoute
-                  ? message.sender === Seller.shop._id
+                  ? message.sender === Seller.shop.id
                     ? "right"
                     : ""
                   : message.sender === Auth.user._id
@@ -224,7 +264,17 @@ const Messaging = () => {
               }`}
             >
               <div className="chat-box">
-                <p>{message.body}</p>
+                {message.isPhoto ? (
+                  <div>
+                    <img
+                      src={message.photo.photoUrl}
+                      alt="user message"
+                      className="chat-picture"
+                    />
+                  </div>
+                ) : (
+                  <p>{message.body}</p>
+                )}
                 <span className="message-date">
                   {moment(message.createdAt).format("LT")}
                 </span>
@@ -232,10 +282,15 @@ const Messaging = () => {
             </div>
           );
         })}
+        {isPhotoLoading && <IsPhotoSending>Loading...</IsPhotoSending>}
       </div>
       <div className="message-section-bottom">
         {errorMessage && <p className="text-danger">{errorMessage}</p>}
-        <form onSubmit={(e) => sendMessage(e)} autocomplete="off">
+        <form
+          onSubmit={(e) => sendMessage(e)}
+          autocomplete="off"
+          enctype="multipart/form-data"
+        >
           <textarea
             className="message-input"
             type="text"
@@ -245,6 +300,15 @@ const Messaging = () => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => keyDownListener(e)}
             onBlur={(e) => stopTyping(e)}
+          />
+          <label for="file-upload" class="custom-file-upload">
+            <MdPhotoCamera style={{ marginTop: "-2px" }} />
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            onChange={(e) => selectFile(e)}
           />
           <button type="submit" disabled={message.length > 0 ? false : true}>
             <BiSend style={{ marginTop: "-3px" }} />

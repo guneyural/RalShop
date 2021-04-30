@@ -48,7 +48,7 @@ export function Chat(state = initialState, action) {
       };
     case LOADING:
       return {
-        ...state,
+        ...state, 
         loading: true,
       };
     case FORBIDDEN_ROOM:

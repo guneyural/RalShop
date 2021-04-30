@@ -173,6 +173,28 @@
   float: right;
 }
 
+.message-section-bottom input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  cursor: pointer;
+  background: white;
+  padding: 3px 8px;
+  border: none;
+  background: #333333;
+  margin: 0;
+  color: white;
+  border-radius: 50%;
+  font-size: 25px !important;
+}
+
+.chat-picture {
+  max-width: 300px;
+  max-height: 200px;
+  object-fit: cover;
+}
+
 @media only screen and (max-width: 612px) {
   .message-section {
     margin-top: -20px;
