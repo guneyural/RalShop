@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-const PORT = 3001 || process.env.PORT;
+const PORT = 3003 || process.env.PORT;
 const DATABASE = process.env.DATABASE;
 const expressError = require("./utils/expressError");
 const Routes = require("./routes");
@@ -50,17 +50,29 @@ io.on("connection", (socket) => {
       });
 
       socket.on("send message", (message) => {
-        const { sender, receiver, chatroom, body } = message;
-        const messageObject = new Message({ sender, receiver, chatroom, body });
-        messageObject.save((err, msg) => {
-          if (err) {
-            socket
-              .to(roomId)
-              .emit("error", "An error occured while sending the message.");
-          } else {
-            io.to(roomId).emit("message sent", msg);
-          }
-        });
+        const { sender, receiver, chatroom, body, isPhoto, photo } = message;
+
+        console.log(message);
+
+        if (!isPhoto) {
+          const messageObject = new Message({
+            sender,
+            receiver,
+            chatroom,
+            body,
+          });
+          messageObject.save((err, msg) => {
+            if (err) {
+              socket
+                .to(roomId)
+                .emit("error", "An error occured while sending the message.");
+            } else {
+              io.to(roomId).emit("message sent", msg);
+            }
+          });
+        } else {
+          io.to(roomId).emit("message sent", message);
+        }
       });
     });
 
