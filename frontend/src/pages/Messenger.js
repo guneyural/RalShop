@@ -119,13 +119,16 @@ const Messenger = () => {
                   {!inSellerRoute && (
                     <FullName>{room.chatroom.participant.fullname}</FullName>
                   )}
-                  {room.lastMessage !== null && (
-                    <LastMessage>
-                      {room.lastMessage.body.length > 28
-                        ? `${room.lastMessage.body.substring(0, 28)}...`
-                        : room.lastMessage.body}
-                    </LastMessage>
-                  )}
+                  {room.lastMessage !== null &&
+                    (room.lastMessage.isPhoto ? (
+                      <LastMessage>A Photo Has Been Sent</LastMessage>
+                    ) : (
+                      <LastMessage>
+                        {room.lastMessage.body.length > 28
+                          ? `${room.lastMessage.body.substring(0, 28)}...`
+                          : room.lastMessage.body}
+                      </LastMessage>
+                    ))}
                 </section>
                 <HiDotsVertical
                   style={{
