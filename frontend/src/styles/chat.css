@@ -195,6 +195,21 @@
   object-fit: cover;
 }
 
+.message-box-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-box-bottom .seen-mark {
+  margin-right: 4px;
+  margin-top: -3px;
+}
+
+.unread-message {
+  background: #dedede;
+}
+
 @media only screen and (max-width: 612px) {
   .message-section {
     margin-top: -20px;

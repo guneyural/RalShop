@@ -4,9 +4,11 @@ import { useHistory, useParams } from "react-router-dom";
 import {
   forbiddenRoom,
   receiveMessage,
+  getChatroomMessages,
   shopConfig,
   userConfig,
 } from "../redux/actions/chatActions";
+import { AiFillEye } from "react-icons/ai";
 import { BiLeftArrowAlt, BiMessageDetail, BiSend } from "react-icons/bi";
 import { MdPhotoCamera } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
@@ -57,7 +59,13 @@ const Messaging = () => {
   const [isParticipantLoaded, setIsParticipantLoaded] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
+  const [isTextareaDisabled, setIsTextAreaDisabled] = useState(true);
   let { roomId } = useParams();
+
+  useEffect(() => {
+    let messageContainer = document.querySelector(".message-section-center");
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }, []);
 
   useEffect(() => {
     return history.listen((location) => {
@@ -77,6 +85,12 @@ const Messaging = () => {
         inSellerRoute ? Seller.shop.id : Auth.user._id
       );
       socketRef.current.emit("join room", roomId);
+
+      socketRef.current.on("get chat messages", () =>
+        dispatch(getChatroomMessages(roomId, inSellerRoute))
+      );
+
+      setIsTextAreaDisabled(false);
 
       socketRef.current.on("message sent", (receivedMessage) => {
         setIsPhotoLoading(false);
@@ -99,10 +113,6 @@ const Messaging = () => {
       window.onbeforeunload = function () {
         socketRef.current.emit("left room", roomId);
       };
-      /*
-      window.addEventListener("beforeunload", function (e) {
-        socketRef.current.emit("left room", roomId);
-      });*/
 
       socketRef.current.on("error", (errorMsg) => setErrorMessage(errorMsg));
     }
@@ -249,7 +259,6 @@ const Messaging = () => {
       </div>
       <div className="message-section-center">
         {Chat.activeChat.messages.map((message, index) => {
-          console.log(message);
           return (
             <div
               key={index}
@@ -275,14 +284,24 @@ const Messaging = () => {
                 ) : (
                   <p>{message.body}</p>
                 )}
-                <span className="message-date">
-                  {moment(message.createdAt).format("LT")}
-                </span>
+                <section className="message-box-bottom">
+                  <span className="seen-mark">
+                    {inSellerRoute
+                      ? message.sender === Seller.shop.id &&
+                        message.seen && <AiFillEye />
+                      : message.sender === Auth.user._id &&
+                        message.seen && <AiFillEye />}
+                  </span>
+                  <span className="message-date">
+                    {moment(message.createdAt).format("LT")}
+                  </span>
+                </section>
               </div>
             </div>
           );
         })}
-        {isPhotoLoading && <IsPhotoSending>Loading...</IsPhotoSending>}
+        {isPhotoLoading && <IsPhotoSending>Message Sending...</IsPhotoSending>}
+        {Chat.loading && <IsPhotoSending>Loading...</IsPhotoSending>}
       </div>
       <div className="message-section-bottom">
         {errorMessage && <p className="text-danger">{errorMessage}</p>}
@@ -300,6 +319,7 @@ const Messaging = () => {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => keyDownListener(e)}
             onBlur={(e) => stopTyping(e)}
+            disabled={isTextareaDisabled}
           />
           <label for="file-upload" class="custom-file-upload">
             <MdPhotoCamera style={{ marginTop: "-2px" }} />
@@ -309,6 +329,7 @@ const Messaging = () => {
             type="file"
             accept="image/*"
             onChange={(e) => selectFile(e)}
+            disabled={isTextareaDisabled}
           />
           <button type="submit" disabled={message.length > 0 ? false : true}>
             <BiSend style={{ marginTop: "-3px" }} />
