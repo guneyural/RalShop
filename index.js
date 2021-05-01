@@ -38,17 +38,21 @@ io.on("connection", (socket) => {
     socket.on("join room", (roomId) => {
       users[userId] = { roomId };
 
-      Message.updateMany(
-        {
-          $and: [{ chatroom: roomId }, { receiver: userId }],
-        },
-        { seen: true }
-      ).then(() => {
-        io.to(roomId).emit("get chat messages");
-      });
-
       socket.join(roomId);
       io.emit("user data", users);
+
+      io.to(roomId).emit("get chat messages");
+
+      socket.on("message seen", () => {
+        Message.updateMany(
+          {
+            $and: [{ chatroom: roomId }, { receiver: userId }],
+          },
+          { seen: true }
+        ).then(() => {
+          io.to(roomId).emit("get chat messages");
+        });
+      });
 
       socket.on("start typing", () => {
         socket.broadcast.to(roomId).emit("typing", true);
