@@ -6,6 +6,7 @@ import {
   FORBIDDEN_ROOM,
   LOADING,
   CHAT_ERROR,
+  GET_CHATROOM_MESSAGES,
 } from "./types";
 import axios from "axios";
 
@@ -67,7 +68,7 @@ export const setActiveChatroom = (roomId, participant, isShop) => (
     .then((data) => {
       dispatch({
         type: SET_ACTIVE_CHATROOM,
-        payload: { roomId, participant, messages: data },
+        payload: { roomId, participant },
       });
     })
     .catch((err) => {
@@ -87,6 +88,29 @@ export const receiveMessage = (message) => {
 
 export const forbiddenRoom = () => {
   return { type: FORBIDDEN_ROOM };
+};
+
+export const getChatroomMessages = (roomId, isShop) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .get(
+      `/api/chat/getMessages/${roomId}`,
+      isShop ? shopConfig() : userConfig()
+    )
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_CHATROOM_MESSAGES, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: CHAT_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const shopConfig = () => {

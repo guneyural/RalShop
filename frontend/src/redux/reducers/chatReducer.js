@@ -6,6 +6,7 @@ import {
   FORBIDDEN_ROOM,
   LOADING,
   CHAT_ERROR,
+  GET_CHATROOM_MESSAGES,
 } from "../actions/types";
 
 const initialState = {
@@ -35,6 +36,16 @@ export function Chat(state = initialState, action) {
         chatrooms: [action.payload, ...state.chatrooms],
         error: { msg: null, status: null },
       };
+    case GET_CHATROOM_MESSAGES:
+      return {
+        ...state,
+        loading: false,
+        error: { msg: null, status: null },
+        activeChat: {
+          ...state.activeChat,
+          messages: action.payload.reverse(),
+        },
+      };
     case GET_CHATROOMS:
       let tempRooms =
         state.createdRoom !== null
@@ -48,7 +59,7 @@ export function Chat(state = initialState, action) {
       };
     case LOADING:
       return {
-        ...state, 
+        ...state,
         loading: true,
       };
     case FORBIDDEN_ROOM:
@@ -65,9 +76,9 @@ export function Chat(state = initialState, action) {
         loading: false,
         createdRoom: null,
         activeChat: {
+          ...state.activeChat,
           roomId: action.payload.roomId,
           participant: action.payload.participant,
-          messages: action.payload.messages.reverse(),
         },
         error: { msg: null, status: null },
       };
