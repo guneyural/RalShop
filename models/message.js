@@ -11,6 +11,7 @@ const MessageSchema = new mongoose.Schema(
       fileName: String,
     },
     isPhoto: { type: Boolean, default: false },
+    seen: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -32,11 +32,20 @@ io.on("connection", (socket) => {
       socket.disconnect();
       delete users[userId];
     }
-    users[userId] = { roomId: null };
+    users[userId] = { roomId: null, socketId: socket.id };
     io.emit("user data", users);
 
     socket.on("join room", (roomId) => {
       users[userId] = { roomId };
+
+      Message.updateMany(
+        {
+          $and: [{ chatroom: roomId }, { receiver: userId }],
+        },
+        { seen: true }
+      ).then(() => {
+        io.to(roomId).emit("get chat messages");
+      });
 
       socket.join(roomId);
       io.emit("user data", users);
@@ -49,10 +58,16 @@ io.on("connection", (socket) => {
         socket.broadcast.to(roomId).emit("typing", false);
       });
 
-      socket.on("send message", (message) => {
-        const { sender, receiver, chatroom, body, isPhoto, photo } = message;
-
+      socket.on("send message", async (message) => {
+        const { sender, receiver, chatroom, body, isPhoto } = message;
         console.log(message);
+        let countRoomMember = 0;
+        for (const [key, value] of Object.entries(users)) {
+          const { roomId } = value;
+          if (roomId === chatroom) {
+            countRoomMember++;
+          }
+        }
 
         if (!isPhoto) {
           const messageObject = new Message({
@@ -60,6 +75,7 @@ io.on("connection", (socket) => {
             receiver,
             chatroom,
             body,
+            seen: countRoomMember > 1 ? true : false,
           });
           messageObject.save((err, msg) => {
             if (err) {
@@ -68,10 +84,23 @@ io.on("connection", (socket) => {
                 .emit("error", "An error occured while sending the message.");
             } else {
               io.to(roomId).emit("message sent", msg);
+              if (countRoomMember === 1) {
+                socket.broadcast
+                  .to(users[receiver])
+                  .emit("message", "for your eyes only");
+              }
             }
           });
         } else {
-          io.to(roomId).emit("message sent", message);
+          //const getPhotoMessage = await Message.findById(message._id)
+          const updatedMessage = await Message.findByIdAndUpdate(
+            message._id,
+            {
+              seen: countRoomMember > 1 ? true : false,
+            },
+            { new: true }
+          );
+          io.to(roomId).emit("message sent", updatedMessage);
         }
       });
     });
