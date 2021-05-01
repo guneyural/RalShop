@@ -60,23 +60,18 @@ const Messaging = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
   const [isTextareaDisabled, setIsTextAreaDisabled] = useState(true);
+  const [isUnreadMessage, setIsUnreadMessage] = useState(false);
+  const [unreadMessageLength, setUnreadMessageLength] = useState(0);
   let { roomId } = useParams();
-
-  useEffect(() => {
-    let messageContainer = document.querySelector(".message-section-center");
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-  }, []);
 
   useEffect(() => {
     return history.listen((location) => {
       socketRef.current.emit("left room", roomId);
     });
   }, [history]);
-
   useEffect(() => {
     if (Chat.activeChat.participant !== null) setIsParticipantLoaded(true);
   }, [Chat.activeChat.participant]);
-
   useEffect(() => {
     if (isParticipantLoaded) {
       socketRef.current = io.connect("/");
@@ -86,9 +81,9 @@ const Messaging = () => {
       );
       socketRef.current.emit("join room", roomId);
 
-      socketRef.current.on("get chat messages", () =>
-        dispatch(getChatroomMessages(roomId, inSellerRoute))
-      );
+      socketRef.current.on("get chat messages", () => {
+        dispatch(getChatroomMessages(roomId, inSellerRoute));
+      });
 
       setIsTextAreaDisabled(false);
 
@@ -117,20 +112,50 @@ const Messaging = () => {
       socketRef.current.on("error", (errorMsg) => setErrorMessage(errorMsg));
     }
   }, [isParticipantLoaded]);
+  useEffect(() => {
+    Chat.activeChat.messages.forEach((message) => {
+      if (inSellerRoute) {
+        if (message.receiver === Seller.shop.id && !message.seen) {
+          setIsUnreadMessage(true);
+        }
+      } else {
+        if (message.receiver === Auth.user._id && !message.seen) {
+          setIsUnreadMessage(true);
+        }
+      }
+    });
+  }, [Chat.activeChat.messages]);
+  useEffect(() => {
+    if (isUnreadMessage === true) {
+      const getUnreadMessages = document.querySelectorAll(".unread-message");
+      const getUnreadMessageNotificationText = document.querySelector(
+        ".unread-message"
+      );
+      const getFirstUnreadMessage = document.querySelector(".unread-wrapper");
+      getFirstUnreadMessage.classList.add("show");
+      setUnreadMessageLength(getUnreadMessages.length);
+      let messageContainer = document.querySelector(".message-section-center");
+      messageContainer.scroll(0, getUnreadMessageNotificationText.offsetTop);
 
+      setTimeout(() => {
+        socketRef.current.emit("message seen");
+        setIsUnreadMessage(false);
+        setUnreadMessageLength(0);
+        getFirstUnreadMessage.classList.remove("show");
+      }, 5000);
+    }
+  }, [isUnreadMessage]);
   useEffect(() => {
     // When messages loaded on startup scroll to bottom
     let messageContainer = document.querySelector(".message-section-center");
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }, [Chat.activeChat.messages, isPhotoLoading]);
-
   useEffect(() => {
     if (Chat.error.status === 403) {
       dispatch(forbiddenRoom());
       history.push("/chat");
     }
   }, [Chat.error]);
-
   function receiveUserData() {
     socketRef.current.on("user data", (users) => {
       if (Chat.activeChat.participant !== null) {
@@ -142,7 +167,6 @@ const Messaging = () => {
       }
     });
   }
-
   const sendMessage = (e) => {
     setIsPhotoLoading(true);
     e.preventDefault();
@@ -165,23 +189,19 @@ const Messaging = () => {
       }
     }
   };
-
   const leftRoomButton = () => {
     socketRef.current.emit("left room", roomId);
     history.push(inSellerRoute ? "/chat/seller" : "/chat");
   };
-
   const keyDownListener = (e) => {
     socketRef.current.emit("start typing");
     if (e.keyCode === 13 && !e.shiftKey) {
       sendMessage(e);
     }
   };
-
   function stopTyping(e) {
     socketRef.current.emit("stop typing");
   }
-
   function selectFile(e) {
     if (e.target.files[0]) {
       setIsPhotoLoading(true);
@@ -270,8 +290,33 @@ const Messaging = () => {
                   : message.sender === Auth.user._id
                   ? "right"
                   : ""
+              } ${
+                inSellerRoute
+                  ? message.receiver === Seller.shop.id &&
+                    !message.seen &&
+                    "unread-message"
+                  : message.receiver === Auth.user._id &&
+                    !message.seen &&
+                    "unread-message"
               }`}
             >
+              {inSellerRoute
+                ? message.receiver === Seller.shop.id &&
+                  !message.seen && (
+                    <div className="unread-wrapper" id="unread-message-id">
+                      <div className="unread-message-section">
+                        You Have {unreadMessageLength} Unread Messages
+                      </div>
+                    </div>
+                  )
+                : message.receiver === Auth.user._id &&
+                  !message.seen && (
+                    <div className="unread-wrapper" id="unread-message-id">
+                      <div className="unread-message-section">
+                        You Have {unreadMessageLength} Unread Messages
+                      </div>
+                    </div>
+                  )}
               <div className="chat-box">
                 {message.isPhoto ? (
                   <div>
