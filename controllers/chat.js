@@ -69,13 +69,21 @@ const getChatrooms = catchAsync(async (req, res, next) => {
   // get all chatrooms and get the last message
   let chatroomArray = [];
   allChatrooms.forEach((chatroom) => {
-    // Get the newest message that's charoom id is the current chatroom's id
+    const getLastMessage = getRecentMessages
+      .filter((recentMsg) => {
+        return recentMsg.chatroom.toString() == chatroom._id.toString();
+      })
+      .sort((a, b) => b.createdAt - a.createdAt);
     chatroomArray.push({
       chatroom,
-      lastMessage: getRecentMessages[0],
+      lastMessage: getLastMessage[0],
     });
   });
-  res.json(chatroomArray);
+  res.json(
+    chatroomArray.sort(
+      (a, b) => b.lastMessage.createdAt - a.lastMessage.createdAt
+    )
+  );
 });
 
 const getMessages = catchAsync(async (req, res, next) => {
