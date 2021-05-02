@@ -70,6 +70,8 @@ export const GET_CART = "GET_CART";
 export const INCREASE_CART_ITEM = "INCREASE_CART_ITEM";
 export const DECREASE_CART_ITEM = "DECREASE_CART_ITEM";
 export const CART_ERROR = "CART_ERROR";
+export const SELECT_CART_ITEM = "SELECT_CART_ITEM";
+export const DONT_SELECT_CART_ITEM = "DONT_SELECT_CART_ITEM";
 //===SHOPPING CART===
 
 //===CHAT===

@@ -6,6 +6,8 @@ import {
   INCREASE_CART_ITEM,
   DECREASE_CART_ITEM,
   CART_ERROR,
+  SELECT_CART_ITEM,
+  DONT_SELECT_CART_ITEM,
   LOADING,
 } from "./types";
 import axios from "axios";
@@ -48,6 +50,13 @@ export const increaseCartItem = (id, clr) => {
 
 export const decreaseCartItem = (id, clr) => {
   return { type: DECREASE_CART_ITEM, payload: { id, clr } };
+};
+
+export const selectCartItem = (id, clr) => {
+  return { type: SELECT_CART_ITEM, payload: { id, clr } };
+};
+export const dontSelectCartItem = (id, clr) => {
+  return { type: DONT_SELECT_CART_ITEM, payload: { id, clr } };
 };
 
 const tokenConfig = () => {

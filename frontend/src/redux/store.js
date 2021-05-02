@@ -12,6 +12,8 @@ import {
   GET_CART,
   INCREASE_CART_ITEM,
   DECREASE_CART_ITEM,
+  SELECT_CART_ITEM,
+  DONT_SELECT_CART_ITEM,
 } from "./actions/types";
 
 const initialState = {};
@@ -60,7 +62,9 @@ Store.subscribe(() => {
       lastAction === REMOVE_CART_ITEM ||
       lastAction === GET_CART ||
       lastAction === INCREASE_CART_ITEM ||
-      lastAction === DECREASE_CART_ITEM
+      lastAction === DECREASE_CART_ITEM ||
+      lastAction === SELECT_CART_ITEM ||
+      lastAction === DONT_SELECT_CART_ITEM
     ) {
       axios.post(
         "/api/cart/update",

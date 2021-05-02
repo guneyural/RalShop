@@ -22,6 +22,7 @@ const updateCard = catchAsync(async (req, res, next) => {
       product: item.product,
       color: item.color,
       quantity: item.qty,
+      selected: item.selected,
     });
   });
   const savedCart = await getCart.save();

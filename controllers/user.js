@@ -60,6 +60,7 @@ const register = catchAsync(async (req, res, next) => {
         product: item.product,
         color: item.color,
         quantity: item.qty,
+        selected: item.selected,
       });
     });
   }
@@ -104,6 +105,7 @@ const login = catchAsync(async (req, res, next) => {
           product: item.product,
           color: item.color,
           quantity: item.qty,
+          selected: item.selected,
         });
       }
     });

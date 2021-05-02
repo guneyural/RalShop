@@ -5,6 +5,8 @@ import {
   GET_CART,
   INCREASE_CART_ITEM,
   DECREASE_CART_ITEM,
+  SELECT_CART_ITEM,
+  DONT_SELECT_CART_ITEM,
   CART_ERROR,
   LOADING,
 } from "../actions/types";
@@ -76,6 +78,7 @@ export const Cart = (state = initialState, action) => {
           image: item.product.images[0].url,
           color: item.color,
           qty: item.quantity,
+          selected: item.selected,
         });
       });
 
@@ -113,6 +116,26 @@ export const Cart = (state = initialState, action) => {
         tempList.push(item);
       });
 
+      return { ...state, loading: false, products: [...tempList] };
+    case SELECT_CART_ITEM:
+      temp = `${action.payload.id}${action.payload.clr}`;
+      state.products.forEach((item) => {
+        let itemTemp = `${item.product}${item.color}`;
+        if (itemTemp === temp) {
+          item.selected = true;
+        }
+        tempList.push(item);
+      });
+      return { ...state, loading: false, products: [...tempList] };
+    case DONT_SELECT_CART_ITEM:
+      temp = `${action.payload.id}${action.payload.clr}`;
+      state.products.forEach((item) => {
+        let itemTemp = `${item.product}${item.color}`;
+        if (itemTemp === temp) {
+          item.selected = false;
+        }
+        tempList.push(item);
+      });
       return { ...state, loading: false, products: [...tempList] };
     case CART_ERROR:
       return {
