@@ -57,6 +57,7 @@ const WishlistPage = () => {
         image: product.images[0].url,
         color: product.colors[0].split(",")[0].substring(1),
         qty: 1,
+        selected: true,
       })
     );
     dispatch(removeItem(product._id));

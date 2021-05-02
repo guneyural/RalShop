@@ -892,6 +892,7 @@ const ProductPage = () => {
                         image: Product.images[0].url,
                         color,
                         qty,
+                        selected: true,
                       })
                     )
                   }
