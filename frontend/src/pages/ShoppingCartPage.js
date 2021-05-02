@@ -10,6 +10,8 @@ import {
   removeAllCart,
   increaseCartItem,
   decreaseCartItem,
+  selectCartItem,
+  dontSelectCartItem,
 } from "../redux/actions/ShoppingCartActions";
 import { addItem } from "../redux/actions/wishlistAction";
 import axios from "axios";
@@ -18,19 +20,16 @@ const ItemCount = Styled.span`
   padding-left: 10px;
   padding-top: 3px;
 `;
-
 const CartItem = Styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px
 `;
-
 const StockText = Styled.p`
   font-size:12px;
   font-weight:300px;
   margin-top:-12px;
 `;
-
 const QuantitySection = Styled.section`
   display:flex;
   align-items:center;
@@ -48,7 +47,6 @@ const QtyButton = Styled.button`
 const QtyNumber = Styled.span`
   font-size:15px;
 `;
-
 const ColorPreview = Styled.span`
   height: 14px;
   width: 14px;
@@ -60,6 +58,16 @@ const ColorPreview = Styled.span`
   margin-left: 3px;
   top: 3px;
 `;
+const SelectProduct = Styled.div`
+  margin: 0;
+  padding: 0;
+`;
+const SelectProductInput = Styled.input`
+  margin: 0;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+`;
 
 const ShoppingCartPage = () => {
   const Cart = useSelector((state) => state.Cart);
@@ -70,23 +78,27 @@ const ShoppingCartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [cartItemsLength, setCartItemsLength] = useState(0);
+  const [cartItemsToBuyLength, setCartItemsToBuyLength] = useState(0);
 
   function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   }
-
   useEffect(() => {
     setCartItems(Cart.products);
     let sum = 0;
     let itemSum = 0;
+    let itemSumToBuy = 0;
     Cart.products.forEach((item) => {
-      sum += item.price * item.qty;
+      if (item.selected) {
+        sum += item.price * item.qty;
+        itemSumToBuy += item.qty;
+      }
       itemSum += item.qty;
     });
     setCartTotal(sum);
     setCartItemsLength(itemSum);
+    setCartItemsToBuyLength(itemSumToBuy);
   }, [Cart]);
-
   useEffect(() => {
     const regex = new RegExp(escapeRegex(searchQuery), "gi");
     if (searchQuery.length < 1) {
@@ -120,7 +132,6 @@ const ShoppingCartPage = () => {
       dispatch(removeCartItem(product.product, product.color));
     }
   };
-
   const tokenConfig = () => {
     const token = localStorage.getItem("user-token");
     const config = {
@@ -130,6 +141,12 @@ const ShoppingCartPage = () => {
     };
     if (token) config.headers["user-token"] = token;
     return config;
+  };
+  const selectProduct = (id, color) => {
+    dispatch(selectCartItem(id, color));
+  };
+  const dontSelectProduct = (id, color) => {
+    dispatch(dontSelectCartItem(id, color));
   };
 
   return (
@@ -171,7 +188,7 @@ const ShoppingCartPage = () => {
         >
           <section>
             <p style={{ fontWeight: "500" }}>
-              Subtotal ({cartItemsLength} items): <br />
+              Subtotal ({cartItemsToBuyLength} items): <br />
               <span style={{ fontWeight: "bold" }}>
                 {priceConverter(cartTotal)}
               </span>
@@ -237,6 +254,21 @@ const ShoppingCartPage = () => {
           cartItems.map((item, idx) => {
             return (
               <>
+                <SelectProduct>
+                  <SelectProductInput
+                    type="checkbox"
+                    id="selectedProduct"
+                    name="productSelect"
+                    value="select"
+                    checked={item.selected}
+                    onChange={() =>
+                      item.selected
+                        ? dontSelectProduct(item.product, item.color)
+                        : selectProduct(item.product, item.color)
+                    }
+                    disabled={Cart.loading}
+                  />
+                </SelectProduct>
                 <CartItem key={idx} id="shopping-cart-section">
                   <section className="d-flex" style={{ marginTop: "3px" }}>
                     <Link to={`/product/${item.product}`}>
