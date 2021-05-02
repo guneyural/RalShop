@@ -38,6 +38,7 @@ import ProductPage from "./pages/ProductPage";
 import ShoppingCartPage from "./pages/ShoppingCartPage";
 import Messenger from "./pages/Messenger";
 import Messaging from "./pages/Messaging";
+import CheckoutPage from "./pages/CheckoutPage";
 
 require("dotenv").config();
 
@@ -134,6 +135,12 @@ const App = () => {
           <NormalRoute path="/user/:username" exact component={ProfilePage} />
           <NormalRoute path="/product/:id" exact component={ProductPage} />
           <NormalRoute path="/cart" exact component={ShoppingCartPage} />
+          <PrivateRoute
+            path="/checkout"
+            exact
+            component={CheckoutPage}
+            auth={User.isAuthenticated}
+          />
           <PrivateRoute
             path="/account/settings"
             exact

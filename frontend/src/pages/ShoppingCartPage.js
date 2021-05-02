@@ -3,7 +3,7 @@ import Styled from "styled-components";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { priceConverter } from "../utils/helpers";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   removeCartItem,
@@ -79,6 +79,7 @@ const ShoppingCartPage = () => {
   const [cartTotal, setCartTotal] = useState(0);
   const [cartItemsLength, setCartItemsLength] = useState(0);
   const [cartItemsToBuyLength, setCartItemsToBuyLength] = useState(0);
+  const history = useHistory();
 
   function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -148,6 +149,11 @@ const ShoppingCartPage = () => {
   const dontSelectProduct = (id, color) => {
     dispatch(dontSelectCartItem(id, color));
   };
+  const proceedToCheckout = () => {
+    if (cartItemsToBuyLength > 0) {
+      history.push("/checkout");
+    }
+  };
 
   return (
     <>
@@ -205,7 +211,9 @@ const ShoppingCartPage = () => {
             </span>
           </section>
           {User.isAuthenticated ? (
-            <button className="default-btn">Proceed To Checkout</button>
+            <button className="default-btn" onClick={() => proceedToCheckout()}>
+              Proceed To Checkout
+            </button>
           ) : (
             <Link to="/auth">
               <button className="default-btn">Proceed To Checkout</button>
