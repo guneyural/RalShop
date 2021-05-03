@@ -8,6 +8,10 @@ const AddressSchema = new mongoose.Schema({
   phoneNumber: strOptions,
   address: strOptions,
   addressHeader: strOptions,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = mongoose.model("Address", AddressSchema);

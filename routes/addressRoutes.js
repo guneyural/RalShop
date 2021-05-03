@@ -9,7 +9,7 @@ const { isUser } = require("../middlewares/isAuth");
 
 Router.post("/", isUser, createAddress);
 Router.get("/", isUser, getAddresses);
-Router.put("/", isUser, updateAddress);
-Router.get("/", isUser, deleteAddress);
+Router.put("/:id", isUser, updateAddress);
+Router.delete("/:id", isUser, deleteAddress);
 
 module.exports = Router;
