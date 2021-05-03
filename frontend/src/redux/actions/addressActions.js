@@ -10,18 +10,88 @@ import axios from "axios";
 
 export const createAddress = (data) => (dispatch) => {
   dispatch({ type: LOADING });
+
+  axios
+    .post("/api/address", data, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: CREATE_ADDRESS,
+        payload: data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ADDRESS_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const getAddresses = () => (dispatch) => {
   dispatch({ type: LOADING });
+
+  axios
+    .get("/api/address", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: GET_ADDRESSES,
+        payload: data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ADDRESS_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
-export const updateAddress = (id) => (dispatch) => {
+export const updateAddress = (id, data) => (dispatch) => {
   dispatch({ type: LOADING });
+
+  axios
+    .put(`/api/address${id}`, data, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: UPDATE_ADDRESS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ADDRESS_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const deleteAddress = (id) => (dispatch) => {
   dispatch({ type: LOADING });
+
+  axios
+    .delete(`/api/address${id}`, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: DELETE_ADDRESS, payload: id });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ADDRESS_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 export const loading = () => {
