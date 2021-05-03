@@ -209,6 +209,7 @@ const ShoppingCartPage = () => {
             >
               Remove All
             </span>
+            {Cart.loading && <p>Loading...</p>}
           </section>
           {User.isAuthenticated ? (
             <button className="default-btn" onClick={() => proceedToCheckout()}>
@@ -274,7 +275,6 @@ const ShoppingCartPage = () => {
                         ? dontSelectProduct(item.product, item.color)
                         : selectProduct(item.product, item.color)
                     }
-                    disabled={Cart.loading}
                   />
                 </SelectProduct>
                 <CartItem key={idx} id="shopping-cart-section">
