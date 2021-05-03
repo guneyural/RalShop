@@ -54,7 +54,6 @@ const createShop = catchAsync(async (req, res, next) => {
       new expressError("Password Must Be At Least 6 Characters.", 400)
     );
   if (error) {
-    console.log(error);
     return next(
       new expressError(
         error.details[0].message.split(" ")[
