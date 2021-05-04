@@ -4,11 +4,13 @@ import {
   UPDATE_ADDRESS,
   DELETE_ADDRESS,
   ADDRESS_ERROR,
-  LOADING,
+  ADDRESS_LOADING,
+  SELECT_ADDRESS,
 } from "../actions/types";
 
 const initialState = {
   addresses: [],
+  selectedAddress: {},
   loading: false,
   error: null,
 };
@@ -49,14 +51,21 @@ export const Address = (state = initialState, action) => {
         loading: false,
         error: null,
       };
+    case SELECT_ADDRESS:
+      return {
+        ...state,
+        error: null,
+        loading: false,
+        selectedAddress: action.payload,
+      };
+    case ADDRESS_LOADING:
+      return { ...state, loading: true };
     case ADDRESS_ERROR:
       return {
         ...state,
         loading: false,
         error: { msg: action.payload.msg, status: action.payload.status },
       };
-    case LOADING:
-      return { ...state, loading: true };
     default:
       return state;
   }

@@ -4,12 +4,13 @@ import {
   UPDATE_ADDRESS,
   DELETE_ADDRESS,
   ADDRESS_ERROR,
-  LOADING,
+  ADDRESS_LOADING,
+  SELECT_ADDRESS,
 } from "./types";
 import axios from "axios";
 
 export const createAddress = (data) => (dispatch) => {
-  dispatch({ type: LOADING });
+  dispatch({ type: ADDRESS_LOADING });
 
   axios
     .post("/api/address", data, tokenConfig())
@@ -32,7 +33,7 @@ export const createAddress = (data) => (dispatch) => {
 };
 
 export const getAddresses = () => (dispatch) => {
-  dispatch({ type: LOADING });
+  dispatch({ type: ADDRESS_LOADING });
 
   axios
     .get("/api/address", tokenConfig())
@@ -55,10 +56,10 @@ export const getAddresses = () => (dispatch) => {
 };
 
 export const updateAddress = (id, data) => (dispatch) => {
-  dispatch({ type: LOADING });
+  dispatch({ type: ADDRESS_LOADING });
 
   axios
-    .put(`/api/address${id}`, data, tokenConfig())
+    .put(`/api/address/${id}`, data, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: UPDATE_ADDRESS, payload: data });
@@ -75,10 +76,10 @@ export const updateAddress = (id, data) => (dispatch) => {
 };
 
 export const deleteAddress = (id) => (dispatch) => {
-  dispatch({ type: LOADING });
+  dispatch({ type: ADDRESS_LOADING });
 
   axios
-    .delete(`/api/address${id}`, tokenConfig())
+    .delete(`/api/address/${id}`, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: DELETE_ADDRESS, payload: id });
@@ -94,8 +95,8 @@ export const deleteAddress = (id) => (dispatch) => {
     });
 };
 
-export const loading = () => {
-  return { type: LOADING };
+export const selectAddress = (address) => {
+  return { type: SELECT_ADDRESS, payload: address };
 };
 
 const tokenConfig = () => {
