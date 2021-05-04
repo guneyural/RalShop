@@ -4,6 +4,7 @@ import Styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import AddressSection from "../components/checkoutAddress";
 import PaymentSection from "../components/checkoutPayment";
+import AddressModal from "../components/AddressModal";
 import { priceConverter } from "../utils/helpers";
 
 const HeaderSection = Styled.section`
@@ -36,9 +37,12 @@ const OrderSummarySection = Styled.section`
 const CheckoutPage = () => {
   const dispatch = useDispatch();
   const Cart = useSelector((state) => state.Cart);
+  const Address = useSelector((state) => state.Address);
   const [itemsToBuy, setItemsToBuy] = useState(0);
   const [total, setTotal] = useState(0);
+  const [isModalActive, setIsModalActive] = useState(false);
   const [activeTab, setActiveTab] = useState("address");
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     let sum = 0,
@@ -65,8 +69,24 @@ const CheckoutPage = () => {
     }
   }, [activeTab]);
 
+  function changeTab(tab) {
+    if (
+      Object.keys(
+        typeof Address.selectedAddress === "object"
+          ? Address.selectedAddress
+          : {}
+      ).length > 1
+    ) {
+      setActiveTab(tab);
+    } else {
+      setErrorMsg("Select an address for delivery.");
+      setTimeout(() => setErrorMsg(""), 5000);
+    }
+  }
+
   return (
     <div className="checkout-page">
+      {isModalActive && <AddressModal setIsModalActive={setIsModalActive} />}
       <div className="checkout-page-header">
         <img src={Logo} alt="UralShop Logo" className="checkout-page-logo" />
         <HeaderSection>
@@ -83,18 +103,40 @@ const CheckoutPage = () => {
             >
               <CheckoutNavbarHeader>Address</CheckoutNavbarHeader>
               <CheckoutNavbarText>Address information</CheckoutNavbarText>
+              {Object.keys(
+                typeof Address.selectedAddress === "object"
+                  ? Address.selectedAddress
+                  : {}
+              ).length > 0 && (
+                <p className="address-header">
+                  {Address.selectedAddress.addressHeader.length > 21
+                    ? `${Address.selectedAddress.addressHeader.substring(
+                        0,
+                        21
+                      )}...`
+                    : Address.selectedAddress.addressHeader}
+                </p>
+              )}
             </div>
-            <div onClick={() => setActiveTab("payment")}>
+            <div onClick={() => changeTab("payment")}>
               <CheckoutNavbarHeader>Payment</CheckoutNavbarHeader>
               <CheckoutNavbarText>You can pay with Stripe</CheckoutNavbarText>
             </div>
           </div>
-          {activeTab === "address" ? <AddressSection /> : <PaymentSection />}
+          {errorMsg !== "" && <p className="text-danger">{errorMsg}</p>}
+          {activeTab === "address" ? (
+            <AddressSection
+              setIsModalActive={setIsModalActive}
+              isModalActive={isModalActive}
+            />
+          ) : (
+            <PaymentSection />
+          )}
         </div>
         <div className="col-lg-3 col-md-4 order-summary-section">
           <button
             className="default-btn w-100"
-            onClick={() => setActiveTab("payment")}
+            onClick={() => changeTab("payment")}
           >
             Proceed To Payment
           </button>
