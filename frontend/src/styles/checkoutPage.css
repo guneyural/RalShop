@@ -89,7 +89,7 @@
   border: 1px solid #dedede;
   background: #efefef;
   padding: 4px 8px;
-  height: 120px;
+  height: 135px;
   border-radius: 2px;
   font-size: 14px;
   cursor: pointer;
@@ -136,13 +136,132 @@
   background: #a7a7a7;
 }
 
+.address-modal-background {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.address-modal {
+  border: 2px solid #dedede;
+  background: white;
+  position: relative;
+  width: 30%;
+}
+
+.address-modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #dedede;
+  padding: 10px 8px;
+}
+
+.address-modal-top button {
+  transition: 0.3s;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  font-size: 20px;
+  margin: 0;
+  outline: none;
+}
+
+.address-modal-top button:hover {
+  background: #dedede;
+}
+
+.address-modal-center {
+  padding: 0 10px 10px 10px;
+}
+
+.address-modal-center form {
+  margin-right: -20px;
+}
+
+.address-item.selected-address .checkout-address-box {
+  -webkit-box-shadow: inset 0 0 0 2px #333;
+  -moz-box-shadow: inset 0 0 0 2px #333;
+  box-shadow: inset 0 0 0 2px #333;
+  background: #acacac;
+}
+
+p.address-header {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+  margin-top: -10px;
+}
+
+@media only screen and (max-width: 1580px) {
+  .address-modal {
+    width: 40%;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .address-modal {
+    width: 50%;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .address-modal {
+    width: 60%;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .address-modal {
+    width: 85%;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .address-modal {
+    width: 96%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .address-modal-center form {
+    margin: 5px;
+  }
+}
+
 @media only screen and (max-width: 767px) {
+  .checkout-address-box {
+    border: 1px solid #dedede;
+    background: #efefef;
+    padding: 4px 8px;
+    height: 100px;
+  }
+
+  .address-header {
+    font-size: 16px !important;
+  }
+
   .checkout-page .order-summary-section {
     margin-top: 20px;
   }
 
   .address-item {
     margin-top: 25px !important;
+  }
+
+  .address-item:nth-of-type(1) {
+    margin-top: 0px !important;
+  }
+
+  .create-address {
+    margin-top: 5px !important;
   }
 }
 
