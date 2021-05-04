@@ -79,6 +79,7 @@ const ShoppingCartPage = () => {
   const [cartTotal, setCartTotal] = useState(0);
   const [cartItemsLength, setCartItemsLength] = useState(0);
   const [cartItemsToBuyLength, setCartItemsToBuyLength] = useState(0);
+  const [noItemToBuyError, setNoItemToBuyError] = useState("");
   const history = useHistory();
 
   function escapeRegex(text) {
@@ -152,6 +153,9 @@ const ShoppingCartPage = () => {
   const proceedToCheckout = () => {
     if (cartItemsToBuyLength > 0) {
       history.push("/checkout");
+    } else {
+      setNoItemToBuyError("Select product for checkout");
+      setTimeout(() => setNoItemToBuyError(""), 5000);
     }
   };
 
@@ -210,6 +214,9 @@ const ShoppingCartPage = () => {
               Remove All
             </span>
             {Cart.loading && <p>Loading...</p>}
+            {noItemToBuyError && (
+              <p className="text-danger">{noItemToBuyError}</p>
+            )}
           </section>
           {User.isAuthenticated ? (
             <button className="default-btn" onClick={() => proceedToCheckout()}>
