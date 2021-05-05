@@ -1,17 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Logo from "../assets/logo.png";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
+import styled from "styled-components";
 
-const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
+const NotificationSection = styled.p`
+  background: #c9222b;
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  display: inline-block;
+  height: 18.5px;
+  width: 18.5px;
+  position: relative;
+  top: 14px;
+  left: 3px;
+`;
+
+const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
   const Seller = useSelector((state) => state.Seller);
+  const Chat = useSelector((state) => state.Chat);
+  const [notifications, setNotifications] = useState(0);
+
   useEffect(() => {
     document.querySelectorAll(".nav-mobile a").forEach((item) => {
       item.addEventListener("click", () => setIsNavOpen(false));
     });
   }, [setIsNavOpen]);
+
+  useEffect(() => {
+    setNotifications(Chat.notifications.length);
+  }, [Chat.notifications]);
+
   return (
     <>
       <div className="navbar-section">
@@ -30,8 +53,12 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
           </div>
         </div>
         <div
-          className="top-nav text-light seller-nav"
-          style={{ background: "#333333" }}
+          className={
+            notifications > 0
+              ? "top-nav text-light seller-nav-notification"
+              : "top-nav text-light seller-nav"
+          }
+          style={{ background: "#333" }}
         >
           <div className="container">
             <section className="navbar-left">
@@ -107,9 +134,32 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
                 </Link>
               </section>
             </section>
-            <section className="navbar-middle seller">
-              <Link to="/chat/seller">Chat</Link>
-              <Link to="/seller/notifications">Notifications</Link>
+            <section
+              className="navbar-middle seller"
+              style={
+                notifications > 0
+                  ? { paddingBottom: "12px" }
+                  : { paddingBottom: "0" }
+              }
+            >
+              <Link to="/chat/seller">
+                {notifications > 0 && (
+                  <NotificationSection>
+                    <p
+                      style={{
+                        display: "inline-block",
+                        position: "absolute",
+                        left: "3px",
+                        top: "-5.5px",
+                        padding: "2px",
+                      }}
+                    >
+                      {notifications}
+                    </p>
+                  </NotificationSection>
+                )}
+                Chat
+              </Link>
               <Link to="/seller/profile">Profile</Link>
             </section>
             <button
@@ -117,6 +167,23 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
               aria-label="menu-button"
               onClick={() => setIsNavOpen(true)}
             >
+              {" "}
+              {notifications > 0 && (
+                <NotificationSection>
+                  <p
+                    style={{
+                      display: "inline-block",
+                      position: "absolute",
+                      left: "3px",
+                      top: "-5.5px",
+                      padding: "2px",
+                      fontSize: "17px",
+                    }}
+                  >
+                    {notifications}
+                  </p>
+                </NotificationSection>
+              )}
               <GiHamburgerMenu />
             </button>
           </div>
@@ -193,7 +260,30 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen }) => {
             <Link to="/seller/products/add" className="seller-mobile-link">
               Add Product
             </Link>
-            <Link to="/chat/seller" className="seller-mobile-link">
+            <Link
+              to="/chat/seller"
+              className="seller-mobile-link"
+              style={
+                notifications > 0
+                  ? { padding: "0 0 10px 5px" }
+                  : { padding: "10px 20px" }
+              }
+            >
+              {notifications > 0 && (
+                <NotificationSection>
+                  <p
+                    style={{
+                      display: "inline-block",
+                      position: "absolute",
+                      left: "3px",
+                      top: "-5.5px",
+                      padding: "2px",
+                    }}
+                  >
+                    {notifications}
+                  </p>
+                </NotificationSection>
+              )}
               Chat
             </Link>
             <Link to="/seller/notifications" className="seller-mobile-link">

@@ -22,14 +22,29 @@ const TinyNavLink = styled.span`
     border-bottom: 1px solid #6c757d;
   }
 `;
+const NotificationSection = styled.p`
+  background: #c9222b;
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  display: inline-block;
+  height: 18.5px;
+  width: 18.5px;
+  position: relative;
+  top: 14px;
+  left: 7px;
+`;
 
 const Navbar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
   const [scroll, setScroll] = useState(window.scrollY);
   const [searchQuery, setSearchQuery] = useState("");
+  const [notifications, setNotifications] = useState(0);
+  const [cartItems, setCartItems] = useState(0);
   const { user, isAuthenticated } = useSelector((state) => state.Auth);
-  const Seller = useSelector((state) => state.Seller);
+  const { Cart, Seller, Chat } = useSelector((state) => state);
 
   useEffect(() => {
     if (!Seller.inSellerRoute) {
@@ -38,6 +53,14 @@ const Navbar = () => {
       });
     }
   }, [Seller]);
+
+  useEffect(() => {
+    if (isAuthenticated) setNotifications(Chat.notifications.length);
+  }, [Chat.notifications, isAuthenticated]);
+
+  useEffect(() => {
+    setCartItems(Cart.products.length);
+  }, [Cart.products]);
 
   useEffect(() => {
     if (isNavOpen) {
@@ -62,10 +85,10 @@ const Navbar = () => {
     window.addEventListener("scroll", getScroll);
     window.addEventListener("resize", getWidth);
 
-    if (windowSize > 892) {
+    if (windowSize > 990) {
       document.body.style.overflow = "auto";
       setIsNavOpen(false);
-    } else if (windowSize <= 892 && isNavOpen) {
+    } else if (windowSize <= 990 && isNavOpen) {
       document.body.style.overflow = "hidden";
     }
 
@@ -164,12 +187,40 @@ const Navbar = () => {
                   </Link>
                 )}
                 <Link to="/chat">
+                  {notifications > 0 && (
+                    <NotificationSection>
+                      <p
+                        style={{
+                          display: "inline-block",
+                          position: "absolute",
+                          left: "3px",
+                          top: "-5.5px",
+                          padding: "2px",
+                        }}
+                      >
+                        {notifications}
+                      </p>
+                    </NotificationSection>
+                  )}
                   <BsFillChatFill /> Chat
                 </Link>
                 <Link to="/wishlist">
                   <FaHeart /> Wishlist
                 </Link>
                 <Link to="/cart">
+                  <NotificationSection style={{ background: "#333" }}>
+                    <p
+                      style={{
+                        display: "inline-block",
+                        position: "absolute",
+                        left: "3px",
+                        top: "-5.5px",
+                        padding: "2px",
+                      }}
+                    >
+                      {cartItems > 9 ? "+9" : cartItems}
+                    </p>
+                  </NotificationSection>
                   <FaShoppingCart /> Shopping Cart
                 </Link>
                 <button
@@ -177,6 +228,23 @@ const Navbar = () => {
                   aria-label="menu-button"
                   onClick={() => setIsNavOpen(true)}
                 >
+                  {" "}
+                  {notifications > 0 && (
+                    <NotificationSection>
+                      <p
+                        style={{
+                          display: "inline-block",
+                          position: "absolute",
+                          left: "3px",
+                          top: "-5.5px",
+                          padding: "2px",
+                          fontSize: "17px",
+                        }}
+                      >
+                        {notifications}
+                      </p>
+                    </NotificationSection>
+                  )}
                   <GiHamburgerMenu />
                 </button>
               </section>
@@ -227,7 +295,20 @@ const Navbar = () => {
                 </li>
               </Link>
               <Link to="/cart">
-                <li>
+                <li style={{ padding: "0 0 10px 5px" }}>
+                  <NotificationSection style={{ background: "#333" }}>
+                    <p
+                      style={{
+                        display: "inline-block",
+                        position: "absolute",
+                        left: "3px",
+                        top: "-5.5px",
+                        padding: "2px",
+                      }}
+                    >
+                      {cartItems > 9 ? "+9" : cartItems}
+                    </p>
+                  </NotificationSection>
                   <FaShoppingCart className="mobile-nav-icon" /> Shopping Cart
                 </li>
               </Link>
@@ -237,8 +318,29 @@ const Navbar = () => {
                 </li>
               </Link>
               <Link to="/chat">
-                <li>
-                  <BsFillChatFill /> Chat
+                <li
+                  style={
+                    notifications > 0
+                      ? { padding: "0 0 10px 5px" }
+                      : { padding: "10px 20px" }
+                  }
+                >
+                  {notifications > 0 && (
+                    <NotificationSection>
+                      <p
+                        style={{
+                          display: "inline-block",
+                          position: "absolute",
+                          left: "3px",
+                          top: "-5.5px",
+                          padding: "2px",
+                        }}
+                      >
+                        {notifications}
+                      </p>
+                    </NotificationSection>
+                  )}
+                  <BsFillChatFill /> Chat{" "}
                 </li>
               </Link>
               {isAuthenticated && user !== null ? (
@@ -272,7 +374,13 @@ const Navbar = () => {
       </>
     );
   }
-  return <SellerNavbar isNavOpen={isNavOpen} setIsNavOpen={setIsNavOpen} />;
+  return (
+    <SellerNavbar
+      isNavOpen={isNavOpen}
+      setIsNavOpen={setIsNavOpen}
+      windowSize={windowSize}
+    />
+  );
 };
 
 export default Navbar;
