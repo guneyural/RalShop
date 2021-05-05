@@ -7,6 +7,7 @@ import {
   LOADING,
   CHAT_ERROR,
   GET_CHATROOM_MESSAGES,
+  GET_NOTIFICATIONS,
 } from "../actions/types";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   createdRoom: null,
   activeChat: { roomId: null, participant: null, messages: [] },
   loading: false,
+  notifications: [],
   error: { msg: null, status: null },
 };
 
@@ -81,6 +83,11 @@ export function Chat(state = initialState, action) {
           participant: action.payload.participant,
         },
         error: { msg: null, status: null },
+      };
+    case GET_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.payload,
       };
     case CHAT_ERROR:
       return {

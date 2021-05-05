@@ -7,9 +7,9 @@ import {
   LOADING,
   CHAT_ERROR,
   GET_CHATROOM_MESSAGES,
+  GET_NOTIFICATIONS,
 } from "./types";
 import axios from "axios";
-
 export const createChatroom = (participantId, isShop) => (dispatch) => {
   dispatch({ type: LOADING });
 
@@ -34,7 +34,6 @@ export const createChatroom = (participantId, isShop) => (dispatch) => {
       });
     });
 };
-
 export const getChatrooms = (isShop) => (dispatch) => {
   dispatch({ type: LOADING });
 
@@ -81,15 +80,12 @@ export const setActiveChatroom = (roomId, participant, isShop) => (
       });
     });
 };
-
 export const receiveMessage = (message) => {
   return { type: RECEIVE_MESSAGE, payload: message };
 };
-
 export const forbiddenRoom = () => {
   return { type: FORBIDDEN_ROOM };
 };
-
 export const getChatroomMessages = (roomId, isShop) => (dispatch) => {
   dispatch({ type: LOADING });
 
@@ -112,7 +108,23 @@ export const getChatroomMessages = (roomId, isShop) => (dispatch) => {
       });
     });
 };
-
+export const getNotifications = (isShop) => (dispatch) => {
+  axios
+    .get("/api/chat/notifications", isShop ? shopConfig() : userConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_NOTIFICATIONS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: CHAT_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 export const shopConfig = () => {
   const shopToken = localStorage.getItem("shop-token");
   const config = {
@@ -123,7 +135,6 @@ export const shopConfig = () => {
   if (shopToken) config.headers["shop-token"] = shopToken;
   return config;
 };
-
 export const userConfig = () => {
   const userToken = localStorage.getItem("user-token");
   const config = {
