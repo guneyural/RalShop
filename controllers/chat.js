@@ -34,7 +34,6 @@ const createRoom = catchAsync(async (req, res, next) => {
   const populated = await findChatroom.execPopulate("participant creator");
   res.json(populated);
 });
-
 const getChatrooms = catchAsync(async (req, res, next) => {
   // Check if user exists
   if (req.user) {
@@ -85,7 +84,6 @@ const getChatrooms = catchAsync(async (req, res, next) => {
     )
   );
 });
-
 const getMessages = catchAsync(async (req, res, next) => {
   // Check if user with that id exists
   if (req.user) {
@@ -116,7 +114,6 @@ const getMessages = catchAsync(async (req, res, next) => {
     return next(new expressError("Not Participant Of This Chatroom.", 403));
   }
 });
-
 const sendImage = catchAsync(async (req, res) => {
   const { sender, receiver, chatroom } = req.body;
   const image = req.file;
@@ -133,10 +130,18 @@ const sendImage = catchAsync(async (req, res) => {
   let newMessage = await createMessageObj.save();
   res.json(newMessage);
 });
-
+// getChatNotifications is for receive all the messages that the user sent for check if there is a notification
+const getChatNotifications = catchAsync(async (req, res) => {
+  const user = req.user ? req.user : req.shop;
+  const getMessages = await Message.find({
+    $and: [{ receiver: user.id }, { seen: false }],
+  });
+  res.json(getMessages);
+});
 module.exports = {
   createRoom,
   getChatrooms,
   getMessages,
   sendImage,
+  getChatNotifications,
 };
