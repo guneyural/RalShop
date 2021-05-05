@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import LoadingIcon from "../assets/loading.gif";
 import { getChatrooms, setActiveChatroom } from "../redux/actions/chatActions";
 import Styled from "styled-components";
+import { MdNotifications } from "react-icons/md";
 import { BiMessageDetail } from "react-icons/bi";
 import { HiDotsVertical } from "react-icons/hi";
 
@@ -53,12 +54,12 @@ const Messenger = () => {
   const history = useHistory();
   const { Chat } = useSelector((state) => state);
   const { inSellerRoute } = useSelector((state) => state.Seller);
+  const [notifications, setNotifications] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getChatrooms(inSellerRoute));
   }, []);
-
   useEffect(() => {
     if (Chat.createdRoom !== null) {
       activeChat(
@@ -67,6 +68,9 @@ const Messenger = () => {
       );
     }
   }, [Chat]);
+  useEffect(() => {
+    setNotifications(Chat.notifications);
+  }, [Chat.notifications]);
 
   const activeChat = (roomId, participant) => {
     dispatch(setActiveChatroom(roomId, participant, inSellerRoute));
@@ -95,7 +99,13 @@ const Messenger = () => {
             return (
               <ChatroomBox
                 key={index}
-                className="border-bottom"
+                className={
+                  notifications.some(
+                    (notif) => notif.chatroom === room.chatroom._id
+                  )
+                    ? "border-bottom chatroom-highlight"
+                    : "border-bottom"
+                }
                 onClick={() =>
                   activeChat(
                     room.chatroom._id,
@@ -109,6 +119,14 @@ const Messenger = () => {
                   <BiMessageDetail
                     style={{ height: "30px", width: "30px", marginTop: "50%" }}
                   />
+                  {notifications.some(
+                    (notification) =>
+                      notification.chatroom === room.chatroom._id
+                  ) && (
+                    <MdNotifications
+                      style={{ color: "#c9222b", fontSize: "22px" }}
+                    />
+                  )}
                 </section>
                 <section style={{ paddingLeft: "15px", paddingTop: "5px" }}>
                   <CompanyName>

@@ -228,6 +228,10 @@
   margin: 20px 0;
 }
 
+.chatroom-highlight {
+  background: #e9e9e9;
+}
+
 @media only screen and (max-width: 612px) {
   .message-section {
     margin-top: -20px;
