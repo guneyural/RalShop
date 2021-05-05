@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
 import PrivateRoute from "./privateRoutes/privateRoute";
 import Home from "./pages/Home";
@@ -13,6 +13,7 @@ import {
   getCurrentSeller,
   notSellerRoute,
 } from "./redux/actions/sellerActions";
+import { getNotifications } from "./redux/actions/chatActions";
 import { getWishlist } from "./redux/actions/wishlistAction";
 import { getCart } from "./redux/actions/ShoppingCartActions";
 import PrivateLogin from "./privateRoutes/privateLogin";
@@ -46,6 +47,7 @@ const App = () => {
   const dispatch = useDispatch();
   const User = useSelector((state) => state.Auth);
   const Seller = useSelector((state) => state.Seller);
+  const [intervalId, setIntervalId] = useState();
 
   useEffect(() => {
     dispatch(notSellerRoute());
@@ -54,10 +56,33 @@ const App = () => {
     dispatch(getUser());
     dispatch(getWishlist());
     dispatch(getCart());
+
+    if (User.isAuthenticated) {
+      dispatch(getNotifications(false));
+      startInterval(false);
+    } else {
+      clearInterval(intervalId);
+    }
   }, [dispatch, User.isAuthenticated]);
   useEffect(() => {
     dispatch(getCurrentSeller());
+
+    if (Seller.isAuthenticated) {
+      dispatch(getNotifications(true));
+      startInterval(true);
+    } else {
+      clearInterval(intervalId);
+    }
   }, [dispatch, Seller.isAuthenticated]);
+
+  function startInterval(isShop) {
+    setIntervalId(
+      setInterval(() => {
+        dispatch(getNotifications(isShop));
+      }, 30000)
+    );
+  }
+
   mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
   return (
