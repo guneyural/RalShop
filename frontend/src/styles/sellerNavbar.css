@@ -85,13 +85,19 @@
   .seller-nav {
     padding: 20px 0;
   }
+
+  .seller-nav-notification {
+    padding: 10px 0;
+  }
+
   .nav-logo.seller {
     display: none;
   }
 }
 
 @media only screen and (max-width: 768px) {
-  .seller-nav .navbar-middle {
+  .seller-nav .navbar-middle,
+  .seller-nav-notification .navbar-middle {
     display: none;
   }
   .seller-nav-links {
@@ -100,7 +106,8 @@
   .nav-logo.seller {
     display: inline-block;
   }
-  .seller-nav {
+  .seller-nav,
+  .seller-nav-notification {
     padding: 0;
   }
   .logo-text.text-light {
@@ -112,7 +119,8 @@
 }
 
 @media only screen and (max-width: 612px) {
-  .seller-nav {
+  .seller-nav,
+  .seller-nav-notification {
     padding: 10px 0px;
   }
 }
