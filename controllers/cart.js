@@ -22,6 +22,8 @@ const updateCard = catchAsync(async (req, res, next) => {
       product: item.product,
       color: item.color,
       quantity: item.qty,
+      stripeProductId: item.stripeProductId,
+      stripePriceId: item.stripePriceId,
       selected: item.selected,
     });
   });
