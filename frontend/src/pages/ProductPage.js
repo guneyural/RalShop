@@ -36,19 +36,21 @@ import { addItem as addCartItem } from "../redux/actions/ShoppingCartActions";
 import { createChatroom } from "../redux/actions/chatActions";
 
 const NavDivider = Styled.span`
-     font-weight:bold;
-     padding-left:5px;
+  font-weight:bold;
+  padding-left:5px;
 `;
 const ProductImages = Styled.div`
-     height: 100%;
-     width: 100%;
-     position: relative;
-     height: 400px;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  height: 400px;
+  user-select: none;
+  cursor: pointer;
 `;
 const ImageBottomSection = Styled.section`
-     display:flex;
-     justify-content:space-between;
-     align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 `;
 const InfoRow = Styled.div`
   display: flex;
@@ -506,7 +508,10 @@ const ProductPage = () => {
           <h2>{Product.title}</h2>
           <div className="col-md-6">
             {Product.images && (
-              <ProductImages>
+              <ProductImages
+                id="big-product-img"
+                onDoubleClick={() => setIsFullscreen(true)}
+              >
                 <img
                   src={Product.images[index].url}
                   alt="product"
@@ -539,6 +544,7 @@ const ProductPage = () => {
                       data-idx={idx}
                       key={idx}
                       src={item.url}
+                      style={{ userSelect: "none" }}
                       onClick={() => setIndex(idx)}
                       className={idx === 0 && "product-img-active"}
                       alt="product"
@@ -890,6 +896,8 @@ const ProductPage = () => {
                         stock: Product.stock,
                         title: Product.title,
                         image: Product.images[0].url,
+                        stripeProductId: Product.stripeProductId,
+                        stripePriceId: Product.stripePriceId,
                         color,
                         qty,
                         selected: true,
