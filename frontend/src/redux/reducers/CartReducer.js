@@ -76,6 +76,8 @@ export const Cart = (state = initialState, action) => {
           stock: item.product.stock,
           title: item.product.title,
           image: item.product.images[0].url,
+          stripeProductId: item.product.stripeProductId,
+          stripePriceId: item.product.stripePriceId,
           color: item.color,
           qty: item.quantity,
           selected: item.selected,
