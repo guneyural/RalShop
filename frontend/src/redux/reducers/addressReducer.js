@@ -6,36 +6,65 @@ import {
   ADDRESS_ERROR,
   ADDRESS_LOADING,
   SELECT_ADDRESS,
+  CREATE_BILLING_ADDRESS,
+  SELECT_BILLING_ADDRESS,
+  DELETE_BILLING_ADDRESS,
+  UPDATE_BILLING_ADDRESS,
 } from "../actions/types";
 
 const initialState = {
-  addresses: [],
-  selectedAddress: {},
+  deliveryAddresses: [],
+  billingAddresses: [],
+  selectedDeliveryAddress: {},
+  selectedBillingAddress: {},
   loading: false,
   error: null,
 };
 
 export const Address = (state = initialState, action) => {
   switch (action.type) {
+    case CREATE_BILLING_ADDRESS:
+      return {
+        ...state,
+        billingAddresses: [action.payload, ...state.billingAddresses],
+        loading: false,
+        error: null,
+      };
     case CREATE_ADDRESS:
       return {
         ...state,
-        addresses: [action.payload, ...state.addresses],
+        deliveryAddresses: [action.payload, ...state.deliveryAddresses],
         loading: false,
         error: null,
       };
     case GET_ADDRESSES:
       return {
         ...state,
-        addresses: action.payload,
+        deliveryAddresses: action.payload.filter(
+          (item) => item.addressType === "delivery"
+        ),
+        billingAddresses: action.payload.filter(
+          (item) => item.addressType === "billing"
+        ),
         loading: false,
         error: null,
       };
     case UPDATE_ADDRESS:
       return {
         ...state,
-        addresses: [
-          ...state.addresses.map((address) =>
+        deliveryAddresses: [
+          ...state.deliveryAddresses.map((address) =>
+            address._id === action.payload._id ? action.payload : address
+          ),
+        ],
+        loading: false,
+        error: null,
+      };
+    case UPDATE_BILLING_ADDRESS:
+      return {
+        ...state,
+        billingAddresses: [
+          ...state.billingAddresses.map((address) =>
             address._id === action.payload._id ? action.payload : address
           ),
         ],
@@ -45,18 +74,39 @@ export const Address = (state = initialState, action) => {
     case DELETE_ADDRESS:
       return {
         ...state,
-        addresses: state.addresses.filter(
+        deliveryAddresses: state.deliveryAddresses.filter(
           (address) => address._id !== action.payload
         ),
         loading: false,
         error: null,
+      };
+    case DELETE_BILLING_ADDRESS:
+      return {
+        ...state,
+        selectedBillingAddress:
+          state.selectedBillingAddress._id === action.payload
+            ? null
+            : state.selectedBillingAddress,
+        billingAddresses: state.billingAddresses.filter(
+          (address) => address._id !== action.payload
+        ),
+        loading: false,
+        error: null,
+      };
+
+    case SELECT_BILLING_ADDRESS:
+      return {
+        ...state,
+        error: null,
+        loading: false,
+        selectedBillingAddress: action.payload,
       };
     case SELECT_ADDRESS:
       return {
         ...state,
         error: null,
         loading: false,
-        selectedAddress: action.payload,
+        selectedDeliveryAddress: action.payload,
       };
     case ADDRESS_LOADING:
       return { ...state, loading: true };
