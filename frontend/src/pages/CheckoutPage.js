@@ -35,7 +35,6 @@ const OrderSummarySection = Styled.section`
 `;
 
 const CheckoutPage = () => {
-  const dispatch = useDispatch();
   const Cart = useSelector((state) => state.Cart);
   const Address = useSelector((state) => state.Address);
   const [itemsToBuy, setItemsToBuy] = useState(0);
@@ -43,6 +42,7 @@ const CheckoutPage = () => {
   const [isModalActive, setIsModalActive] = useState(false);
   const [activeTab, setActiveTab] = useState("address");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isBillingAddress, setIsBillingAddress] = useState(false);
 
   useEffect(() => {
     let sum = 0,
@@ -68,25 +68,35 @@ const CheckoutPage = () => {
       getNavItems[1].classList.add("checkout-nav-active");
     }
   }, [activeTab]);
-
   function changeTab(tab) {
     if (
       Object.keys(
-        typeof Address.selectedAddress === "object"
-          ? Address.selectedAddress
+        typeof Address.selectedDeliveryAddress === "object"
+          ? Address.selectedDeliveryAddress
+          : {}
+      ).length > 1 &&
+      Object.keys(
+        typeof Address.selectedBillingAddress === "object"
+          ? Address.selectedBillingAddress
           : {}
       ).length > 1
     ) {
       setActiveTab(tab);
     } else {
-      setErrorMsg("Select an address for delivery.");
+      setErrorMsg("Select addresses for delivery.");
       setTimeout(() => setErrorMsg(""), 5000);
     }
   }
+  function endPayment() {}
 
   return (
     <div className="checkout-page">
-      {isModalActive && <AddressModal setIsModalActive={setIsModalActive} />}
+      {isModalActive && (
+        <AddressModal
+          isBillingAddress={isBillingAddress}
+          setIsModalActive={setIsModalActive}
+        />
+      )}
       <div className="checkout-page-header">
         <img src={Logo} alt="UralShop Logo" className="checkout-page-logo" />
         <HeaderSection>
@@ -104,17 +114,17 @@ const CheckoutPage = () => {
               <CheckoutNavbarHeader>Address</CheckoutNavbarHeader>
               <CheckoutNavbarText>Address information</CheckoutNavbarText>
               {Object.keys(
-                typeof Address.selectedAddress === "object"
-                  ? Address.selectedAddress
+                typeof Address.selectedDeliveryAddress === "object"
+                  ? Address.selectedDeliveryAddress
                   : {}
               ).length > 0 && (
                 <p className="address-header">
-                  {Address.selectedAddress.addressHeader.length > 21
-                    ? `${Address.selectedAddress.addressHeader.substring(
+                  {Address.selectedDeliveryAddress.addressHeader.length > 21
+                    ? `${Address.selectedDeliveryAddress.addressHeader.substring(
                         0,
                         21
                       )}...`
-                    : Address.selectedAddress.addressHeader}
+                    : Address.selectedDeliveryAddress.addressHeader}
                 </p>
               )}
             </div>
@@ -127,6 +137,8 @@ const CheckoutPage = () => {
           {activeTab === "address" ? (
             <AddressSection
               setIsModalActive={setIsModalActive}
+              setIsBillingAddress={setIsBillingAddress}
+              isBillingAddress={isBillingAddress}
               isModalActive={isModalActive}
             />
           ) : (
@@ -136,9 +148,11 @@ const CheckoutPage = () => {
         <div className="col-lg-3 col-md-4 order-summary-section">
           <button
             className="default-btn w-100"
-            onClick={() => changeTab("payment")}
+            onClick={() =>
+              activeTab === "payment" ? endPayment() : changeTab("payment")
+            }
           >
-            Proceed To Payment
+            {activeTab === "payment" ? "End Payment" : "Proceed To Payment"}
           </button>
           <div className="order-summary-box mt-3">
             <OrderSummarySection>
