@@ -1,9 +1,9 @@
 const Product = require("../models/product");
 const Wishlist = require("../models/wishlist");
-const Reviews = require("../models/review");
 const catchAsync = require("../utils/catchAsync");
 const expressError = require("../utils/expressError");
 const mongoId = require("mongoose").Types.ObjectId;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const createProduct = catchAsync(async (req, res, next) => {
   const {
@@ -31,8 +31,20 @@ const createProduct = catchAsync(async (req, res, next) => {
     !location
   )
     return next(new expressError("Fill All Fields", 400));
+
+  const stripeProduct = await stripe.products.create({
+    name: title,
+  });
+  const stripePrice = await stripe.prices.create({
+    product: stripeProduct.id,
+    unit_amount: price * 100,
+    currency: "usd",
+  });
+
   const newProduct = new Product(req.body);
   newProduct.coordinate = coordinate.split(",");
+  newProduct.stripeProductId = stripeProduct.id;
+  newProduct.stripePriceId = stripePrice.id;
   newProduct.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
