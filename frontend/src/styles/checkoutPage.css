@@ -200,6 +200,27 @@ p.address-header {
   margin-top: -10px;
 }
 
+#card-element {
+  border-radius: 3px;
+  padding: 12px;
+  border: 1px solid #c2c2c2;
+  max-height: 44px;
+  width: 100%;
+  background: #efefef;
+  box-sizing: border-box;
+  color: #333333 !important;
+  font-weight: 500 !important;
+}
+
+#payment-form button {
+  border-radius: 20px;
+  margin-top: 12px;
+}
+
+.card-information-section {
+  padding: 8px;
+}
+
 @media only screen and (max-width: 1580px) {
   .address-modal {
     width: 40%;
