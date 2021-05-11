@@ -21,6 +21,8 @@ const productSchema = new mongoose.Schema(
     category: strOptions,
     subCategory: strOptions,
     rating: { type: Number, min: 0, default: 0 },
+    stripeProductId: strOptions,
+    stripePriceId: strOptions,
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
