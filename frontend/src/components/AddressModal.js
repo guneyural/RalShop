@@ -70,9 +70,17 @@ const InformationText = styled.span`
   margin-top: -15px;
 `;
 
-const AddressModal = ({ setIsModalActive, isEdit, selectedAddress }) => {
+const AddressModal = ({
+  setIsModalActive,
+  isEdit,
+  selectedAddress,
+  isBillingAddress,
+}) => {
   const dispatch = useDispatch();
   const { Address, lastAction } = useSelector((state) => state);
+  const [email, setEmail] = useState(isEdit ? selectedAddress.email : "");
+  const [city, setCity] = useState(isEdit ? selectedAddress.city : "");
+  const [state, setState] = useState(isEdit ? selectedAddress.state : "");
   const [name, setName] = useState(isEdit ? selectedAddress.name : "");
   const [surname, setSurname] = useState(isEdit ? selectedAddress.surname : "");
   const [country, setCountry] = useState(isEdit ? selectedAddress.country : "");
@@ -97,7 +105,12 @@ const AddressModal = ({ setIsModalActive, isEdit, selectedAddress }) => {
   }, []);
   useEffect(() => {
     if (isButtonClicked) {
-      if (lastAction === "CREATE_ADDRESS" || lastAction === "UPDATE_ADDRESS") {
+      if (
+        lastAction === "CREATE_ADDRESS" ||
+        lastAction === "UPDATE_ADDRESS" ||
+        lastAction === "CREATE_BILLING_ADDRESS" ||
+        lastAction === "UPDATE_BILLING_ADDRESS"
+      ) {
         setIsModalActive(false);
         setIsButtonClicked(false);
       }
@@ -114,8 +127,11 @@ const AddressModal = ({ setIsModalActive, isEdit, selectedAddress }) => {
       phoneNumber,
       address: addressDetails,
       addressHeader,
+      city,
+      state,
+      email,
     };
-    dispatch(CREATE_ADDRESS(addressObject));
+    dispatch(CREATE_ADDRESS(addressObject, isBillingAddress));
   }
   function editAddress(e) {
     e.preventDefault();
@@ -127,8 +143,13 @@ const AddressModal = ({ setIsModalActive, isEdit, selectedAddress }) => {
       phoneNumber,
       address: addressDetails,
       addressHeader,
+      city,
+      state,
+      email,
     };
-    dispatch(updateAddress(selectedAddress._id, addressObject));
+    dispatch(
+      updateAddress(selectedAddress._id, addressObject, isBillingAddress)
+    );
   }
 
   return (
@@ -190,6 +211,42 @@ const AddressModal = ({ setIsModalActive, isEdit, selectedAddress }) => {
                   placeholder="Phone Number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </div>
+              <div className="col-md-6 mt-2">
+                <Labels htmlFor="city">City</Labels>
+                <InputField
+                  type="text"
+                  id="city"
+                  placeholder="city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="col-md-6 mt-2">
+                <Labels htmlFor="state">State</Labels>
+                <InputField
+                  type="text"
+                  id="state"
+                  placeholder="state"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="col-md-12 mt-2">
+                <Labels htmlFor="email" style={{ fontSize: "14px" }}>
+                  {isBillingAddress
+                    ? "Email (You will receive receipt and invoice from this address)"
+                    : "Email (You will get notified about your order from this address"}
+                </Labels>
+                <InputFieldFullWidth
+                  type="email"
+                  id="email"
+                  placeholder="email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="col-md-12 mt-2">
