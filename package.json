@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/urlGuney/RalShop#readme",
   "dependencies": {
+    "@stripe/react-stripe-js": "^1.4.0",
     "base64-arraybuffer": "^0.1.4",
     "bcrypt": "^5.0.0",
     "cloudinary": "^1.24.0",
@@ -42,7 +43,8 @@
     "nodemailer": "^6.4.17",
     "react-mapbox-wrapper": "^2.6.1",
     "socket.io": "^4.0.1",
-    "socket.io-stream": "^0.9.1"
+    "socket.io-stream": "^0.9.1",
+    "stripe": "^8.148.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0"
