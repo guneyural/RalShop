@@ -6,27 +6,33 @@ import {
   getAddresses,
   deleteAddress,
   selectAddress as SELECT_ADDRESS,
+  selectBillingAddress as SELECT_BILLING_ADDRESS,
 } from "../redux/actions/addressActions";
 
-const CheckoutAddress = ({ setIsModalActive }) => {
+const CheckoutAddress = ({
+  setIsModalActive,
+  isBillingAddress,
+  setIsBillingAddress,
+}) => {
   const Address = useSelector((state) => state.Address);
   const dispatch = useDispatch();
   const [selectedAddress, setSelectedAddress] = useState();
   const [isEditModalActive, setIsEditModalActive] = useState(false);
   const [editedItem, setEditedItem] = useState();
+  const [selectedBillingAddress, setSelectedBillingAddress] = useState();
 
   useEffect(() => {
     dispatch(getAddresses());
   }, []);
   useEffect(() => {
-    if (Address.addresses.length > 0) {
+    if (Address.deliveryAddresses.length > 0) {
       const index = parseInt(localStorage.getItem("selected-address-index"));
       setSelectedAddress(
-        Address.addresses[
+        Address.deliveryAddresses[
           index
             ? isNaN(index)
               ? 0
-              : index > Address.addresses.length
+              : index > Address.deliveryAddresses.length
               ? 0
               : index
             : 0
@@ -35,20 +41,29 @@ const CheckoutAddress = ({ setIsModalActive }) => {
     } else {
       setSelectedAddress();
     }
-  }, [Address.addresses]);
+  }, [Address.deliveryAddresses]);
   useEffect(() => {
     dispatch(SELECT_ADDRESS(selectedAddress));
   }, [selectedAddress]);
-  function removeAddress(id) {
-    dispatch(deleteAddress(id));
+  function removeAddress(id, isBilling) {
+    dispatch(deleteAddress(id, isBilling));
   }
   function selectAddress(item, index) {
     setSelectedAddress(item);
     localStorage.setItem("selected-address-index", index);
   }
-  function editAddress(item) {
+  function selectBillingAddress(item) {
+    setSelectedBillingAddress(item);
+    dispatch(SELECT_BILLING_ADDRESS(item));
+  }
+  function editAddress(item, billingAddresses) {
     setIsEditModalActive(true);
     setEditedItem(item);
+    setIsBillingAddress(billingAddresses);
+  }
+  function createNewAddress(billingAddresses) {
+    setIsModalActive(true);
+    setIsBillingAddress(billingAddresses);
   }
 
   return (
@@ -58,6 +73,7 @@ const CheckoutAddress = ({ setIsModalActive }) => {
           setIsModalActive={setIsEditModalActive}
           isEdit={true}
           selectedAddress={editedItem}
+          isBillingAddress={isBillingAddress}
         />
       )}
       {Address.loading && (
@@ -85,14 +101,14 @@ const CheckoutAddress = ({ setIsModalActive }) => {
             <div className="col-md-4 mt-3 address-item">
               <div
                 className="checkout-address-box create-address"
-                onClick={() => setIsModalActive(true)}
+                onClick={() => createNewAddress(false)}
               >
                 <BsPlusCircle style={{ fontSize: "50px" }} />
                 <p style={{ fontSize: "13px" }}>Create new address</p>
               </div>
             </div>
-            {Address.addresses.length > 0 ? (
-              Address.addresses.map((item, index) => {
+            {Address.deliveryAddresses.length > 0 ? (
+              Address.deliveryAddresses.map((item, index) => {
                 return (
                   <div
                     className={`col-md-4 mt-3 address-item ${
@@ -114,13 +130,13 @@ const CheckoutAddress = ({ setIsModalActive }) => {
                       <div>
                         <button
                           className="address-edit-btn"
-                          onClick={() => editAddress(item)}
+                          onClick={() => editAddress(item, false)}
                         >
                           <BsPencil />
                         </button>
                         <button
                           className="address-edit-btn"
-                          onClick={() => removeAddress(item._id)}
+                          onClick={() => removeAddress(item._id, false)}
                         >
                           <BsTrash />
                         </button>
@@ -134,6 +150,7 @@ const CheckoutAddress = ({ setIsModalActive }) => {
                         {item.name} {item.surname}
                       </p>
                       <p>{item.phoneNumber}</p>
+                      <p>{item.email}</p>
                       <p>
                         {item.address.length > 47
                           ? `${item.address.substring(0, 47)}...`
@@ -146,6 +163,83 @@ const CheckoutAddress = ({ setIsModalActive }) => {
             ) : (
               <span className="text-muted d-inline">
                 Add an address to order
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="checkout-address-section">
+        <div className="checkout-address-section-top">
+          <span>Billing Address</span>
+        </div>
+
+        <div className="checkout-address-section-center">
+          <div className="row">
+            <div className="col-md-4 mt-3 address-item">
+              <div
+                className="checkout-address-box create-address"
+                onClick={() => createNewAddress(true)}
+              >
+                <BsPlusCircle style={{ fontSize: "50px" }} />
+                <p style={{ fontSize: "13px" }}>Create new address</p>
+              </div>
+            </div>
+            {Address.billingAddresses.length > 0 ? (
+              Address.billingAddresses.map((item, index) => {
+                return (
+                  <div
+                    className={`col-md-4 mt-3 address-item ${
+                      selectedBillingAddress !== undefined &&
+                      item._id === selectedBillingAddress._id &&
+                      "selected-address"
+                    }`}
+                    key={index}
+                  >
+                    <section>
+                      <span
+                        style={{ fontSize: "12px" }}
+                        className="address-header"
+                      >
+                        {item.addressHeader.length > 12
+                          ? `${item.addressHeader.substring(0, 12)}...`
+                          : item.addressHeader}
+                      </span>
+                      <div>
+                        <button
+                          className="address-edit-btn"
+                          onClick={() => editAddress(item, true)}
+                        >
+                          <BsPencil />
+                        </button>
+                        <button
+                          className="address-edit-btn"
+                          onClick={() => removeAddress(item._id, true)}
+                        >
+                          <BsTrash />
+                        </button>
+                      </div>
+                    </section>
+                    <div
+                      className="checkout-address-box"
+                      onClick={() => selectBillingAddress(item)}
+                    >
+                      <p>
+                        {item.name} {item.surname}
+                      </p>
+                      <p>{item.phoneNumber}</p>
+                      <p>{item.email}</p>
+                      <p>
+                        {item.address.length > 47
+                          ? `${item.address.substring(0, 47)}...`
+                          : item.address}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <span className="text-muted d-inline">
+                Add an billing address to order
               </span>
             )}
           </div>
