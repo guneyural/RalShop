@@ -22,6 +22,7 @@ const Background = Styled.div`
      display:flex;
      flex-direction:column;
      justify-content: space-between;
+     user-select:none;
      align-items:center;
 `;
 
@@ -34,6 +35,7 @@ const CloseButton = Styled.button`
      position:absolute;
      top:50px;
      right:50px;
+     user-select:none;
      @media (max-width: 525px) {
          right: 10px;
      }
@@ -90,6 +92,7 @@ const FullscreenImage = ({
         src={images[index].url}
         alt="big product"
         className="big-product-img"
+        style={{ userSelect: "none" }}
       />
       <AiFillCaretRight
         className="img-arrows right"
@@ -116,6 +119,7 @@ const FullscreenImage = ({
               key={idx}
               src={item.url}
               onClick={() => setIndex(idx)}
+              style={{ userSelect: "none" }}
               className={idx === 0 && "product-img-active"}
               alt="product"
             />
