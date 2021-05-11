@@ -12,7 +12,11 @@ const createAddress = catchAsync(async (req, res, next) => {
     !req.body.country ||
     !req.body.phoneNumber ||
     !req.body.address ||
-    !req.body.addressHeader
+    !req.body.addressHeader ||
+    !req.body.city ||
+    !req.body.state ||
+    !req.body.addressType ||
+    !req.body.email
   ) {
     return next(new expressError("Fill all fields.", 400));
   }
@@ -37,7 +41,11 @@ const createAddress = catchAsync(async (req, res, next) => {
     phoneNumber: newPhone,
     address: req.body.address,
     addressHeader: req.body.addressHeader,
+    city: req.body.city,
+    state: req.body.state,
+    addressType: req.body.addressType,
     user: user.id,
+    email: req.body.email,
   });
   const populatedAddress = await newAddress.execPopulate("user");
   res.json(populatedAddress);
