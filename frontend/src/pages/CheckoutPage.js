@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../assets/logo.png";
 import Styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import AddressSection from "../components/checkoutAddress";
 import PaymentSection from "../components/checkoutPayment";
 import AddressModal from "../components/AddressModal";
