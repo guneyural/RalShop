@@ -147,7 +147,7 @@ const CheckoutPage = () => {
         </div>
         <div className="col-lg-3 col-md-4 order-summary-section">
           <button
-            className="default-btn w-100"
+            className="default-btn w-100 checkout-btn-top"
             onClick={() =>
               activeTab === "payment" ? endPayment() : changeTab("payment")
             }
@@ -161,12 +161,12 @@ const CheckoutPage = () => {
             </OrderSummarySection>
             <OrderSummarySection>
               <p>Shipping Fee</p>
-              <p>{priceConverter(5.99)}</p>
+              <p>{priceConverter(4.99)}</p>
             </OrderSummarySection>
             <hr />
             <OrderSummarySection>
               <p>Total</p>
-              <p>{priceConverter(5.99 + total)}</p>
+              <p>{priceConverter(4.99 + total)}</p>
             </OrderSummarySection>
           </div>
           <div className="order-summary-box mt-4 shipping-info">
@@ -177,6 +177,14 @@ const CheckoutPage = () => {
           <div className="order-summary-box mt-4 shipping-info">
             <p>You can cancel an order before seller confirms the order.</p>
           </div>
+          <button
+            className="default-btn w-100 mt-3"
+            onClick={() =>
+              activeTab === "payment" ? endPayment() : changeTab("payment")
+            }
+          >
+            {activeTab === "payment" ? "End Payment" : "Proceed To Payment"}
+          </button>
         </div>
       </div>
     </div>

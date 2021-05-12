@@ -265,6 +265,10 @@ p.address-header {
     height: 100px;
   }
 
+  .checkout-btn-top {
+    display: none;
+  }
+
   .address-header {
     font-size: 16px !important;
   }
