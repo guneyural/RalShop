@@ -3,6 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import styled from "styled-components";
 import LoadingIcon from "../assets/loading.gif";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Labels = styled.label`
   font-size: 15px;
@@ -22,11 +23,14 @@ export default function CheckoutForm() {
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState("");
   const [billingEmail, setBillingEmail] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [paymentIntentId, setPaymentIntentId] = useState("");
   const [name, setName] = useState("");
   const Address = useSelector((state) => state.Address.selectedDeliveryAddress);
   const BillingAddress = useSelector(
     (state) => state.Address.selectedBillingAddress
   );
+  const cartProducts = useSelector((state) => state.Cart.products);
   const stripe = useStripe();
   const elements = useElements();
 
@@ -39,7 +43,8 @@ export default function CheckoutForm() {
           "user-token": localStorage.getItem("user-token"),
         },
         body: JSON.stringify({
-          items: [{ id: "xl-tshirt" }],
+          items: cartProducts.filter((product) => product.selected === true),
+          shippingFee: 4.99,
           shippingAddress: {
             address: {
               city: Address.city,
@@ -68,6 +73,8 @@ export default function CheckoutForm() {
       })
       .then((data) => {
         setClientSecret(data.clientSecret);
+        setCustomerId(data.customer);
+        setPaymentIntentId(data.paymentIntentId);
       });
   }, []);
 
@@ -96,12 +103,6 @@ export default function CheckoutForm() {
     ev.preventDefault();
     setProcessing(true);
 
-    /*  shipping: {
-        address: Address.address,
-        name: `${Address.name} ${Address.surname}`,
-        phone: Address.phoneNumber,
-      },*/
-
     const payload = await stripe.confirmCardPayment(clientSecret, {
       receipt_email: billingEmail,
       payment_method: {
@@ -125,9 +126,32 @@ export default function CheckoutForm() {
       setError(`Payment failed ${payload.error.message}`);
       setProcessing(false);
     } else {
-      setError(null);
-      setProcessing(false);
-      setSucceeded(true);
+      axios
+        .post(
+          "/api/stripe/create-invoice",
+          {
+            items: cartProducts.filter((product) => product.selected === true),
+            paymentIntentId,
+            customerId,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "user-token": localStorage.getItem("user-token"),
+            },
+          }
+        )
+        .then((res) => res.data)
+        .then((data) => {
+          setError(null);
+          setProcessing(false);
+          setSucceeded(true);
+        })
+        .catch((err) => {
+          setError(null);
+          setProcessing(false);
+          setSucceeded(false);
+        });
     }
   };
 
