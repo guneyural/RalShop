@@ -223,6 +223,17 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
+    if (window.location.hash) {
+      let reviewElement = document.getElementById(
+        window.location.hash.slice(1)
+      );
+      if (reviewElement !== null) {
+        window.scroll(0, reviewElement.offsetTop);
+      }
+    }
+  }, [reviews]);
+
+  useEffect(() => {
     dispatch(getProductById(id));
     dispatch(getReviews(id));
   }, [dispatch, id]);
@@ -1243,7 +1254,7 @@ const ProductPage = () => {
                 {reviews.length < 1 && <p>No review added.</p>}
                 {reviews.map((item, id) => {
                   return (
-                    <div className="review-item mb-4" key={id}>
+                    <div className="review-item mb-4" key={id} id={item._id}>
                       <UserSection>
                         <div className="d-flex">
                           <ProfilePicture
