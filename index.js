@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-const PORT = 3003 || process.env.PORT;
+const PORT = 3002 || process.env.PORT;
 const DATABASE = process.env.DATABASE;
 const expressError = require("./utils/expressError");
 const Routes = require("./routes");
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
 
       socket.on("send message", async (message) => {
         const { sender, receiver, chatroom, body, isPhoto } = message;
-        console.log(message);
+
         let countRoomMember = 0;
         for (const [key, value] of Object.entries(users)) {
           const { roomId } = value;
