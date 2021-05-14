@@ -40,12 +40,12 @@ export const Address = (state = initialState, action) => {
     case GET_ADDRESSES:
       return {
         ...state,
-        deliveryAddresses: action.payload.filter(
-          (item) => item.addressType === "delivery"
-        ),
-        billingAddresses: action.payload.filter(
-          (item) => item.addressType === "billing"
-        ),
+        deliveryAddresses: action.payload
+          .filter((item) => item.addressType === "delivery")
+          .reverse(),
+        billingAddresses: action.payload
+          .filter((item) => item.addressType === "billing")
+          .reverse(),
         loading: false,
         error: null,
       };

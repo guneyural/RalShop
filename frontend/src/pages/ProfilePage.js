@@ -142,13 +142,22 @@ const ProfilePage = () => {
                     className={isEmpty ? "navbar-item-container-empty" : ""}
                   >
                     {param === "orders" && (
-                      <ProfilePageOrderSection setIsEmpty={setIsEmpty} />
+                      <ProfilePageOrderSection
+                        setIsEmpty={setIsEmpty}
+                        isEmpty={isEmpty}
+                      />
                     )}
                     {param === "addresses" && (
-                      <ProfilePageAddressSection setIsEmpty={setIsEmpty} />
+                      <ProfilePageAddressSection
+                        setIsEmpty={setIsEmpty}
+                        isEmpty={isEmpty}
+                      />
                     )}
                     {param === "reviews" && (
-                      <ProfilePageReviewsSection setIsEmpty={setIsEmpty} />
+                      <ProfilePageReviewsSection
+                        setIsEmpty={setIsEmpty}
+                        isEmpty={isEmpty}
+                      />
                     )}
                   </NavbarItemContanier>
                 </div>
