@@ -410,7 +410,7 @@ const AddProductPage = () => {
                     <section
                       className="location-result mb-1"
                       key={idx}
-                      onClick={() =>
+                      onMouseDown={() =>
                         changeLocation(
                           item.place_name,
                           item.geometry.coordinates
