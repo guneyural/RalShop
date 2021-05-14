@@ -178,7 +178,7 @@ const Navbar = () => {
               </section>
               <section className="navbar-right">
                 {isAuthenticated && user !== null ? (
-                  <Link to={`/user/${user.username}`}>
+                  <Link to={`/user/orders`}>
                     <FaUserCircle /> Profile
                   </Link>
                 ) : (

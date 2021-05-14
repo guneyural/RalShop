@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfile, logoutUser } from "../redux/actions/authActions";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import noPicture from "../assets/noProfilePic.jpg";
 import { MdSettings } from "react-icons/md";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ import moment from "moment";
 import { BiLogOut } from "react-icons/bi";
 import MessageBox from "../components/messageBox";
 import { Link } from "react-router-dom";
+import ProfilePageNavbar from "../components/profilePageNavbar";
 
 const TextMuted = styled.p`
   color: var(--text-muted);
@@ -22,15 +23,18 @@ const ProfileSection = styled.section`
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const { user, profile, loading, error } = useSelector((state) => state.Auth);
-  const { username } = useParams();
+  const { param } = useParams();
+  const history = useHistory();
   const [message, setMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalHeader, setModalHeader] = useState("");
   const [btnText, setBtnText] = useState("");
 
   useEffect(() => {
-    dispatch(getProfile(username));
-  }, [dispatch, username]);
+    if (param !== "orders" || param !== "addresses" || param !== "reviews") {
+      history.push("/user/orders");
+    }
+  }, [param]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -79,42 +83,54 @@ const ProfilePage = () => {
             isRedux={true}
           />
         )}
-        {profile !== null && (
-          <section className="profile-section">
-            <div className="profile-pic-section">
-              <img
-                src={profile.hasPhoto ? profile.profilePhoto.url : noPicture}
-                alt="profile"
-                className="profile-picture"
-              />
-            </div>
-            <div className="profile-body">
-              <section>
-                <ProfileSection>
-                  <h3 className="profile-username">{profile.username}</h3>
-                  {user !== null && user._id === profile._id && (
-                    <button
-                      className="default-btn"
-                      onClick={() => clickLogout()}
-                    >
-                      <BiLogOut /> Logout
+        {user !== null && (
+          <>
+            <section className="profile-section">
+              <div className="profile-pic-section">
+                <img
+                  src={user.hasPhoto ? user.profilePhoto.url : noPicture}
+                  alt="profile"
+                  className="profile-picture"
+                />
+              </div>
+              <div className="profile-body">
+                <section>
+                  <ProfileSection>
+                    <h3 className="profile-username">{user.username}</h3>
+                    {user !== null && user._id === user._id && (
+                      <button
+                        className="default-btn"
+                        onClick={() => clickLogout()}
+                      >
+                        <BiLogOut /> Logout
+                      </button>
+                    )}
+                  </ProfileSection>
+                  <TextMuted>
+                    Member since: {moment(user.createdAt).format("ll")}
+                  </TextMuted>
+                </section>
+                {user !== null && user._id === user._id && (
+                  <Link to="/account/settings">
+                    <button className="default-btn settings-btn">
+                      <MdSettings />
+                      Settings
                     </button>
-                  )}
-                </ProfileSection>
-                <TextMuted>
-                  Member since: {moment(profile.createdAt).format("ll")}
-                </TextMuted>
-              </section>
-              {user !== null && user._id === profile._id && (
-                <Link to="/account/settings">
-                  <button className="default-btn settings-btn">
-                    <MdSettings />
-                    Settings
-                  </button>
-                </Link>
-              )}
+                  </Link>
+                )}
+              </div>
+            </section>
+            <div className="profile-center mt-5">
+              <div className="row">
+                <div className="col-md-2">
+                  <ProfilePageNavbar />
+                </div>
+                <div className="col-md-10">
+                  <h1>GÜNEY URAL</h1>
+                </div>
+              </div>
             </div>
-          </section>
+          </>
         )}
       </div>
     );
