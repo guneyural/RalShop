@@ -215,6 +215,7 @@ const AddressModal = ({
               </div>
               <div className="col-md-6 mt-2">
                 <Labels htmlFor="city">City</Labels>
+                <br />
                 <InputField
                   type="text"
                   id="city"
