@@ -6,7 +6,7 @@ import {
   MdLocationOn,
   MdKeyboardArrowRight,
 } from "react-icons/md";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 const NavbarItem = styled.li`
   display: flex;
@@ -19,6 +19,7 @@ const NavbarItem = styled.li`
   padding: 0;
   margin: 0;
   margin-left: 10px;
+  user-select: none;
 
   &:hover {
     color: black;
@@ -34,25 +35,29 @@ const NavLinks = [
 
 const ProfilePageNavbar = () => {
   const history = useHistory();
-  const location = useLocation();
+  const { param } = useParams();
 
   const changePage = (pushTo) => {
-    history.push(location.pathname + pushTo);
+    history.push("/user" + pushTo);
   };
 
   return (
-    <div style={{ width: "120px" }}>
+    <div className="profile-nav-wrapper">
       <ul style={{ padding: "0", margin: "0" }}>
         {NavLinks.map((navLink, index) => {
           return (
             <NavbarItem
               key={index}
               onClick={() => changePage(navLink.pushTo)}
-              className="mt-3"
+              className={`mt-3 ${
+                param === navLink.name.toLowerCase() && "profile-nav-active"
+              }`}
             >
-              {navLink.icon}
+              <span className="profile-nav-icon">{navLink.icon}</span>
               <span>{navLink.name}</span>
-              <MdKeyboardArrowRight />
+              <span className="profile-nav-arrow-right">
+                <MdKeyboardArrowRight />
+              </span>
             </NavbarItem>
           );
         })}

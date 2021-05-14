@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile, logoutUser } from "../redux/actions/authActions";
+import { logoutUser } from "../redux/actions/authActions";
 import { useParams, useHistory } from "react-router-dom";
 import noPicture from "../assets/noProfilePic.jpg";
 import { MdSettings } from "react-icons/md";
@@ -10,6 +10,9 @@ import { BiLogOut } from "react-icons/bi";
 import MessageBox from "../components/messageBox";
 import { Link } from "react-router-dom";
 import ProfilePageNavbar from "../components/profilePageNavbar";
+import ProfilePageReviewsSection from "../components/profilePageReviewsSection";
+import ProfilePageAddressSection from "../components/profilePageAddressSection";
+import ProfilePageOrderSection from "../components/profilePageOrderSection";
 
 const TextMuted = styled.p`
   color: var(--text-muted);
@@ -18,6 +21,14 @@ const TextMuted = styled.p`
 const ProfileSection = styled.section`
   display: flex;
   align-items: center;
+`;
+const NavbarItemContanier = styled.div`
+  background: white;
+  width: 100%;
+  min-height: 230px;
+  border: 1px solid #dedede;
+  border-radius: 3px;
+  padding: 10px 15px;
 `;
 
 const ProfilePage = () => {
@@ -29,9 +40,10 @@ const ProfilePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalHeader, setModalHeader] = useState("");
   const [btnText, setBtnText] = useState("");
+  const [isEmpty, setIsEmpty] = useState(false);
 
   useEffect(() => {
-    if (param !== "orders" || param !== "addresses" || param !== "reviews") {
+    if (!param) {
       history.push("/user/orders");
     }
   }, [param]);
@@ -126,7 +138,19 @@ const ProfilePage = () => {
                   <ProfilePageNavbar />
                 </div>
                 <div className="col-md-10">
-                  <h1>GÜNEY URAL</h1>
+                  <NavbarItemContanier
+                    className={isEmpty ? "navbar-item-container-empty" : ""}
+                  >
+                    {param === "orders" && (
+                      <ProfilePageOrderSection setIsEmpty={setIsEmpty} />
+                    )}
+                    {param === "addresses" && (
+                      <ProfilePageAddressSection setIsEmpty={setIsEmpty} />
+                    )}
+                    {param === "reviews" && (
+                      <ProfilePageReviewsSection setIsEmpty={setIsEmpty} />
+                    )}
+                  </NavbarItemContanier>
                 </div>
               </div>
             </div>
