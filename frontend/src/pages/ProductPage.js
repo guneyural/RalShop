@@ -231,7 +231,7 @@ const ProductPage = () => {
         window.scroll(0, reviewElement.offsetTop);
       }
     }
-  }, [reviews]);
+  }, [Product, reviews]);
 
   useEffect(() => {
     dispatch(getProductById(id));
