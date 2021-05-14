@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import LoadingIcon from "../assets/loading.gif";
 import { useSelector } from "react-redux";
@@ -26,6 +27,7 @@ export default function CheckoutForm() {
   const [customerId, setCustomerId] = useState("");
   const [paymentIntentId, setPaymentIntentId] = useState("");
   const [name, setName] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const Address = useSelector((state) => state.Address.selectedDeliveryAddress);
   const BillingAddress = useSelector(
     (state) => state.Address.selectedBillingAddress
@@ -33,6 +35,7 @@ export default function CheckoutForm() {
   const cartProducts = useSelector((state) => state.Cart.products);
   const stripe = useStripe();
   const elements = useElements();
+  const history = useHistory();
 
   useEffect(() => {
     window
@@ -146,6 +149,11 @@ export default function CheckoutForm() {
           setError(null);
           setProcessing(false);
           setSucceeded(true);
+          setSuccessMessage("Payment Succeeded. Redirecting...");
+
+          setTimeout(() => {
+            history.push("/user/orders");
+          }, [1000]);
         })
         .catch((err) => {
           setError(null);
@@ -198,6 +206,11 @@ export default function CheckoutForm() {
       >
         <span id="button-text">Pay now</span>
       </button>
+      {successMessage && (
+        <div className="text-success" style={{ fontWeight: "bold" }}>
+          {successMessage}
+        </div>
+      )}
       {processing && (
         <img src={LoadingIcon} alt="Loading..." height="50" width="50" />
       )}
