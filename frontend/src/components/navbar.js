@@ -344,7 +344,7 @@ const Navbar = () => {
                 </li>
               </Link>
               {isAuthenticated && user !== null ? (
-                <Link to={`/user/${user.username}`}>
+                <Link to="/user/orders">
                   <li>
                     <FaUserCircle className="mobile-nav-icon" /> Profile
                   </li>
