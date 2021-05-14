@@ -120,10 +120,23 @@ const getProductReviews = catchAsync(async (req, res, next) => {
   res.json({ reviews: getReviews, average });
 });
 
+const getUserReviews = catchAsync(async (req, res, next) => {
+  const user = req.user;
+
+  const getReviews = await Review.find({ user: user.id })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate("productId");
+
+  res.json(getReviews);
+});
+
 module.exports = {
   getReviewById,
   createReview,
   deleteReview,
   updateReview,
   getProductReviews,
+  getUserReviews,
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/actions/authActions";
+import { logoutUser, getUserReviews } from "../redux/actions/authActions";
 import { useParams, useHistory } from "react-router-dom";
 import noPicture from "../assets/noProfilePic.jpg";
 import { MdSettings } from "react-icons/md";
@@ -41,6 +41,10 @@ const ProfilePage = () => {
   const [modalHeader, setModalHeader] = useState("");
   const [btnText, setBtnText] = useState("");
   const [isEmpty, setIsEmpty] = useState(false);
+
+  useEffect(() => {
+    dispatch(getUserReviews());
+  }, []);
 
   useEffect(() => {
     if (!param) {

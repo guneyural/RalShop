@@ -16,6 +16,8 @@ import {
   UPDATE_USER_DATA,
   USER_ADD_PROFILE_PHOTO,
   REMOVE_PROFILE_PHOTO,
+  GET_USER_REVIEWS,
+  USER_DELETE_REVIEW,
 } from "../actions/types";
 
 const initialState = {
@@ -29,6 +31,7 @@ const initialState = {
   },
   userDataUpdated: false,
   profile: null,
+  reviews: null,
   forgotPassword: {
     isPasswordReset:
       localStorage.getItem("password_reset") === null
@@ -89,6 +92,28 @@ export const Auth = (state = initialState, action) => {
           status: null,
         },
         profile: action.payload,
+      };
+    case GET_USER_REVIEWS:
+      return {
+        ...state,
+        loading: false,
+        error: {
+          msg: null,
+          status: null,
+        },
+        reviews: action.payload,
+      };
+    case USER_DELETE_REVIEW:
+      return {
+        ...state,
+        loading: false,
+        error: {
+          msg: null,
+          status: null,
+        },
+        reviews: [
+          ...state.reviews.filter((item) => item._id !== action.payload),
+        ],
       };
     case USER_LOGIN:
     case REGISTER_USER:

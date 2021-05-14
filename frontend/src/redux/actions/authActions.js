@@ -16,6 +16,8 @@ import {
   UPDATE_USER_DATA,
   USER_ADD_PROFILE_PHOTO,
   REMOVE_PROFILE_PHOTO,
+  GET_USER_REVIEWS,
+  USER_DELETE_REVIEW,
 } from "./types";
 import { sellerLogout } from "./sellerActions";
 import axios from "axios";
@@ -123,66 +125,65 @@ export const cancelForgotPassword = () => {
   return { type: CANCEL_FORGOT_PASSWORD };
 };
 
-export const confirmPasswordResetCode = (resetCode, isImportant = false) => (
-  dispatch
-) => {
-  dispatch({ type: LOADING });
-  axios
-    .post(`/api/user/checkPasswordResetCode`, {
-      usernameOrEmail: localStorage.getItem("emailOrUsername"),
-      userToken: resetCode,
-    })
-    .then((res) => res.data)
-    .then((data) => {
-      dispatch({
-        type: CONFIRMATION_CODE_SUCCESS,
-        payload: { confirmationCode: resetCode },
+export const confirmPasswordResetCode =
+  (resetCode, isImportant = false) =>
+  (dispatch) => {
+    dispatch({ type: LOADING });
+    axios
+      .post(`/api/user/checkPasswordResetCode`, {
+        usernameOrEmail: localStorage.getItem("emailOrUsername"),
+        userToken: resetCode,
+      })
+      .then((res) => res.data)
+      .then((data) => {
+        dispatch({
+          type: CONFIRMATION_CODE_SUCCESS,
+          payload: { confirmationCode: resetCode },
+        });
+      })
+      .catch((err) => {
+        if (isImportant) {
+          return dispatch({ type: CANCEL_FORGOT_PASSWORD });
+        }
+        dispatch({ type: CONFIRMATION_CODE_ERROR });
       });
-    })
-    .catch((err) => {
-      if (isImportant) {
-        return dispatch({ type: CANCEL_FORGOT_PASSWORD });
-      }
-      dispatch({ type: CONFIRMATION_CODE_ERROR });
-    });
-};
+  };
 
-export const changePassword = (
-  emailOrUsername,
-  confirmationCode,
-  newPassword,
-  confirmPassword
-) => (dispatch) => {
-  axios
-    .post(
-      "/api/user/newPassword",
-      { emailOrUsername, newPassword, confirmPassword },
-      { headers: { "password-token": confirmationCode } }
-    )
-    .then(() => {
-      dispatch({ type: CHANGE_PASSWORD });
-    })
-    .catch((err) => dispatch({ type: CHANGE_PASSWORD_ERROR }));
-};
+export const changePassword =
+  (emailOrUsername, confirmationCode, newPassword, confirmPassword) =>
+  (dispatch) => {
+    axios
+      .post(
+        "/api/user/newPassword",
+        { emailOrUsername, newPassword, confirmPassword },
+        { headers: { "password-token": confirmationCode } }
+      )
+      .then(() => {
+        dispatch({ type: CHANGE_PASSWORD });
+      })
+      .catch((err) => dispatch({ type: CHANGE_PASSWORD_ERROR }));
+  };
 
-export const updateUserData = ({ username, email }) => (dispatch) => {
-  dispatch({ type: LOADING });
-  axios
-    .put("/api/user/update", { username, email }, tokenConfig())
-    .then((res) => res.data)
-    .then((data) => {
-      dispatch({ type: UPDATE_USER_DATA, payload: data });
-    })
-    .catch((err) => {
-      dispatch({
-        type: AUTH_ERROR,
-        payload: {
-          msg: err.response.data.errorMessage,
-          status: err.response.status,
-        },
+export const updateUserData =
+  ({ username, email }) =>
+  (dispatch) => {
+    dispatch({ type: LOADING });
+    axios
+      .put("/api/user/update", { username, email }, tokenConfig())
+      .then((res) => res.data)
+      .then((data) => {
+        dispatch({ type: UPDATE_USER_DATA, payload: data });
+      })
+      .catch((err) => {
+        dispatch({
+          type: AUTH_ERROR,
+          payload: {
+            msg: err.response.data.errorMessage,
+            status: err.response.status,
+          },
+        });
       });
-    });
-};
+  };
 
 export const addProfilePhoto = (formData) => (dispatch) => {
   dispatch({ type: LOADING });
@@ -221,6 +222,46 @@ export const removeProfilePhoto = () => (dispatch) => {
         type: AUTH_ERROR,
         payload: {
           msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const getUserReviews = () => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .get("/api/review/user/reviews", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_USER_REVIEWS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const deleteReview = (id) => (dispatch) => {
+  dispatch({ type: LOADING });
+
+  axios
+    .delete(`/api/review/${id}`, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: USER_DELETE_REVIEW, payload: id });
+    })
+    .catch((err) => {
+      dispatch({
+        type: AUTH_ERROR,
+        payload: {
+          message: err.response.data.errorMessage,
           status: err.response.status,
         },
       });
