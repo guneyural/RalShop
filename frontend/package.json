@@ -13,6 +13,7 @@
     "dotenv": "^8.2.0",
     "draft-js": "^0.11.7",
     "jodit-react": "^1.0.70",
+    "lodash": "^4.17.21",
     "mapbox-gl": "^2.1.1",
     "moment": "^2.29.1",
     "react": "^17.0.1",

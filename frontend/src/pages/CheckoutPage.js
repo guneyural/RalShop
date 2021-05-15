@@ -175,7 +175,11 @@ const CheckoutPage = () => {
             </p>
           </div>
           <div className="order-summary-box mt-4 shipping-info">
-            <p>You can cancel an order before seller confirms the order.</p>
+            <p>
+              If seller approves you can cancel the order.
+              <br />
+              Or You can send direct message to seller.
+            </p>
           </div>
           <button
             className="default-btn w-100 mt-3"
