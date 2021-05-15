@@ -3,8 +3,10 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import LoadingIcon from "../assets/loading.gif";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import { createOrder } from "../redux/actions/orderActions";
 
 const Labels = styled.label`
   font-size: 15px;
@@ -33,9 +35,11 @@ export default function CheckoutForm() {
     (state) => state.Address.selectedBillingAddress
   );
   const cartProducts = useSelector((state) => state.Cart.products);
+  const User = useSelector((state) => state.Auth.user);
   const stripe = useStripe();
   const elements = useElements();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     window
@@ -149,11 +153,42 @@ export default function CheckoutForm() {
           setError(null);
           setProcessing(false);
           setSucceeded(true);
-          setSuccessMessage("Payment Succeeded. Redirecting...");
+          setSuccessMessage("Payment Succeeded. Creating Order...");
 
-          setTimeout(() => {
-            history.push("/user/orders");
-          }, [1000]);
+          const orderedProducts = cartProducts.filter(
+            (product) => product.selected === true
+          );
+          let total_amount = 0;
+          let orderedProductCount = 0;
+          let groupId = uuidv4();
+          orderedProducts.forEach((item) => (total_amount += item.price));
+
+          orderedProducts.forEach((item) => {
+            const orderData = {
+              billingAddress: BillingAddress._id,
+              deliveryAddress: Address._id,
+              user: User._id,
+              invoiceId: data,
+              paymentIntentId,
+              seller: item.seller,
+              Product: {
+                product: item.product,
+                color: item.color,
+                quantity: item.qty,
+              },
+              totalAmount: total_amount + 4.99,
+              groupId,
+            };
+            dispatch(createOrder(orderData));
+            orderedProductCount++;
+          });
+
+          if (orderedProductCount === orderedProducts.length) {
+            setSuccessMessage("Products Ordered. Redirecting...");
+            setTimeout(() => {
+              history.push("/user/orders");
+            }, [1000]);
+          }
         })
         .catch((err) => {
           setError(null);
