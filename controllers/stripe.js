@@ -1,15 +1,8 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const createPaymentIntent = async (req, res) => {
-  const {
-    items,
-    email,
-    name,
-    phone,
-    shippingAddress,
-    address,
-    shippingFee,
-  } = req.body;
+  const { items, email, name, phone, shippingAddress, address, shippingFee } =
+    req.body;
   let totalAmount = 0;
 
   items.forEach((item) => {
@@ -31,7 +24,7 @@ const createPaymentIntent = async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
     setup_future_usage: "off_session",
-    amount: (totalAmount + shippingFee) * 100, // totalAmount * 100 because stripe accepts amounts in cents
+    amount: ((totalAmount + shippingFee) * 100).toFixed(0), // totalAmount * 100 because stripe accepts amounts in cents
     currency: "usd",
   });
 
@@ -43,7 +36,7 @@ const createPaymentIntent = async (req, res) => {
 };
 
 const createInvoice = async (req, res) => {
-  const { items, paymentIntentId, customerId } = req.body;
+  const { items, customerId } = req.body;
 
   for (let i = 0; i < items.length; i++) {
     const invoiceItem = await stripe.invoiceItems.create({
@@ -66,7 +59,7 @@ const createInvoice = async (req, res) => {
   const payInvoice = await stripe.invoices.pay(invoice.id, {
     paid_out_of_band: true,
   });
-  res.json();
+  res.json(invoice.id);
 };
 
 module.exports = { createPaymentIntent, createInvoice };
