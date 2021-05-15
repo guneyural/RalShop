@@ -9,6 +9,7 @@ import moment from "moment";
 import { BiLogOut } from "react-icons/bi";
 import MessageBox from "../components/messageBox";
 import { Link } from "react-router-dom";
+import { getOrders } from "../redux/actions/orderActions";
 import ProfilePageNavbar from "../components/profilePageNavbar";
 import ProfilePageReviewsSection from "../components/profilePageReviewsSection";
 import ProfilePageAddressSection from "../components/profilePageAddressSection";
@@ -44,6 +45,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     dispatch(getUserReviews());
+    dispatch(getOrders());
   }, []);
 
   useEffect(() => {
