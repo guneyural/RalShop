@@ -45,6 +45,7 @@ export const Product = (state = initialState, action) => {
         product: action.payload.Product,
         wishlistCount: action.payload.wishlistCount,
         loading: false,
+        createdProduct: {},
       };
     default:
       return state;
