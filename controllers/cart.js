@@ -20,6 +20,7 @@ const updateCard = catchAsync(async (req, res, next) => {
   products.forEach((item) => {
     getCart.items.push({
       product: item.product,
+      seller: item.seller,
       color: item.color,
       quantity: item.qty,
       stripeProductId: item.stripeProductId,

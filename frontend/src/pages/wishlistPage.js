@@ -51,6 +51,7 @@ const WishlistPage = () => {
     dispatch(
       addCartItem({
         product: product._id,
+        seller: product.shop,
         price: product.price,
         stock: product.stock,
         title: product.title,

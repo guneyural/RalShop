@@ -72,6 +72,7 @@ export const Cart = (state = initialState, action) => {
       action.payload.items.forEach((item) => {
         tempList.push({
           product: item.product._id,
+          seller: item.seller,
           price: item.product.price,
           stock: item.product.stock,
           title: item.product.title,

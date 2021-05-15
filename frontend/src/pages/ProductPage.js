@@ -903,6 +903,7 @@ const ProductPage = () => {
                     dispatch(
                       addCartItem({
                         product: Product._id,
+                        seller: Product.shop._id,
                         price: Product.price,
                         stock: Product.stock,
                         title: Product.title,
