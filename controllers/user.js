@@ -58,6 +58,9 @@ const register = catchAsync(async (req, res, next) => {
     Products.forEach((item) => {
       newCart.items.push({
         product: item.product,
+        seller: item.seller,
+        stripePriceId: item.stripePriceId,
+        stripeProductId: item.stripeProductId,
         color: item.color,
         quantity: item.qty,
         selected: item.selected,
@@ -103,6 +106,9 @@ const login = catchAsync(async (req, res, next) => {
       if (!isDuplicate) {
         getCart.items.push({
           product: item.product,
+          seller: item.seller,
+          stripePriceId: item.stripePriceId,
+          stripeProductId: item.stripeProductId,
           color: item.color,
           quantity: item.qty,
           selected: item.selected,
@@ -133,14 +139,8 @@ const getCurrentUser = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(req.user.id);
   if (!currentUser)
     return next(new expressError("Current User Not Found", 404));
-  const {
-    username,
-    email,
-    _id,
-    createdAt,
-    hasPhoto,
-    profilePhoto,
-  } = currentUser;
+  const { username, email, _id, createdAt, hasPhoto, profilePhoto } =
+    currentUser;
   res.json({ _id, username, email, createdAt, hasPhoto, profilePhoto });
 });
 
@@ -198,7 +198,8 @@ const removeUser = catchAsync(async (req, res, next) => {
 });
 
 const validateEmail = (email) => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };
 
@@ -330,14 +331,8 @@ const updateUserData = catchAsync(async (req, res, next) => {
       }
     });
   }
-  const {
-    _id,
-    username,
-    email,
-    createdAt,
-    hasPhoto,
-    profilePhoto,
-  } = updateUser;
+  const { _id, username, email, createdAt, hasPhoto, profilePhoto } =
+    updateUser;
   res.json({
     _id,
     username,
