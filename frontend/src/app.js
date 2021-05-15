@@ -158,7 +158,12 @@ const App = () => {
             component={SellerLoginPage}
           />
           <NormalRoute path="/user/" exact component={ProfilePage} />
-          <NormalRoute path="/user/:param" exact component={ProfilePage} />
+          <PrivateRoute
+            path="/user/:param"
+            exact
+            component={ProfilePage}
+            auth={User.isAuthenticated}
+          />
           <NormalRoute path="/product/:id" exact component={ProductPage} />
           <NormalRoute path="/cart" exact component={ShoppingCartPage} />
           <PrivateRoute
