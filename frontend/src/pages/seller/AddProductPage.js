@@ -93,6 +93,8 @@ const AddProductPage = () => {
   const [stock, setStock] = useState(0);
   const config = {
     readonly: false,
+    placeholder: "Write product description...",
+    askBeforePasteHTML: false,
   };
   const Product = useSelector((state) => state.Product);
   const dispatch = useDispatch();
@@ -123,7 +125,6 @@ const AddProductPage = () => {
       });
     }
   }, [map, center]);
-
 
   useEffect(() => {
     if (location.length > 0) {
@@ -373,7 +374,7 @@ const AddProductPage = () => {
           value={description}
           config={config}
           tabIndex={1}
-          onBlur={(newContent) => setDescription(newContent.target.innerHTML)}
+          onBlur={(newContent) => setDescription(newContent)}
         />
         <Labels htmlFor="images" className="mt-3">
           Choose Product Images
