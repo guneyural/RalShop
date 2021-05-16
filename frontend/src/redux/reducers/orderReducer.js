@@ -17,14 +17,11 @@ export function Order(state = initialState, action) {
   let grouppedOrders = {};
   switch (action.type) {
     case CREATE_ORDER:
-      grouppedOrders = _.groupBy(
-        [action.payload, Object.keys(state.orders)],
-        (order) => order.groupId
-      );
+      grouppedOrders = _.groupBy([action.payload], (order) => order.groupId);
 
       return {
         ...state,
-        orders: grouppedOrders,
+        orders: { ...grouppedOrders, ...state.orders },
         loading: false,
         error: null,
       };
