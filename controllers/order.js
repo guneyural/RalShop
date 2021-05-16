@@ -50,14 +50,18 @@ const createOrder = catchAsync(async (req, res, next) => {
 });
 
 const getOrdersByUser = catchAsync(async (req, res) => {
-  const getOrders = await Order.find({ user: req.user.id }).sort({
-    createdAt: "desc",
-  });
+  const getOrders = await Order.find({ user: req.user.id })
+    .sort({
+      createdAt: "desc",
+    })
+    .populate("Product.product billingAddress deliveryAddress user seller");
   res.status(200).json(getOrders);
 });
 
 const getOrdersBySeller = catchAsync(async (req, res) => {
-  const getOrders = await Order.find({ user: req.shop.id });
+  const getOrders = await Order.find({ user: req.shop.id })
+    .sort({ createdAt: "desc" })
+    .populate("Product.product billingAddress deliveryAddress user seller");
   res.status(200).json(getOrders);
 });
 
