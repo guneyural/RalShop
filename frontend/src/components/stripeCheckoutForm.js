@@ -161,7 +161,9 @@ export default function CheckoutForm() {
           let total_amount = 0;
           let orderedProductCount = 0;
           let groupId = uuidv4();
-          orderedProducts.forEach((item) => (total_amount += item.price));
+          orderedProducts.forEach(
+            (item) => (total_amount += item.price * item.qty)
+          );
 
           orderedProducts.forEach((item) => {
             const orderData = {
