@@ -46,7 +46,10 @@ const createOrder = catchAsync(async (req, res, next) => {
     status: "waitingConfirmation",
   });
   const createdOrder = await orderObject.save();
-  res.status(200).json(createdOrder);
+  const populatedOrder = await createdOrder.execPopulate(
+    "Product.product billingAddress deliveryAddress user seller"
+  );
+  res.status(200).json(populatedOrder);
 });
 
 const getOrdersByUser = catchAsync(async (req, res) => {
