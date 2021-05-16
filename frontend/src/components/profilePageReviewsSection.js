@@ -16,6 +16,10 @@ const DateText = Styled.p`
   font-size: 14px;
   margin-top: -5px;
 `;
+const BoxHeaderText = Styled.span`
+  font-size: 14px;
+  font-weight: bold;
+`;
 
 const ProfilePageReviewsSection = ({ setIsEmpty, isEmpty }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,6 +45,12 @@ const ProfilePageReviewsSection = ({ setIsEmpty, isEmpty }) => {
   }
   return (
     <>
+      <div
+        className="checkout-address-section-top w-100"
+        style={{ position: "absolute", top: "0", left: "0" }}
+      >
+        <BoxHeaderText>{reviews.length} Reviews</BoxHeaderText>
+      </div>
       {isModalOpen && (
         <Modal
           isRedux={true}
@@ -56,7 +66,10 @@ const ProfilePageReviewsSection = ({ setIsEmpty, isEmpty }) => {
       {reviews !== null &&
         reviews.map((review, index) => {
           return (
-            <ReviewItem key={index}>
+            <ReviewItem
+              key={index}
+              style={index === 0 ? { marginTop: "35px" } : {}}
+            >
               <span
                 style={{ fontWeight: "bold", cursor: "pointer" }}
                 onClick={() =>

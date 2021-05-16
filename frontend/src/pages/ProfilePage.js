@@ -30,6 +30,7 @@ const NavbarItemContanier = styled.div`
   border: 1px solid #dedede;
   border-radius: 3px;
   padding: 10px 15px;
+  position: relative;
 `;
 
 const ProfilePage = () => {

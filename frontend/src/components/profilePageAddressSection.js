@@ -3,6 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAddresses, deleteAddress } from "../redux/actions/addressActions";
 import { BsPencil, BsTrash } from "react-icons/bs";
 import AddressModal from "../components/AddressModal";
+import Styled from "styled-components";
+
+const BoxHeaderText = Styled.span`
+  font-size: 14px;
+  font-weight: bold;
+`;
 
 const ProfilePageAddressSection = ({ setIsEmpty, isEmpty }) => {
   const dispatch = useDispatch();
@@ -41,7 +47,16 @@ const ProfilePageAddressSection = ({ setIsEmpty, isEmpty }) => {
 
   return (
     <div>
-      <div className="checkout-address-section">
+      {" "}
+      <div
+        className="checkout-address-section-top w-100"
+        style={{ position: "absolute", top: "0", left: "0" }}
+      >
+        <BoxHeaderText>
+          {billingAddresses.length + deliveryAddresses.length} Addresses
+        </BoxHeaderText>
+      </div>
+      <div className="checkout-address-section" style={{ marginTop: "35px" }}>
         <div className="checkout-address-section-top">
           <span>Delivery Addresses</span>
         </div>
@@ -113,7 +128,6 @@ const ProfilePageAddressSection = ({ setIsEmpty, isEmpty }) => {
           </div>
         </div>
       </div>
-
       <div className="checkout-address-section">
         <div className="checkout-address-section-top">
           <span>Billing Addresses</span>
