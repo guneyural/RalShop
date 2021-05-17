@@ -134,7 +134,7 @@ const InnerItem = styled.div`
   font-size: 15px;
   color: var(--text-muted);
   align-items: center;
-  padding-top: 5px;
+  padding-top: 3px;
 `;
 const OrderItem = styled.div`
   border: 1px solid #dbdbdb;
@@ -340,10 +340,16 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
                     {orderGroup[0].order.seller.email}
                   </b>
                 </InnerItem>
-                <InnerItem>
+                <InnerItem style={{ borderBottom: "1px solid #dbdbdb" }}>
                   <>Phone</>
                   <b style={{ color: "#333" }}>
                     {orderGroup[0].order.seller.phoneNumber}
+                  </b>
+                </InnerItem>
+                <InnerItem>
+                  <>Rating</>
+                  <b style={{ color: "#333" }}>
+                    {9.6}
                   </b>
                 </InnerItem>
               </AddressBoxInner>
