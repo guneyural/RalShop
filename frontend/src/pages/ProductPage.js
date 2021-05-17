@@ -990,7 +990,13 @@ const ProductPage = () => {
             </ul>
           </TabNav>
           {Product && (
-            <section style={{ background: "white" }}>
+            <section
+              style={{
+                background: "white",
+                wordWrap: "break-word",
+                whiteSpace: "pre-wrap",
+              }}
+            >
               {tab === "description" && (
                 <ProductDescription Product={Product} />
               )}
