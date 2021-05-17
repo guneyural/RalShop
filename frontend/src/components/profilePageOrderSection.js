@@ -6,6 +6,7 @@ import moment from "moment";
 import { Link, useHistory } from "react-router-dom";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import OrderDetailsModal from "./orderDetailsModal";
+import SellerDetailsModal from "./sellerDetailsModal";
 
 const OrderBox = styled.div`
   border: 1px solid #dbdbdb;
@@ -179,6 +180,9 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const { orders } = useSelector((state) => state.Order);
   const [visibleOrder, setVisibleOrder] = useState("");
   const [isOrderDetailsModalOpen, setIsOrderDetailsModalOpen] = useState(false);
+  const [isSellerDetailsModalOpen, setIsSellerDetailsModalOpen] =
+    useState(false);
+  const [sellerDetail, setSellerDetail] = useState("");
   const [orderDetailsGroupId, setOrderDetailsGroupId] = useState("");
   const history = useHistory();
 
@@ -194,6 +198,10 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
     setOrderDetailsGroupId(groupId);
     setIsOrderDetailsModalOpen(true);
   };
+  const openSellerDetailsModal = (seller) => {
+    setSellerDetail(seller);
+    setIsSellerDetailsModalOpen(true);
+  };
 
   if (isEmpty) {
     return <h4>No Orders Added</h4>;
@@ -205,6 +213,12 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
         <OrderDetailsModal
           setIsOrderDetailsModalOpen={setIsOrderDetailsModalOpen}
           orderGroup={orders[orderDetailsGroupId]}
+        />
+      )}
+      {isSellerDetailsModalOpen && (
+        <SellerDetailsModal
+          Seller={sellerDetail}
+          closeModal={setIsSellerDetailsModalOpen}
         />
       )}
       <div
@@ -321,6 +335,9 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                         <OrderItemBottom>
                           <OrderItemOptions
                             style={{ borderRight: "1px solid #dbdbdb" }}
+                            onClick={() =>
+                              openSellerDetailsModal(orderItem.order.seller)
+                            }
                           >
                             Seller Details
                           </OrderItemOptions>
