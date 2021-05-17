@@ -168,10 +168,6 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
     history.push("/chat");
   };
 
-  useEffect(() => {
-    console.log(orderGroup);
-  }, []);
-
   return (
     <FullPageBackground>
       <ModalBox>
