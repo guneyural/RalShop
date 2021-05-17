@@ -31,6 +31,21 @@ const NavbarItemContanier = styled.div`
   border-radius: 3px;
   padding: 10px 15px;
   position: relative;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 500px;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #dddddd;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #acaaaa;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #c2c2c2;
+  }
 `;
 
 const ProfilePage = () => {
