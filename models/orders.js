@@ -2,14 +2,8 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    billingAddress: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Address",
-    },
-    deliveryAddress: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Address",
-    },
+    billingAddress: { type: Object, required: true },
+    deliveryAddress: { type: Object, required: true },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

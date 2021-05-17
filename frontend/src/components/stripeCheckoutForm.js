@@ -167,8 +167,8 @@ export default function CheckoutForm() {
 
           orderedProducts.forEach((item) => {
             const orderData = {
-              billingAddress: BillingAddress._id,
-              deliveryAddress: Address._id,
+              billingAddress: BillingAddress,
+              deliveryAddress: Address,
               user: User._id,
               invoiceId: data,
               paymentIntentId,

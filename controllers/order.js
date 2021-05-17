@@ -47,25 +47,59 @@ const createOrder = catchAsync(async (req, res, next) => {
   });
   const createdOrder = await orderObject.save();
   const populatedOrder = await createdOrder.execPopulate(
-    "Product.product billingAddress deliveryAddress user seller"
+    "Product.product user seller"
   );
-  res.status(200).json(populatedOrder);
+  const paymentIntent = await stripe.paymentIntents.retrieve(
+    populatedOrder.paymentIntentId
+  );
+  res.status(200).json({
+    groupId: populatedOrder.groupId,
+    order: populatedOrder,
+    Payment: paymentIntent,
+  });
 });
 
 const getOrdersByUser = catchAsync(async (req, res) => {
+  let orders = [];
   const getOrders = await Order.find({ user: req.user.id })
     .sort({
       createdAt: "desc",
     })
-    .populate("Product.product billingAddress deliveryAddress user seller");
-  res.status(200).json(getOrders);
+    .populate("Product.product user seller");
+  for (let i = 0; i < getOrders.length; i++) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      getOrders[i].paymentIntentId
+    );
+
+    orders.push({
+      groupId: getOrders[i].groupId,
+      order: getOrders[i],
+      Payment: paymentIntent.charges.data[0],
+    });
+  }
+
+  res.status(200).json(orders);
 });
 
 const getOrdersBySeller = catchAsync(async (req, res) => {
+  let orders = [];
   const getOrders = await Order.find({ user: req.shop.id })
     .sort({ createdAt: "desc" })
-    .populate("Product.product billingAddress deliveryAddress user seller");
-  res.status(200).json(getOrders);
+    .populate("Product.product user seller");
+
+  for (let i = 0; i < getOrders.length; i++) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      getOrders[i].paymentIntentId
+    );
+
+    orders.push({
+      groupId: getOrders[i].groupId,
+      order: getOrders[i],
+      Payment: paymentIntent.charges.data[0],
+    });
+  }
+
+  res.status(200).json(orders);
 });
 
 const orderCancelRequest = catchAsync(async (req, res, next) => {
