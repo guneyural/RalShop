@@ -49,12 +49,14 @@ export const getRatedSellersForUser = () => (dispatch) => {
     });
 };
 
-export const deleteSellerRating = (id) => (dispatch) => {
+export const deleteSellerRating = (id, seller) => (dispatch) => {
   dispatch({ type: RATE_SELLER_LOADING });
 
   axios
     .delete(`${prefix}/${id}`, tokenConfig())
-    .then(() => dispatch({ type: DELETE_SELLER_RATING, payload: id }))
+    .then(() => {
+      dispatch({ type: DELETE_SELLER_RATING, payload: { id, seller } });
+    })
     .catch((err) => {
       dispatch({
         type: RATE_SELLER_ERROR,
@@ -73,7 +75,7 @@ export const rateSeller = (data) => (dispatch) => {
     .post(prefix, data, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
-      dispatch({ type: RATE_SELLER, payload: data });
+      dispatch({ type: RATE_SELLER, payload: { data, seller: data.seller } });
     })
     .catch((err) => {
       dispatch({

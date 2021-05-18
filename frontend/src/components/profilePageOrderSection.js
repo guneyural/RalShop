@@ -38,24 +38,27 @@ const OrderItem = styled.div`
   margin-top: 15px;
   margin-bottom: 10px;
   padding: 3px 8px;
-  height: 270px;
+  height: 290px;
   position: relative;
   @media (max-width: 375px) {
     width: 98%;
   }
   @media (max-width: 1000px) {
-    height: 290px;
+    height: 320px;
   }
   @media (max-width: 767px) {
     width: 94%;
-    height: 250px;
+    height: 265px;
   }
   @media (max-width: 500px) {
-    height: 265px;
+    height: 280px;
   }
   @media (max-width: 375px) {
     width: 96%;
-    height: 290px;
+    height: 300px;
+  }
+  @media (max-width: 360px) {
+    height: 320px;
   }
 `;
 const OrderItemImage = styled.img`
@@ -275,7 +278,6 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
     } else {
       return 0;
     }
-    
   };
 
   if (isEmpty) {
@@ -478,7 +480,8 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                                                 (item) =>
                                                   item.seller ===
                                                   orderItem.order.seller._id
-                                              )[0]._id
+                                              )[0]._id,
+                                              orderItem.order.seller._id
                                             )
                                           )
                                         }

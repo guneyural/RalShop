@@ -6,6 +6,7 @@ import {
   RATE_SELLER_LOADING,
   RATE_SELLER_ERROR,
 } from "../actions/types";
+import axios from "axios";
 
 const initialState = {
   ratedSellers: [],
@@ -30,23 +31,31 @@ export function RateSeller(state = initialState, action) {
         loading: false,
       };
     case DELETE_SELLER_RATING:
+      axios.post("/api/seller_rating/calculate_seller_rating", {
+        seller: action.payload.seller,
+      });
       return {
         ...state,
         ratedSellers: state.ratedSellers.filter(
-          (item) => item._id !== action.payload
+          (item) => item._id !== action.payload.id
         ),
         error: null,
         loading: false,
       };
     case RATE_SELLER:
+      axios.post("/api/seller_rating/calculate_seller_rating", {
+        seller: action.payload.seller,
+      });
       return {
         ...state,
         ratedSellers:
           state.ratedSellers.length > 0
             ? state.ratedSellers.map((item) =>
-                item._id === action.payload._id ? action.payload : item
+                item._id === action.payload.data._id
+                  ? action.payload.data
+                  : item
               )
-            : [action.payload],
+            : [action.payload.data],
         error: null,
         loading: false,
       };
