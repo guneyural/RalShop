@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import LoadingIcon from "../assets/loading.gif";
 import styled from "styled-components";
 import { priceConverter } from "../utils/helpers";
 import moment from "moment";
@@ -7,6 +8,11 @@ import { Link, useHistory } from "react-router-dom";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import OrderDetailsModal from "./orderDetailsModal";
 import SellerDetailsModal from "./sellerDetailsModal";
+import ReactStars from "react-rating-stars-component";
+import {
+  rateSeller,
+  deleteSellerRating,
+} from "../redux/actions/rateSellerActions";
 
 const OrderBox = styled.div`
   border: 1px solid #dbdbdb;
@@ -174,10 +180,53 @@ const Row = styled.div`
 const WebsiteLink = styled.a`
   text-decoration: none;
 `;
+const RateSellerStars = styled.div`
+  display: none;
+  position: absolute;
+  bottom: 29px;
+  left: 0px;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  padding: 10px;
+  min-width: 100%;
+  width: 140px;
+  font-size: 12px;
+  cursor: auto;
+
+  @media (max-width: 793px) {
+    bottom: 45px;
+  }
+  @media (max-width: 766px) {
+    bottom: 30px;
+  }
+`;
+const RateSellerSection = styled.div`
+  position: relative;
+  padding: 5px;
+  &:hover ${RateSellerStars} {
+    display: block;
+  }
+`;
+const RateSellerText = styled.span``;
+const RateSellersStarsTop = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid #dbdbdb;
+`;
 
 const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.Auth);
   const { orders } = useSelector((state) => state.Order);
+  const { ratedSellers, loading, error } = useSelector(
+    (state) => state.RateSeller
+  );
+  const [isDisplayingRateError, setIsDisplayingRateError] = useState(false);
   const [visibleOrder, setVisibleOrder] = useState("");
   const [isOrderDetailsModalOpen, setIsOrderDetailsModalOpen] = useState(false);
   const [isSellerDetailsModalOpen, setIsSellerDetailsModalOpen] =
@@ -191,6 +240,11 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
     if (Object.keys(orders).length > 0) setIsEmpty(false);
   }, [orders]);
 
+  useEffect(() => {
+    setIsDisplayingRateError(true);
+    setTimeout(() => setIsDisplayingRateError(false), 1500);
+  }, [error]);
+
   const productReviewsLink = (productId) => {
     history.push(`/product/${productId}/#reviews`);
   };
@@ -201,6 +255,27 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const openSellerDetailsModal = (seller) => {
     setSellerDetail(seller);
     setIsSellerDetailsModalOpen(true);
+  };
+  const RateSeller = (val, orderItem) => {
+    dispatch(
+      rateSeller({
+        rating: val,
+        seller: orderItem.order.seller._id,
+        user: user._id,
+      })
+    );
+  };
+  const isSellerRated = (orderItem) => {
+    const ratedItem = ratedSellers.filter(
+      (item) => item.seller === orderItem.order.seller._id
+    );
+
+    if (ratedItem.length > 0) {
+      return ratedItem[0].rating;
+    } else {
+      return 0;
+    }
+    
   };
 
   if (isEmpty) {
@@ -342,9 +417,80 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                             Seller Details
                           </OrderItemOptions>
                           <OrderItemOptions
-                            style={{ borderRight: "1px solid #dbdbdb" }}
+                            style={{
+                              borderRight: "1px solid #dbdbdb",
+                              padding: "0",
+                            }}
                           >
-                            Rate Seller
+                            <RateSellerSection>
+                              <RateSellerStars>
+                                <RateSellersStarsTop>
+                                  Rate Seller
+                                </RateSellersStarsTop>
+                                {loading && (
+                                  <img
+                                    src={LoadingIcon}
+                                    alt="loading icon spinning"
+                                    height="40px"
+                                    width="40px"
+                                    style={{ marginTop: "10px" }}
+                                  />
+                                )}
+                                {error && isDisplayingRateError && (
+                                  <span className="text-danger">{error}</span>
+                                )}
+                                {!loading && !isDisplayingRateError && (
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      flexDirection: "column",
+                                    }}
+                                  >
+                                    <ReactStars
+                                      count={5}
+                                      a11y={false}
+                                      value={isSellerRated(orderItem)}
+                                      onChange={(val) =>
+                                        RateSeller(val, orderItem)
+                                      }
+                                      size={24}
+                                      activeColor="#ffd700"
+                                      className="react-stars-seller-rating"
+                                    />
+                                    {ratedSellers.find(
+                                      (item) =>
+                                        item.seller ===
+                                        orderItem.order.seller._id
+                                    ) && (
+                                      <span
+                                        style={{
+                                          display: "inline-block",
+                                          cursor: "pointer",
+                                          textDecoration: "underline",
+                                          color: "var(--text-muted)",
+                                        }}
+                                        onClick={() =>
+                                          dispatch(
+                                            deleteSellerRating(
+                                              ratedSellers.filter(
+                                                (item) =>
+                                                  item.seller ===
+                                                  orderItem.order.seller._id
+                                              )[0]._id
+                                            )
+                                          )
+                                        }
+                                      >
+                                        Delete Rating
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </RateSellerStars>
+                              <RateSellerText>Rate Seller</RateSellerText>
+                            </RateSellerSection>
                           </OrderItemOptions>
                           <OrderItemOptions
                             onClick={() =>

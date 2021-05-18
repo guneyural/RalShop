@@ -10,6 +10,7 @@ import { BiLogOut } from "react-icons/bi";
 import MessageBox from "../components/messageBox";
 import { Link } from "react-router-dom";
 import { getOrders } from "../redux/actions/orderActions";
+import { getRatedSellersForUser } from "../redux/actions/rateSellerActions";
 import ProfilePageNavbar from "../components/profilePageNavbar";
 import ProfilePageReviewsSection from "../components/profilePageReviewsSection";
 import ProfilePageAddressSection from "../components/profilePageAddressSection";
@@ -61,8 +62,9 @@ const ProfilePage = () => {
   const [isEmpty, setIsEmpty] = useState(false);
 
   useEffect(() => {
-    dispatch(getUserReviews());
     dispatch(getOrders());
+    dispatch(getUserReviews());
+    dispatch(getRatedSellersForUser());
   }, []);
 
   useEffect(() => {

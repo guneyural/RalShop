@@ -9,6 +9,7 @@ import { Cart } from "./CartReducer";
 import { Chat } from "./chatReducer";
 import { Address } from "./addressReducer";
 import { Order } from "./orderReducer";
+import { RateSeller } from "./rateSellerReducer";
 
 function lastAction(state = null, action) {
   return action.type;
@@ -25,6 +26,7 @@ const reducers = combineReducers({
   Chat,
   Address,
   Order,
+  RateSeller,
   lastAction,
 });
 
