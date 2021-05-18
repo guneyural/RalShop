@@ -14,6 +14,7 @@ import ProfilePageNavbar from "../components/profilePageNavbar";
 import ProfilePageReviewsSection from "../components/profilePageReviewsSection";
 import ProfilePageAddressSection from "../components/profilePageAddressSection";
 import ProfilePageOrderSection from "../components/profilePageOrderSection";
+import ProfilePageRatedSellersSection from "../components/ProfilePageRatedSellersSection";
 
 const TextMuted = styled.p`
   color: var(--text-muted);
@@ -177,6 +178,12 @@ const ProfilePage = () => {
                     )}
                     {param === "reviews" && (
                       <ProfilePageReviewsSection
+                        setIsEmpty={setIsEmpty}
+                        isEmpty={isEmpty}
+                      />
+                    )}
+                    {param === "ratedsellers" && (
+                      <ProfilePageRatedSellersSection
                         setIsEmpty={setIsEmpty}
                         isEmpty={isEmpty}
                       />

@@ -5,6 +5,7 @@ import {
   MdComment,
   MdLocationOn,
   MdKeyboardArrowRight,
+  MdStar,
 } from "react-icons/md";
 import { useHistory, useParams } from "react-router-dom";
 
@@ -28,8 +29,14 @@ const NavbarItem = styled.li`
 `;
 
 const NavLinks = [
-  { name: "Orders", icon: <MdLocalShipping />, pushTo: "/orders" },
+  {
+    name: "Orders",
+    icon: <MdLocalShipping />,
+    pushTo: "/orders",
+    val: "orders",
+  },
   { name: "Reviews", icon: <MdComment />, pushTo: "/reviews" },
+  { name: "Rated Sellers", icon: <MdStar />, pushTo: "/ratedsellers" },
   { name: "Addresses", icon: <MdLocationOn />, pushTo: "/addresses" },
 ];
 
@@ -50,7 +57,8 @@ const ProfilePageNavbar = () => {
               key={index}
               onClick={() => changePage(navLink.pushTo)}
               className={`mt-3 ${
-                param === navLink.name.toLowerCase() && "profile-nav-active"
+                param === navLink.name.toLowerCase().split(" ").join("") &&
+                "profile-nav-active"
               }`}
             >
               <span className="profile-nav-icon">{navLink.icon}</span>
