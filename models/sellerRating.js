@@ -12,7 +12,8 @@ const SellerRatingSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    seller: {
+    seller: { type: String, required: true },
+    sellerObject: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
     },

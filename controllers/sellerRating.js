@@ -22,17 +22,25 @@ const rateSeller = catchAsync(async (req, res, next) => {
     findExistingRating.rating = rating;
     savedRating = await findExistingRating.save();
   } else {
-    const newRatingObject = new SellerRating({ rating, user, seller });
+    const newRatingObject = new SellerRating({
+      rating,
+      user,
+      seller,
+      sellerObject: seller,
+    });
     savedRating = await newRatingObject.save();
   }
 
+  let populatedRating = await savedRating.execPopulate("sellerObject");
   calculateSellerRating(seller);
-  res.status(200).json(savedRating);
+  res.status(200).json(populatedRating);
 });
 const getUserRatings = catchAsync(async (req, res) => {
   const user = req.user;
 
-  const getRatings = await SellerRating.find({ user: user.id });
+  const getRatings = await SellerRating.find({ user: user.id }).populate(
+    "sellerObject"
+  );
   res.json(getRatings);
 });
 const getSellerRatings = catchAsync(async (req, res) => {
