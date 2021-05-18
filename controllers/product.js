@@ -32,6 +32,10 @@ const createProduct = catchAsync(async (req, res, next) => {
   )
     return next(new expressError("Fill All Fields", 400));
 
+  if (price > 999999) {
+    return next(new expressError("Price must be less than $999.999", 400));
+  }
+
   const stripeProduct = await stripe.products.create({
     name: title,
   });
