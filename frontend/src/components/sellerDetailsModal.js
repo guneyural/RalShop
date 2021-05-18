@@ -210,7 +210,7 @@ const SellerDetailsModal = ({ Seller, closeModal }) => {
                   </InnerItem>
                   <InnerItem style={{}}>
                     <>Rating</>
-                    <b style={{ color: "#333" }}>{4.3}</b>
+                    <b style={{ color: "#333" }}>{Seller.rating}</b>
                   </InnerItem>
                 </AddressBoxInner>
               </AddressBox>

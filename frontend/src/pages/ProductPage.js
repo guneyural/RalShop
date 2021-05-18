@@ -833,7 +833,9 @@ const ProductPage = () => {
                   <Link to="/" id="product-link">
                     <h6 style={{ fontSize: "18px" }}>
                       {Product.shop.companyName}{" "}
-                      <div className="badge bg-primary">9.4</div>
+                      <div className="badge bg-primary">
+                        {Product.shop.rating}
+                      </div>
                     </h6>
                   </Link>
                   <Link to="/" id="product-link">

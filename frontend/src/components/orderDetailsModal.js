@@ -345,7 +345,7 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
                 <InnerItem>
                   <>Rating</>
                   <b style={{ color: "#333" }}>
-                    {9.6}
+                    {orderGroup[0].order.seller.rating}
                   </b>
                 </InnerItem>
               </AddressBoxInner>
