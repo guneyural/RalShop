@@ -17,6 +17,7 @@ const shopSchema = new mongoose.Schema(
       token: String,
       expiration: Date,
     },
+    rating: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
