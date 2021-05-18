@@ -8,6 +8,7 @@ const ChatRoutes = require("./chatRoutes");
 const AddressRoutes = require("./addressRoutes");
 const StripeRoutes = require("./stripeRoutes");
 const OrderRoutes = require("./OrderRoutes");
+const SellerRatingRoutes = require("./sellerRatingRoutes");
 
 module.exports = {
   CartRoutes,
@@ -20,4 +21,5 @@ module.exports = {
   AddressRoutes,
   StripeRoutes,
   OrderRoutes,
+  SellerRatingRoutes,
 };

@@ -144,6 +144,7 @@ app.use("/api/chat", Routes.ChatRoutes);
 app.use("/api/address", Routes.AddressRoutes);
 app.use("/api/stripe", Routes.StripeRoutes);
 app.use("/api/order", Routes.OrderRoutes);
+app.use("/api/seller_rating", Routes.SellerRatingRoutes);
 app.get("/", (req, res) => {
   res.send("Güney Ural");
 });
