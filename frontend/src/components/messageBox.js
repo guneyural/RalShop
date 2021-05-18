@@ -16,6 +16,7 @@ const MessageBox = ({
   header,
   btnText,
   param,
+  secondParam,
 }) => {
   const dispatch = useDispatch();
   const closeModal = () => {
@@ -27,7 +28,16 @@ const MessageBox = ({
       action();
       setIsModalOpen(false);
     } else {
-      dispatch(action(param && param));
+      const parameters = {};
+      if (param) parameters["param"] = param;
+      if (secondParam) parameters["secondParam"] = secondParam;
+      dispatch(
+        action(
+          ...Object.keys(parameters).map((key) => {
+            return parameters[key];
+          })
+        )
+      );
       setIsModalOpen(false);
     }
   };
