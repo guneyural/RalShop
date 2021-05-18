@@ -32,7 +32,6 @@ const rateSeller = catchAsync(async (req, res, next) => {
   }
 
   let populatedRating = await savedRating.execPopulate("sellerObject");
-  calculateSellerRating(seller);
   res.status(200).json(populatedRating);
 });
 const getUserRatings = catchAsync(async (req, res) => {
@@ -51,23 +50,30 @@ const getSellerRatings = catchAsync(async (req, res) => {
 });
 const deleteRating = catchAsync(async (req, res) => {
   const ratingId = req.params.id;
-  const seller = req.body.seller;
 
-  await SellerRating.findByIdAndRemove(ratingId);
-  calculateSellerRating(seller);
-
-  res.status(200).json("success");
+  SellerRating.findByIdAndRemove(ratingId).then(() => {
+    res.status(200).json("success");
+  });
 });
 
-async function calculateSellerRating(seller) {
+const calculateSellerRating = catchAsync(async (req, res) => {
+  const { seller } = req.body;
   let sum = 0;
-  const getRatings = await SellerRating.find({ seller });
+  const getRatings = await SellerRating.find({ sellerObject: seller });
+  console.log(getRatings);
   const getSeller = await Seller.findById(seller);
   getRatings.forEach((ratingItem) => {
     sum += ratingItem.rating;
   });
-  getSeller.rating = (sum / getRatings.length).toFixed(1);
+  getSeller.rating = parseFloat(sum / getRatings.length).toFixed(1);
   await getSeller.save();
-}
+  res.json("seller rating calculated");
+});
 
-module.exports = { rateSeller, getUserRatings, getSellerRatings, deleteRating };
+module.exports = {
+  rateSeller,
+  getUserRatings,
+  getSellerRatings,
+  deleteRating,
+  calculateSellerRating,
+};
