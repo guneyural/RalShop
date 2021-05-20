@@ -60,11 +60,12 @@ const calculateSellerRating = catchAsync(async (req, res) => {
   const { seller } = req.body;
   let sum = 0;
   const getRatings = await SellerRating.find({ sellerObject: seller });
-  console.log(getRatings);
+
   const getSeller = await Seller.findById(seller);
   getRatings.forEach((ratingItem) => {
     sum += ratingItem.rating;
   });
+
   getSeller.rating = parseFloat(sum / getRatings.length).toFixed(1);
   await getSeller.save();
   res.json("seller rating calculated");
