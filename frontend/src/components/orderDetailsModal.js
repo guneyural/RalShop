@@ -372,8 +372,11 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
                               color: "var(--text-muted)",
                             }}
                           >
-                            <b style={{ color: "#333" }}>Status:</b> Waiting
-                            confirmation by seller
+                            <b style={{ color: "#333" }}>Status:</b>
+                            {order.order.status === "waitingConfirmation" &&
+                              "Waiting confirmation by seller"}
+                            {order.order.status === "cancelRequest" &&
+                              "Waiting confirmation by seller to confirm cancellation"}
                           </span>
                         </OrderItem>
                       </div>
