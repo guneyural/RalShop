@@ -40,6 +40,11 @@ import ShoppingCartPage from "./pages/ShoppingCartPage";
 import Messenger from "./pages/Messenger";
 import Messaging from "./pages/Messaging";
 import CheckoutPage from "./pages/CheckoutPage";
+import AllOrdersPage from "./pages/seller/allOrdersPage";
+import AllProductsPage from "./pages/seller/AllProductsPage";
+import CancelledOrdersPage from "./pages/seller/cancelledOrders";
+import ConfirmationRequiredOrders from "./pages/seller/confirmationRequiredOrders";
+import OutOfStockPage from "./pages/seller/OutOfStockPage";
 
 require("dotenv").config();
 
@@ -123,6 +128,42 @@ const App = () => {
             path="/seller/profile"
             exact
             component={SellerProfile}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/orders/list"
+            exact
+            component={AllOrdersPage}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/products/all"
+            exact
+            component={AllProductsPage}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/orders/list"
+            exact
+            component={AllOrdersPage}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/orders/cancelled"
+            exact
+            component={CancelledOrdersPage}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/orders/confirmation_required"
+            exact
+            component={ConfirmationRequiredOrders}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
+            path="/seller/products/outofstock"
+            exact
+            component={OutOfStockPage}
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
