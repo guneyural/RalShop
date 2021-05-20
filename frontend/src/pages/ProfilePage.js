@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, getUserReviews } from "../redux/actions/authActions";
 import { useParams, useHistory } from "react-router-dom";
 import noPicture from "../assets/noProfilePic.jpg";
+import LoadingIcon from "../assets/loading.gif";
 import { MdSettings } from "react-icons/md";
 import styled from "styled-components";
 import moment from "moment";
@@ -199,7 +200,16 @@ const ProfilePage = () => {
       </div>
     );
   } else {
-    return <h1>Loading...</h1>;
+    return (
+      <div style={{ display: "block", margin: "auto", textAlign: "center" }}>
+        {loading && (
+          <>
+            <img src={LoadingIcon} alt="loading gif" height="100" width="100" />
+            <h2 style={{ fontWeight: "lighter" }}>Loading...</h2>
+          </>
+        )}
+      </div>
+    );
   }
 };
 
