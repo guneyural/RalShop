@@ -67,6 +67,7 @@ const calculateSellerRating = catchAsync(async (req, res) => {
   });
 
   getSeller.rating = parseFloat(sum / getRatings.length).toFixed(1);
+  getSeller.ratingCount = getRatings.length;
   await getSeller.save();
   res.json("seller rating calculated");
 });

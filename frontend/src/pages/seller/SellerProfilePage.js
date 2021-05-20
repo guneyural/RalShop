@@ -5,7 +5,11 @@ import moment from "moment";
 import ReactMapGL, { Marker } from "react-map-gl";
 import pin from "../../assets/pin.webp";
 import MessageBox from "../../components/messageBox";
+import { BsStarFill, BsStar, BsStarHalf } from "react-icons/bs";
 import { sellerLogout } from "../../redux/actions/sellerActions";
+import { AiFillEdit } from "react-icons/ai";
+import { RiLogoutBoxFill } from "react-icons/ri";
+import SellerProfileEdit from "../../components/sellerProfileEdit";
 
 const SellerInformation = styled.div`
   border: 1px solid #c2c2c2;
@@ -44,6 +48,7 @@ const SellerProfilePage = () => {
   const Seller = useSelector((state) => state.Seller);
   const [center, setCenter] = useState([...Seller.shop.coordinate]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [viewport, setViewport] = useState({
     height: 205,
     latitude: center[1],
@@ -57,6 +62,9 @@ const SellerProfilePage = () => {
 
   return (
     <div className="row">
+      {isEditModalOpen && (
+        <SellerProfileEdit isModalOpen={setIsEditModalOpen} />
+      )}
       {isModalOpen && (
         <MessageBox
           action={sellerLogout}
@@ -141,9 +149,10 @@ const SellerProfilePage = () => {
           </Marker>
         </ReactMapGL>
       </div>
-      <section className="col-12 mt-3">
-        <h1>Links</h1>
+      <section className="col-md-4 mt-3">
+        <h2>Links</h2>
         <SellerInformation>
+          {Seller.shop.links.length < 1 && <p>No Links Added</p>}
           {Seller.shop.links.map((item, idx) => {
             return (
               <>
@@ -166,13 +175,79 @@ const SellerProfilePage = () => {
           })}
         </SellerInformation>
       </section>
-      <button
-        className="default-btn mt-5 mb-3"
-        style={{ width: "100px", marginLeft: "12px" }}
-        onClick={() => setIsModalOpen(true)}
+      <section className="col-md-4 mt-3">
+        <h2>Rating</h2>
+        <section
+          style={{
+            display: "flex",
+            alignItems: "center",
+            fontSize: "28px",
+            marginTop: "-15px",
+          }}
+        >
+          <p style={{ position: "relative", top: "12px" }}>
+            {Seller.shop.rating}{" "}
+            <b style={{ position: "relative", bottom: "3px" }}>-</b>
+          </p>
+          <section style={{ marginLeft: "10px" }}>
+            {Array.from({ length: 5 }, (_, index) => {
+              const number = index + 0.5;
+              return (
+                <span key={index}>
+                  {Seller.shop.rating > number ? (
+                    <BsStarFill style={{ color: "rgb(255, 215, 0)" }} />
+                  ) : Seller.shop.rating > index ? (
+                    <BsStarHalf style={{ color: "rgb(255, 215, 0)" }} />
+                  ) : (
+                    <BsStar style={{ color: "rgb(255, 215, 0)" }} />
+                  )}
+                </span>
+              );
+            })}
+          </section>
+        </section>
+        <p
+          style={{
+            padding: "0",
+            margin: "0",
+            marginTop: "-5px",
+            fontSize: "15px",
+            color: "var(--text-muted)",
+          }}
+        >
+          ({Seller.shop.ratingCount > 0 ? `${Seller.shop.ratingCount} ` : "No "}
+          reviews)
+        </p>
+      </section>
+      <section
+        className="col-md-4 mt-3"
+        style={{ textAlign: "center", margin: "auto" }}
       >
-        Logout
-      </button>
+        <section style={{ textAlign: "left" }}>
+          <h2>Settings</h2>
+          <p
+            style={{
+              borderBottom: "1px solid #dbdbdb",
+              margin: "0",
+              cursor: "pointer",
+              paddingBottom: "8px",
+            }}
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            <AiFillEdit /> Edit Profile
+          </p>
+          <p
+            style={{
+              paddingTop: "10px",
+              cursor: "pointer",
+              color: "var(--text-muted)",
+            }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <RiLogoutBoxFill /> Logout
+          </p>
+        </section>
+      </section>
     </div>
   );
 };

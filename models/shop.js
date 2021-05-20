@@ -18,6 +18,7 @@ const shopSchema = new mongoose.Schema(
       expiration: Date,
     },
     rating: { type: Number, default: 0 },
+    ratingCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -108,24 +108,23 @@ export const confirmPasswordResetToken = (email, shopToken) => (dispatch) => {
     });
 };
 
-export const resetPassword = (newPassword, confirmPassword, email, token) => (
-  dispatch
-) => {
-  dispatch({ type: LOADING });
+export const resetPassword =
+  (newPassword, confirmPassword, email, token) => (dispatch) => {
+    dispatch({ type: LOADING });
 
-  axios
-    .post(
-      "/api/shop/changePassword",
-      { newPassword, confirmPassword, email },
-      { headers: { "password-token": token } }
-    )
-    .then(() => {
-      dispatch({ type: SELLER_CHANGE_PASSWORD });
-    })
-    .catch((err) => {
-      dispatch({ type: SELLER_RESET_PASSWORD_ERROR });
-    });
-};
+    axios
+      .post(
+        "/api/shop/changePassword",
+        { newPassword, confirmPassword, email },
+        { headers: { "password-token": token } }
+      )
+      .then(() => {
+        dispatch({ type: SELLER_CHANGE_PASSWORD });
+      })
+      .catch((err) => {
+        dispatch({ type: SELLER_RESET_PASSWORD_ERROR });
+      });
+  };
 
 export const sellerRoute = () => {
   return { type: SELLER_ROUTE };
