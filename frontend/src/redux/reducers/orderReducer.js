@@ -46,8 +46,12 @@ export function Order(state = initialState, action) {
         error: null,
       };
     case ORDER_CANCEL_REQUEST:
+      let tempOrders = { ...state.orders };
+      tempOrders[action.payload.groupId] = action.payload.order;
+
       return {
         ...state,
+        orders: tempOrders,
         loading: false,
         error: null,
       };

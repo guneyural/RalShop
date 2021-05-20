@@ -66,11 +66,12 @@ const getOrdersByUser = catchAsync(async (req, res) => {
       createdAt: "desc",
     })
     .populate("Product.product user seller");
-  for (let i = 0; i < getOrders.length; i++) {
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      getOrders[i].paymentIntentId
-    );
 
+  const paymentIntent = await stripe.paymentIntents.retrieve(
+    getOrders[0].paymentIntentId
+  );
+
+  for (let i = 0; i < getOrders.length; i++) {
     orders.push({
       groupId: getOrders[i].groupId,
       order: getOrders[i],
@@ -87,11 +88,11 @@ const getOrdersBySeller = catchAsync(async (req, res) => {
     .sort({ createdAt: "desc" })
     .populate("Product.product user seller");
 
-  for (let i = 0; i < getOrders.length; i++) {
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      getOrders[i].paymentIntentId
-    );
+  const paymentIntent = await stripe.paymentIntents.retrieve(
+    getOrders[0].paymentIntentId
+  );
 
+  for (let i = 0; i < getOrders.length; i++) {
     orders.push({
       groupId: getOrders[i].groupId,
       order: getOrders[i],
@@ -103,19 +104,36 @@ const getOrdersBySeller = catchAsync(async (req, res) => {
 });
 
 const orderCancelRequest = catchAsync(async (req, res, next) => {
-  const { id, groupId } = req.body;
+  const { groupId } = req.body;
+  let ordersArray = [];
 
-  const getOrder = await Order.findOne({
-    $and: [{ _id: id }, { user: req.user.id }, { groupId }],
-  });
+  const getOrders = await Order.find({
+    $and: [{ user: req.user.id }, { groupId }],
+  }).populate("Product.product user seller");
 
-  if (!getOrder) return next(new expressError("Order could not found!", 404));
-  if (getOrder.status === "cancelRequest")
-    return next(new expressError("Cancel request already sent.", 400));
+  if (getOrders.length < 1)
+    return next(new expressError("Order could not found", 404));
 
-  getOrder.status = "cancelRequest";
-  const saveOrder = await getOrder.save();
-  res.status(200).json(saveOrder);
+  let paymentIntent;
+  for (let [index, order] of getOrders.entries()) {
+    if (order.status === "cancelRequest")
+      return next(new expressError("Cancel request already sent", 400));
+
+    if (index === 0) {
+      paymentIntent = await stripe.paymentIntents.retrieve(
+        order.paymentIntentId
+      );
+    }
+    order.status = "cancelRequest";
+    await order.save();
+    ordersArray.push({
+      groupId: order.groupId,
+      order: order,
+      Payment: paymentIntent.charges.data[0],
+    });
+  }
+
+  return res.status(200).json(ordersArray);
 });
 
 const changeOrderStatus = catchAsync(async (req, res, next) => {

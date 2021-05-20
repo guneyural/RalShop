@@ -13,6 +13,8 @@ import {
   rateSeller,
   deleteSellerRating,
 } from "../redux/actions/rateSellerActions";
+import { orderCancelRequest } from "../redux/actions/orderActions";
+import Modal from "./messageBox";
 
 const OrderBox = styled.div`
   border: 1px solid #dbdbdb;
@@ -225,7 +227,7 @@ const RateSellersStarsTop = styled.div`
 const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.Auth);
-  const { orders } = useSelector((state) => state.Order);
+  const { orders, loading: isLoading } = useSelector((state) => state.Order);
   const { ratedSellers, loading, error } = useSelector(
     (state) => state.RateSeller
   );
@@ -234,8 +236,10 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const [isOrderDetailsModalOpen, setIsOrderDetailsModalOpen] = useState(false);
   const [isSellerDetailsModalOpen, setIsSellerDetailsModalOpen] =
     useState(false);
+  const [isCancelOrderModalOpen, setIsCancelOrderModalOpen] = useState(false);
   const [sellerDetail, setSellerDetail] = useState("");
   const [orderDetailsGroupId, setOrderDetailsGroupId] = useState("");
+
   const history = useHistory();
 
   useEffect(() => {
@@ -279,9 +283,34 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
       return 0;
     }
   };
+  const cancelOrder = (groupId) => {
+    setOrderDetailsGroupId(groupId);
+    setIsCancelOrderModalOpen(true);
+  };
+  const showCancelButton = (key) => {
+    return orders[key][0].order.status === "delivered" ||
+      orders[key][0].order.status === "cancelRequest" ||
+      orders[key][0].order === "cancelled"
+      ? false
+      : true;
+  };
 
   if (isEmpty) {
-    return <h4>No Orders Added</h4>;
+    return (
+      <div>
+        {isLoading ? (
+          <img
+            src={LoadingIcon}
+            alt="loading gif"
+            height="70"
+            width="70"
+            style={{ display: "block", margin: "auto" }}
+          />
+        ) : (
+          <h4>No Orders Added</h4>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -298,12 +327,32 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
           closeModal={setIsSellerDetailsModalOpen}
         />
       )}
+      {isCancelOrderModalOpen && (
+        <Modal
+          isRedux={true}
+          action={orderCancelRequest}
+          message="You will get refunded, if seller confirms your cancel request. This action is irreversible. Do you want to cancel your order?"
+          setIsModalOpen={setIsCancelOrderModalOpen}
+          header="Cancel Order"
+          btnText="Cancel Order"
+          param={orderDetailsGroupId}
+        />
+      )}
       <div
         className="checkout-address-section-top w-100"
         style={{ position: "absolute", top: "0", left: "0" }}
       >
         <BoxHeaderText>{Object.keys(orders).length} Orders</BoxHeaderText>
       </div>
+      {isLoading && (
+        <img
+          src={LoadingIcon}
+          alt="loading gif"
+          height="45"
+          width="45"
+          style={{ display: "block", marginBottom: "-30px", marginTop: "20px" }}
+        />
+      )}
       {Object.keys(orders).map((order, index) => {
         return (
           <div key={index}>
@@ -348,7 +397,11 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                 >
                   <OrderBoxSettingsItem>View Receipt</OrderBoxSettingsItem>
                 </WebsiteLink>
-                <OrderBoxSettingsItem>Cancel Order</OrderBoxSettingsItem>
+                {showCancelButton(order) && (
+                  <OrderBoxSettingsItem onClick={() => cancelOrder(order)}>
+                    Cancel Order
+                  </OrderBoxSettingsItem>
+                )}
               </OrderBoxSettings>
               <Row
                 className="row"
@@ -407,6 +460,8 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                           >
                             {orderItem.order.status === "waitingConfirmation" &&
                               "Waiting confirmation by seller"}
+                            {orderItem.order.status === "cancelRequest" &&
+                              "Waiting for seller to confirm cancellation"}
                           </span>
                         </OrderItemPrice>
                         <OrderItemBottom>

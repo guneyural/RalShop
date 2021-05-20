@@ -49,8 +49,27 @@ export const getOrders = () => (dispatch) => {
     });
 };
 
-export const orderCancelRequest = (data) => (dispatch) => {
+export const orderCancelRequest = (groupId) => (dispatch) => {
   dispatch({ type: ORDER_LOADING });
+
+  axios
+    .post(`${PREFIX}/cancel-request`, { groupId }, userTokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: ORDER_CANCEL_REQUEST,
+        payload: { order: data, groupId },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: ORDER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
 };
 
 const userTokenConfig = () => {
