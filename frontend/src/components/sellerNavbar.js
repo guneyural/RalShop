@@ -88,20 +88,11 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                     <Link to="/seller/products/all" className="dropdown-link">
                       All Products
                     </Link>
-                    <Link to="/seller/products/sales" className="dropdown-link">
-                      On Sale
-                    </Link>
                     <Link
                       to="/seller/products/outofstock"
                       className="dropdown-link"
                     >
                       Out Of Stock
-                    </Link>
-                    <Link
-                      to="/seller/products/saleslist"
-                      className="dropdown-link"
-                    >
-                      Sales List
                     </Link>
                   </div>
                 </span>
@@ -114,10 +105,15 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 >
                   Order <IoMdArrowDropdown />{" "}
                   <div className="drop-content">
-                    <Link to="/seller/orders/cargo" className="dropdown-link">
-                      Cargo
+                    <Link to="/seller/orders/list" className="dropdown-link">
+                      All Orders
                     </Link>
-
+                    <Link
+                      to="/seller/orders/confirmation_required"
+                      className="dropdown-link"
+                    >
+                      Confirmation Required
+                    </Link>
                     <Link
                       to="/seller/orders/cancelled"
                       className="dropdown-link"
@@ -222,17 +218,11 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 <Link to="/seller/products/all" className="dropdown-link">
                   All Products
                 </Link>
-                <Link to="/seller/products/sales" className="dropdown-link">
-                  On Sale
-                </Link>
                 <Link
                   to="/seller/products/outofstock"
                   className="dropdown-link"
                 >
                   Out Of Stock
-                </Link>
-                <Link to="/seller/products/saleslist" className="dropdown-link">
-                  Sales List
                 </Link>
               </div>
             </span>
@@ -245,12 +235,17 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
             >
               Order <IoMdArrowDropdown />{" "}
               <div className="drop-content">
-                <Link to="/seller/orders/cargo" className="dropdown-link">
-                  Cargo
+                <Link to="/seller/orders/list" className="dropdown-link">
+                  All Orders
                 </Link>
-
+                <Link
+                  to="/seller/orders/confirmation_required"
+                  className="dropdown-link"
+                >
+                  Confirmation Required
+                </Link>
                 <Link to="/seller/orders/cancelled" className="dropdown-link">
-                  Cancelled orders
+                  Cancelled
                 </Link>
               </div>
             </span>
