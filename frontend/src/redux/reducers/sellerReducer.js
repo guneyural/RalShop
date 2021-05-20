@@ -12,6 +12,7 @@ import {
   SELLER_RESET_PASSWORD_TOKEN_ERROR,
   SELLER_ROUTE,
   NOT_SELLER_ROUTE,
+  UPDATE_SELLER,
 } from "../actions/types";
 
 const initialState = {
@@ -68,6 +69,13 @@ export const Seller = (state = initialState, action) => {
         shop: null,
         loading: false,
         isAuthenticated: false,
+        error: { message: null, status: null },
+      };
+    case UPDATE_SELLER:
+      return {
+        ...state,
+        loading: false,
+        shop: action.payload,
         error: { message: null, status: null },
       };
     case SELLER_ERROR:

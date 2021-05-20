@@ -106,6 +106,101 @@ const createShop = catchAsync(async (req, res, next) => {
   res.status(201).json(token);
 });
 
+const editShop = catchAsync(async (req, res, next) => {
+  const {
+    fullname,
+    email,
+    country,
+    phoneNumber,
+    category,
+    companyName,
+    location,
+    links,
+    coordinate,
+  } = req.body;
+  if (
+    category === "" ||
+    !category ||
+    country === "" ||
+    !country ||
+    !fullname ||
+    !email ||
+    !companyName ||
+    !location ||
+    !phoneNumber
+  ) {
+    return next(new expressError("Enter All Fields.", 400));
+  }
+
+  var expression =
+    /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+  var regex = new RegExp(expression);
+
+  if (links[0] !== "") {
+    links.forEach((url) => {
+      if (!url.match(regex)) {
+        return next(new expressError("Enter Valid Link", 400));
+      }
+    });
+  }
+
+  let newPhone = "";
+  const checkPhone = phone
+    .string()
+    .phoneNumber({
+      defaultCountry: country,
+      strict: true,
+      format: "international",
+    })
+    .validate(phoneNumber);
+  if (checkPhone.error)
+    return next(new expressError("Enter Valid Phone Number.", 400));
+  else newPhone = checkPhone.value;
+
+  const shopBeforeEdit = await Shop.findById(req.params.id);
+
+  if (shopBeforeEdit.email !== email) {
+    const findShopByEmail = await Shop.findOne({ email });
+    if (findShopByEmail)
+      return next(new expressError("Shop With That Email Exists.", 400));
+  }
+  if (shopBeforeEdit.companyName !== companyName) {
+    const findShopByName = await Shop.findOne({ companyName });
+    if (findShopByName)
+      return next(new expressError("Shop With That Company Name Exists.", 400));
+  }
+
+  const updateShop = await Shop.findByIdAndUpdate(
+    req.params.id,
+    {
+      fullname,
+      email,
+      country,
+      phoneNumber: newPhone,
+      category,
+      companyName,
+      location,
+      links,
+      coordinate,
+    },
+    { new: true }
+  );
+  res.status(200).json({
+    fullname: updateShop.fullname,
+    email: updateShop.email,
+    country: updateShop.country,
+    phoneNumber: newPhone,
+    category: updateShop.category,
+    companyName: updateShop.companyName,
+    location: updateShop.location,
+    links: updateShop.links,
+    coordinate: updateShop.coordinate,
+    id: updateShop._id,
+    rating: updateShop.rating,
+    ratingCount: updateShop.ratingCount,
+  });
+});
+
 const validateEmail = (email) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -289,6 +384,7 @@ const changePassword = catchAsync(async (req, res, next) => {
 
 module.exports = {
   createShop,
+  editShop,
   loginShop,
   getShopById,
   getCurrentShop,

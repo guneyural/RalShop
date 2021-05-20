@@ -63,7 +63,10 @@ const SellerProfilePage = () => {
   return (
     <div className="row">
       {isEditModalOpen && (
-        <SellerProfileEdit isModalOpen={setIsEditModalOpen} />
+        <SellerProfileEdit
+          isModalOpen={setIsEditModalOpen}
+          Seller={Seller.shop}
+        />
       )}
       {isModalOpen && (
         <MessageBox
@@ -119,7 +122,7 @@ const SellerProfilePage = () => {
           </InformationColumn>
         </SellerInformation>
       </div>
-      <div className="col-xl-7 col-lg-6 col-md-5">
+      <div className="col-xl-7 col-lg-6 col-md-5 ">
         <h2>Location</h2>
         <SellerInformation>
           <InformationColumn>
@@ -149,7 +152,7 @@ const SellerProfilePage = () => {
           </Marker>
         </ReactMapGL>
       </div>
-      <section className="col-md-4 mt-3">
+      <section className="col-md-4 mt-4">
         <h2>Links</h2>
         <SellerInformation>
           {Seller.shop.links.length < 1 && <p>No Links Added</p>}
@@ -175,7 +178,7 @@ const SellerProfilePage = () => {
           })}
         </SellerInformation>
       </section>
-      <section className="col-md-4 mt-3">
+      <section className="col-md-4 mt-4">
         <h2>Rating</h2>
         <section
           style={{
@@ -220,7 +223,7 @@ const SellerProfilePage = () => {
         </p>
       </section>
       <section
-        className="col-md-4 mt-3"
+        className="col-md-4 mt-4"
         style={{ textAlign: "center", margin: "auto" }}
       >
         <section style={{ textAlign: "left" }}>

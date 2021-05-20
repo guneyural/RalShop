@@ -13,6 +13,7 @@ import {
   NOT_SELLER_ROUTE,
   SELLER_ROUTE,
   LOADING,
+  UPDATE_SELLER,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
@@ -44,6 +45,26 @@ export const sellerRegister = (data) => (dispatch) => {
     .then((data) => {
       dispatch(logoutUser());
       dispatch({ type: SELLER_REGISTER, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const sellerUpdateProfile = (data, sellerId) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .put(`/api/shop/update/${sellerId}`, data, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: UPDATE_SELLER, payload: data });
     })
     .catch((err) => {
       dispatch({
