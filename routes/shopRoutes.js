@@ -23,7 +23,7 @@ Router.post("/login", limiter, loginShop);
 Router.post("/sendEmail", limiter, sendForgetPasswordEmail);
 Router.post("/checkToken", limiter, checkResetPasswordToken);
 Router.post("/changePassword", limiter, changePassword);
-Router.put("/update/:id", limiter, editShop);
+Router.put("/update/:id", isShop, limiter, editShop);
 Router.get("/p/:id", getShopById);
 Router.get("/current", isShop, getCurrentShop);
 
