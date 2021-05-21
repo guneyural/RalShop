@@ -103,9 +103,19 @@ const deleteProduct = catchAsync(async (req, res, next) => {
   return next(new expressError("You Are Not Owner Of This Product.", 403));
 });
 
+const getSellerAllProducts = catchAsync(async (req, res) => {
+  const shop = req.shop.id;
+  const getAllProducts = await Product.find({ shop }).sort({
+    rating: "desc",
+    date: "desc",
+  });
+  res.status(200).json(getAllProducts);
+});
+
 module.exports = {
   createProduct,
   getProductById,
   updateProduct,
   deleteProduct,
+  getSellerAllProducts,
 };

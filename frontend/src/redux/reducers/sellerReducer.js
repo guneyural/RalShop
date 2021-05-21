@@ -13,6 +13,7 @@ import {
   SELLER_ROUTE,
   NOT_SELLER_ROUTE,
   UPDATE_SELLER,
+  GET_ALL_SELLER_PRODUCTS,
 } from "../actions/types";
 
 const initialState = {
@@ -36,10 +37,18 @@ const initialState = {
     resetPasswordError: null,
     successText: null,
   },
+  products: [],
 };
 
 export const Seller = (state = initialState, action) => {
   switch (action.type) {
+    case GET_ALL_SELLER_PRODUCTS:
+      return {
+        ...state,
+        error: { message: null, status: null },
+        loading: false,
+        products: action.payload,
+      };
     case GET_CURRENT_SELLER:
       return {
         ...state,

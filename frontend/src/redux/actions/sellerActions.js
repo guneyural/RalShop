@@ -14,9 +14,30 @@ import {
   SELLER_ROUTE,
   LOADING,
   UPDATE_SELLER,
+  GET_ALL_SELLER_PRODUCTS,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
+
+export const getAllSellerProducts = () => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .get("/api/product/products/all", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_ALL_SELLER_PRODUCTS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 export const getCurrentSeller = () => (dispatch) => {
   axios
