@@ -89,10 +89,10 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                       All Products
                     </Link>
                     <Link
-                      to="/seller/products/outofstock"
+                      to="/seller/products/actions"
                       className="dropdown-link"
                     >
-                      Out Of Stock
+                      Product Actions
                     </Link>
                   </div>
                 </span>
@@ -218,11 +218,8 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 <Link to="/seller/products/all" className="dropdown-link">
                   All Products
                 </Link>
-                <Link
-                  to="/seller/products/outofstock"
-                  className="dropdown-link"
-                >
-                  Out Of Stock
+                <Link to="/seller/products/actions" className="dropdown-link">
+                  Product Actions
                 </Link>
               </div>
             </span>

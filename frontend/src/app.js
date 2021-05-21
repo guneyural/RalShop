@@ -44,7 +44,7 @@ import AllOrdersPage from "./pages/seller/allOrdersPage";
 import AllProductsPage from "./pages/seller/AllProductsPage";
 import CancelledOrdersPage from "./pages/seller/cancelledOrders";
 import ConfirmationRequiredOrders from "./pages/seller/confirmationRequiredOrders";
-import OutOfStockPage from "./pages/seller/OutOfStockPage";
+import ProductActionsPage from "./pages/seller/productActionsPage";
 
 require("dotenv").config();
 
@@ -143,6 +143,12 @@ const App = () => {
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
+            path="/seller/products/actions"
+            exact
+            component={ProductActionsPage}
+            isSellerAuthenticated={Seller.isAuthenticated}
+          />
+          <SellerRoute
             path="/seller/orders/list"
             exact
             component={AllOrdersPage}
@@ -158,12 +164,6 @@ const App = () => {
             path="/seller/orders/confirmation_required"
             exact
             component={ConfirmationRequiredOrders}
-            isSellerAuthenticated={Seller.isAuthenticated}
-          />
-          <SellerRoute
-            path="/seller/products/outofstock"
-            exact
-            component={OutOfStockPage}
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
