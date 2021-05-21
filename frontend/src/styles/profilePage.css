@@ -83,6 +83,29 @@
   align-items: center;
 }
 
+td,
+th {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-width: 100px;
+  max-width: 420px;
+  text-align: center;
+  margin: auto;
+  padding: 0;
+  font-size: 14px;
+}
+
+td button {
+  background: none;
+  border: none;
+  margin: 3px;
+}
+
+.product-actions-product-name:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 830px) {
   .profile-settings-section {
     width: 90%;
