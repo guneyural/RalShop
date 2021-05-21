@@ -1,7 +1,13 @@
 import React from "react";
+import styled from "styled-components";
+import Navbar from "../../components/seller/productActionsPageNavbar";
 
 const ProductActionsPage = () => {
-  return <h1>Product Actions Page</h1>;
+  return (
+    <div>
+      <Navbar />
+    </div>
+  );
 };
 
 export default ProductActionsPage;
