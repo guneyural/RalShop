@@ -46,7 +46,7 @@ const MessageBox = ({
     <div className="modal-container">
       <div className="modal-box">
         <section className="modal-top">
-          <h1>{header}</h1>
+          <h2>{header}</h2>
           <button onClick={() => closeModal()}>
             <FaTimes />
           </button>
