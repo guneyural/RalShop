@@ -18,6 +18,7 @@ const NotificationSection = styled.p`
   position: relative;
   top: 14px;
   left: 3px;
+  text-shadow: 1px 1px black;
 `;
 
 const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {

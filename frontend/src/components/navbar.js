@@ -34,6 +34,7 @@ const NotificationSection = styled.p`
   position: relative;
   top: 14px;
   left: 7px;
+  text-shadow: 1px 1px black;
 `;
 
 const Navbar = () => {
