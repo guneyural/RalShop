@@ -8,6 +8,7 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 import { useHistory } from "react-router-dom";
 import { deleteProduct } from "../../redux/actions/sellerActions";
 import DeleteModal from "../../components/messageBox";
+import UpdateProductModal from "../../components/seller/updateProductModal";
 
 const Container = styled.div`
   margin-left: 15px;
@@ -22,30 +23,22 @@ const Container = styled.div`
     margin-left: 8px;
   }
 `;
-const ContainerTop = styled.div`
-  border-bottom: 1.2px solid #dbdbdb;
-  padding: 3px 8px;
-
-  @media (max-width: 330px) {
-    padding: 1px 8px;
-  }
-`;
-const ContainerInner = styled.div`
-  padding: 3px 8px;
-  @media (max-width: 330px) {
-    padding: 1px 8px;
-  }
-`;
 
 const ProductActionsProductList = ({ Products }) => {
   const { loading } = useSelector((state) => state.Seller);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isUpdateProductModalOpen, setIsUpdateProductModalOpen] =
+    useState(false);
   const [selectedProduct, setSelectedProduct] = useState();
   const history = useHistory();
 
   const removeProduct = (product) => {
     setSelectedProduct(product);
     setIsDeleteModalOpen(true);
+  };
+  const updateProduct = (product) => {
+    setSelectedProduct(product);
+    setIsUpdateProductModalOpen(true);
   };
 
   if (loading) {
@@ -83,6 +76,12 @@ const ProductActionsProductList = ({ Products }) => {
 
   return (
     <Container>
+      {isUpdateProductModalOpen && (
+        <UpdateProductModal
+          setIsUpdateProductModalOpen={setIsUpdateProductModalOpen}
+          Product={selectedProduct}
+        />
+      )}
       {isDeleteModalOpen && (
         <DeleteModal
           isRedux={true}
@@ -160,7 +159,7 @@ const ProductActionsProductList = ({ Products }) => {
                   <td valign="middle">{item.subCategory}</td>
                   <td valign="middle">{item.stock}</td>
                   <td valign="middle">
-                    <button>
+                    <button onClick={() => updateProduct(item)}>
                       <FaEdit style={{ fontSize: "12px", marginTop: "-3px" }} />{" "}
                       Edit
                     </button>
