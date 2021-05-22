@@ -12,25 +12,44 @@ import {
 } from "./types";
 import axios from "axios";
 
-export const getCart = () => (dispatch) => {
-  dispatch({ type: LOADING });
-
-  axios
-    .get("/api/cart/", tokenConfig())
-    .then((res) => res.data)
-    .then((data) => {
-      dispatch({ type: GET_CART, payload: data });
-    })
-    .catch((err) => {
-      dispatch({
-        type: CART_ERROR,
-        payload: {
-          message: err.response.data.errorMessage,
-          status: err.response.status,
-        },
-      });
-    });
-};
+export const getCart =
+  (isAuth, Products = []) =>
+  (dispatch) => {
+    dispatch({ type: LOADING });
+    if (!isAuth) {
+      axios
+        .post("/api/cart/check_unauthorized", { Products })
+        .then((res) => res.data)
+        .then((data) => {
+          dispatch({ type: GET_CART, payload: data });
+        })
+        .catch((err) => {
+          dispatch({
+            type: CART_ERROR,
+            payload: {
+              message: err.response.data.errorMessage,
+              status: err.response.status,
+            },
+          });
+        });
+    } else {
+      axios
+        .get("/api/cart/", tokenConfig())
+        .then((res) => res.data)
+        .then((data) => {
+          dispatch({ type: GET_CART, payload: data });
+        })
+        .catch((err) => {
+          dispatch({
+            type: CART_ERROR,
+            payload: {
+              message: err.response.data.errorMessage,
+              status: err.response.status,
+            },
+          });
+        });
+    }
+  };
 
 export const removeCartItem = (id, clr) => {
   return { type: REMOVE_CART_ITEM, payload: { id, clr } };

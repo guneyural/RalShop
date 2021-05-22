@@ -47,6 +47,11 @@ Store.subscribe(() => {
     Cart,
   } = Store.getState();
   localStorage.setItem("Cart", JSON.stringify(Cart.products));
+
+  if (!Auth.isAuthenticated && lastAction === GET_CART) {
+    localStorage.setItem("Cart", JSON.stringify(Cart.products));
+  }
+
   if (Auth.isAuthenticated) {
     localStorage.setItem("Wishlist", JSON.stringify(products));
     if (
@@ -60,7 +65,6 @@ Store.subscribe(() => {
       lastAction === ADD_CART ||
       lastAction === REMOVE_ALL_CART_ITEM ||
       lastAction === REMOVE_CART_ITEM ||
-      lastAction === GET_CART ||
       lastAction === INCREASE_CART_ITEM ||
       lastAction === DECREASE_CART_ITEM ||
       lastAction === SELECT_CART_ITEM ||

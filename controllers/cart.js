@@ -1,6 +1,22 @@
 const catchAsync = require("../utils/catchAsync");
 const expressError = require("../utils/expressError");
 const Cart = require("../models/shoppingCart");
+const Product = require("../models/product");
+
+const getCardUnauthorized = catchAsync(async (req, res, next) => {
+  const Products = req.body.Products;
+  console.log(Products);
+  let cart = { items: [] };
+
+  for (let item of Products) {
+    const getProduct = await Product.findById(item.product);
+    if (getProduct) {
+      cart.items.push({ ...item, product: getProduct, quantity: item.qty });
+    }
+  }
+
+  res.status(200).json(cart);
+});
 
 const getCard = catchAsync(async (req, res, next) => {
   const getCart = await Cart.findOne({ user: req.user.id }).populate(
@@ -45,6 +61,7 @@ const removeAllCard = catchAsync(async (req, res, next) => {
 
 module.exports = {
   getCard,
+  getCardUnauthorized,
   updateCard,
   removeAllCard,
 };

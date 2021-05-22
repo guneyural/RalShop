@@ -70,6 +70,7 @@ export const Cart = (state = initialState, action) => {
       };
     case GET_CART:
       action.payload.items.forEach((item) => {
+        console.log(item);
         tempList.push({
           product: item.product._id,
           seller: item.seller,

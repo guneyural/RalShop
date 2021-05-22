@@ -52,6 +52,7 @@ const App = () => {
   const dispatch = useDispatch();
   const User = useSelector((state) => state.Auth);
   const Seller = useSelector((state) => state.Seller);
+  const Cart = useSelector((state) => state.Cart);
   const [intervalId, setIntervalId] = useState();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const App = () => {
   useEffect(() => {
     dispatch(getUser());
     dispatch(getWishlist());
-    dispatch(getCart());
+    dispatch(getCart(User.isAuthenticated, Cart.products));
 
     if (User.isAuthenticated) {
       dispatch(getNotifications(false));

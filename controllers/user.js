@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Wishlist = require("../models/wishlist");
 const Review = require("../models/review");
 const Cart = require("../models/shoppingCart");
+const Product = require("../models/product");
 const jwt = require("jsonwebtoken");
 const expressError = require("../utils/expressError");
 const catchAsync = require("../utils/catchAsync");
@@ -55,17 +56,20 @@ const register = catchAsync(async (req, res, next) => {
   Wishlist.create({ owner: saveUser._id });
   const newCart = new Cart({ user: saveUser._id });
   if (Products) {
-    Products.forEach((item) => {
-      newCart.items.push({
-        product: item.product,
-        seller: item.seller,
-        stripePriceId: item.stripePriceId,
-        stripeProductId: item.stripeProductId,
-        color: item.color,
-        quantity: item.qty,
-        selected: item.selected,
-      });
-    });
+    for (let item of Products) {
+      const getProduct = await Product.findById(item.product);
+      if (getProduct) {
+        newCart.items.push({
+          product: item.product,
+          seller: item.seller,
+          stripePriceId: item.stripePriceId,
+          stripeProductId: item.stripeProductId,
+          color: item.color,
+          quantity: item.qty,
+          selected: item.selected,
+        });
+      }
+    }
   }
   newCart.save();
 
@@ -95,7 +99,8 @@ const login = catchAsync(async (req, res, next) => {
       secondTemp = "",
       isDuplicate = false;
     const getCart = await Cart.findOne({ user: findUser._id });
-    Products.forEach((item) => {
+
+    for (let item of Products) {
       secondTemp = `${item.product}${item.color}`;
       getCart.items.forEach((cartItem) => {
         temp = `${cartItem.product}${cartItem.color}`;
@@ -104,17 +109,20 @@ const login = catchAsync(async (req, res, next) => {
         }
       });
       if (!isDuplicate) {
-        getCart.items.push({
-          product: item.product,
-          seller: item.seller,
-          stripePriceId: item.stripePriceId,
-          stripeProductId: item.stripeProductId,
-          color: item.color,
-          quantity: item.qty,
-          selected: item.selected,
-        });
+        const getProduct = await Product.findById(item.product);
+        if (getProduct) {
+          getCart.items.push({
+            product: item.product,
+            seller: item.seller,
+            stripePriceId: item.stripePriceId,
+            stripeProductId: item.stripeProductId,
+            color: item.color,
+            quantity: item.qty,
+            selected: item.selected,
+          });
+        }
       }
-    });
+    }
 
     getCart.save();
   }
