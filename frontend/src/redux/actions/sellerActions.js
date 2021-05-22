@@ -15,6 +15,7 @@ import {
   LOADING,
   UPDATE_SELLER,
   GET_ALL_SELLER_PRODUCTS,
+  SELLER_DELETE_PRODUCT,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
@@ -27,6 +28,25 @@ export const getAllSellerProducts = () => (dispatch) => {
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_ALL_SELLER_PRODUCTS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const deleteProduct = (id) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .delete(`/api/product/${id}`, tokenConfig())
+    .then(() => {
+      dispatch({ type: SELLER_DELETE_PRODUCT, payload: id });
     })
     .catch((err) => {
       dispatch({

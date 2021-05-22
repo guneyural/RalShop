@@ -6,6 +6,8 @@ import { priceConverter } from "../../utils/helpers";
 import { BsStarFill, BsStar, BsStarHalf } from "react-icons/bs";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useHistory } from "react-router-dom";
+import { deleteProduct } from "../../redux/actions/sellerActions";
+import DeleteModal from "../../components/messageBox";
 
 const Container = styled.div`
   margin-left: 15px;
@@ -37,7 +39,14 @@ const ContainerInner = styled.div`
 
 const ProductActionsProductList = ({ Products }) => {
   const { loading } = useSelector((state) => state.Seller);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState();
   const history = useHistory();
+
+  const removeProduct = (product) => {
+    setSelectedProduct(product);
+    setIsDeleteModalOpen(true);
+  };
 
   if (loading) {
     return (
@@ -74,6 +83,19 @@ const ProductActionsProductList = ({ Products }) => {
 
   return (
     <Container>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          isRedux={true}
+          action={deleteProduct}
+          message={
+            "If this product belongs to an order, this product will be deleted from the order. Then user will be refunded as the price of the deleted product. Do you want to delete this product?"
+          }
+          setIsModalOpen={setIsDeleteModalOpen}
+          header={"Delete Product"}
+          btnText={"Delete"}
+          param={selectedProduct._id}
+        />
+      )}
       <div className="table-responsive">
         <table class="table table-bordered">
           <thead>
@@ -143,7 +165,7 @@ const ProductActionsProductList = ({ Products }) => {
                       Edit
                     </button>
                     <br />
-                    <button>
+                    <button onClick={() => removeProduct(item)}>
                       <FaTrash
                         style={{ fontSize: "10px", marginTop: "-3px" }}
                       />{" "}

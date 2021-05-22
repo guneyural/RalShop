@@ -14,6 +14,7 @@ import {
   NOT_SELLER_ROUTE,
   UPDATE_SELLER,
   GET_ALL_SELLER_PRODUCTS,
+  SELLER_DELETE_PRODUCT,
 } from "../actions/types";
 
 const initialState = {
@@ -42,6 +43,13 @@ const initialState = {
 
 export const Seller = (state = initialState, action) => {
   switch (action.type) {
+    case SELLER_DELETE_PRODUCT:
+      return {
+        ...state,
+        error: { message: null, status: null },
+        loading: false,
+        products: state.products.filter((item) => item._id !== action.payload),
+      };
     case GET_ALL_SELLER_PRODUCTS:
       return {
         ...state,
