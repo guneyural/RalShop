@@ -34,6 +34,7 @@ const OrderSchema = new mongoose.Schema(
       ],
       default: "waitingConfirmation",
     },
+    note: String,
   },
   { timestamps: true }
 );
