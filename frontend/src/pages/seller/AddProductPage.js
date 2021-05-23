@@ -10,11 +10,8 @@ import { priceConverter } from "../../utils/helpers";
 import { useSelector, useDispatch } from "react-redux";
 import { createProduct } from "../../redux/actions/productActions";
 import { Redirect } from "react-router-dom";
+import Navbar from "../../components/seller/productActionsPageNavbar";
 
-const PageHeader = styled.h1`
-  font-weight: 300;
-  text-align: center;
-`;
 const Labels = styled.label`
   font-weight: 500;
 `;
@@ -224,7 +221,7 @@ const AddProductPage = () => {
 
   return (
     <div>
-      <PageHeader>Add Product</PageHeader>
+      <Navbar isAddProductPage={true}/>
       <form onSubmit={(e) => handleSubmit(e)}>
         <div className="form-section">
           <Labels htmlFor="name">Product Name</Labels>
