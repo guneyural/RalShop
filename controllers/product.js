@@ -62,7 +62,6 @@ const createProduct = catchAsync(async (req, res, next) => {
   const product = await newProduct.save();
   res.status(201).json(product);
 });
-
 const getProductById = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
@@ -76,25 +75,76 @@ const getProductById = catchAsync(async (req, res, next) => {
     wishlistCount: getWishlistCount.length,
   });
 });
-
 const updateProduct = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
 
+  if (
+    !req.body.title ||
+    !req.body.price ||
+    !req.body.description ||
+    !req.body.stock ||
+    !req.body.brand ||
+    !req.body.colors ||
+    !req.body.location ||
+    !req.body.coordinate ||
+    !req.body.category ||
+    !req.body.subCategory
+  ) {
+    return next(new expressError("Fill all fields", 400));
+  }
+
   const getProduct = await Product.findById(req.params.id);
   if (!getProduct) return next(new expressError("Product Not Found", 404));
   if (getProduct.shop == req.shop.id) {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+    let newImages = [];
+    let oldImages = [];
+
+    if (req.body.oldImages.length > 0) {
+      oldImages = req.body.oldImages;
+    }
+    if (req.files.length > 0) {
+      newImages = req.files.map((f) => ({
+        url: f.path,
+        filename: f.filename,
+      }));
+    }
+    getProduct.images = [...newImages, ...JSON.parse(oldImages)].map((f) => ({
+      url: f.url,
+      filename: f.filename,
+    }));
+    getProduct.coordinate = req.body.coordinate.split(",");
+
+    if (parseFloat(getProduct.price) !== parseFloat(req.body.price)) {
+      const stripePrice = await stripe.prices.create({
+        product: getProduct.stripeProductId,
+        unit_amount: req.body.price * 100,
+        currency: "usd",
+      });
+      getProduct.stripePriceId = stripePrice.id;
+      getProduct.price = req.body.price;
+    }
+    await getProduct.save();
+
+    const editProduct = await Product.findByIdAndUpdate(
+      getProduct._id,
+      {
+        title: req.body.title,
+        description: req.body.description,
+        stock: req.body.stock,
+        brand: req.body.brand,
+        colors: req.body.colors,
+        location: req.body.location,
+        category: req.body.category,
+        subCategory: req.body.subCategory,
+      },
       { new: true }
     );
-    res.json(updatedProduct);
+    res.status(200).json(editProduct);
   } else {
     next(new expressError("You Are Not Owner Of This Product.", 403));
   }
 });
-
 const deleteProduct = catchAsync(async (req, res, next) => {
   if (!mongoId.isValid(req.params.id))
     return next(new expressError("Enter Valid Id.", 400));
@@ -211,7 +261,6 @@ const deleteProduct = catchAsync(async (req, res, next) => {
   }
   return next(new expressError("You Are Not Owner Of This Product.", 403));
 });
-
 const getSellerAllProducts = catchAsync(async (req, res) => {
   const shop = req.shop.id;
   const getAllProducts = await Product.find({ shop }).sort({
@@ -220,7 +269,6 @@ const getSellerAllProducts = catchAsync(async (req, res) => {
   });
   res.status(200).json(getAllProducts);
 });
-
 const priceConverter = (number) => {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -230,7 +278,6 @@ const priceConverter = (number) => {
 
   return formatter.format(number);
 };
-
 module.exports = {
   createProduct,
   getProductById,
