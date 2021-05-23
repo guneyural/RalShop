@@ -95,6 +95,9 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                     >
                       Product Actions
                     </Link>
+                    <Link to="/seller/products/add" className="dropdown-link">
+                      Add Product
+                    </Link>
                   </div>
                 </span>
                 <span
@@ -125,9 +128,6 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 </span>
                 <Link to="/seller/dashboard" className="seller-nav-link">
                   Dashboard
-                </Link>
-                <Link to="/seller/products/add" className="seller-nav-link">
-                  Add Product
                 </Link>
               </section>
             </section>
@@ -222,6 +222,9 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 <Link to="/seller/products/actions" className="dropdown-link">
                   Product Actions
                 </Link>
+                <Link to="/seller/products/add" className="dropdown-link">
+                  Add Product
+                </Link>
               </div>
             </span>
             <span
@@ -249,9 +252,6 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
             </span>
             <Link to="/seller/dashboard" className="seller-mobile-link">
               Dashboard
-            </Link>
-            <Link to="/seller/products/add" className="seller-mobile-link">
-              Add Product
             </Link>
             <Link
               to="/chat/seller"
