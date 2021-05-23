@@ -69,7 +69,13 @@ export const Seller = (state = initialState, action) => {
         ...state,
         error: { message: null, status: null },
         loading: false,
-        products: action.payload,
+        products: action.payload.map((product) => {
+          return {
+            ...product.item,
+            ordersCount: product.ordersCount,
+            wishlistCount: product.wishlistCount,
+          };
+        }),
       };
     case GET_CURRENT_SELLER:
       return {

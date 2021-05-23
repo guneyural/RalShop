@@ -264,7 +264,21 @@ const deleteProduct = catchAsync(async (req, res, next) => {
 const getSellerAllProducts = catchAsync(async (req, res) => {
   const shop = req.shop.id;
   const getAllProducts = await Product.find({ shop });
-  res.status(200).json(getAllProducts);
+  let productData = [];
+
+  for (let item of getAllProducts) {
+    const getWishlistCount = await Wishlist.find({
+      products: { $in: [item._id] },
+    });
+    const getOrders = await Order.find({ "Product.product": item._id });
+    productData.push({
+      item,
+      ordersCount: getOrders.length,
+      wishlistCount: getWishlistCount.length,
+    });
+  }
+
+  res.status(200).json(productData);
 });
 const priceConverter = (number) => {
   const formatter = new Intl.NumberFormat("en-US", {

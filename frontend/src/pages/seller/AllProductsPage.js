@@ -6,10 +6,11 @@ import Filters from "../../components/seller/productActionsFilters";
 import ProductList from "../../components/seller/productActionsProductList";
 
 const AllProductsPage = () => {
-  const dispatch = useDispatch();
   const { products } = useSelector((state) => state.Seller);
   const [listProducts, setListProducts] = useState(products);
+  const dispatch = useDispatch();
 
+  useEffect(() => dispatch(getAllSellerProducts()), []);
   useEffect(() => setListProducts(products), [products]);
 
   return (
@@ -20,8 +21,7 @@ const AllProductsPage = () => {
         listProducts={listProducts}
         DefaultProducts={products}
       />
-      <ProductList Products={listProducts} actionsAvailable={false}/>
-      
+      <ProductList Products={listProducts} actionsAvailable={false} />
     </>
   );
 };

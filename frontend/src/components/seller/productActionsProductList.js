@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import { deleteProduct } from "../../redux/actions/sellerActions";
 import DeleteModal from "../../components/messageBox";
 import UpdateProductModal from "../../components/seller/updateProductModal";
+import moment from "moment";
 
 const Container = styled.div`
   margin-left: 15px;
@@ -41,7 +42,7 @@ const CopyButton = styled.button`
   }
 `;
 
-const ProductActionsProductList = ({ Products }) => {
+const ProductActionsProductList = ({ Products, actionsAvailable = true }) => {
   const { loading } = useSelector((state) => state.Seller);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isUpdateProductModalOpen, setIsUpdateProductModalOpen] =
@@ -135,9 +136,13 @@ const ProductActionsProductList = ({ Products }) => {
                 <th scope="col">Rating</th>
                 <th scope="col">Brand</th>
                 <th scope="col">Color</th>
+                {!actionsAvailable && <th scope="col">Wishlist Count</th>}
+                {!actionsAvailable && <th scope="col">Order Count</th>}
                 <th scope="col">Category</th>
+                {!actionsAvailable && <th scope="col">Sub Category</th>}
+                {!actionsAvailable && <th scope="col">Date</th>}
                 <th scope="col">Stock</th>
-                <th scope="col">Actions</th>
+                {actionsAvailable && <th scope="col">Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -200,23 +205,41 @@ const ProductActionsProductList = ({ Products }) => {
                     <td valign="middle">
                       {item.colors[0].split(",").length} Colors
                     </td>
-                    <td valign="middle">{item.subCategory}</td>
-                    <td valign="middle">{item.stock}</td>
+                    {!actionsAvailable && (
+                      <td valign="middle">{item.wishlistCount}</td>
+                    )}
+                    {!actionsAvailable && (
+                      <td valign="middle">{item.ordersCount}</td>
+                    )}
                     <td valign="middle">
-                      <button onClick={() => updateProduct(item)}>
-                        <FaEdit
-                          style={{ fontSize: "12px", marginTop: "-3px" }}
-                        />{" "}
-                        Edit
-                      </button>
-                      <br />
-                      <button onClick={() => removeProduct(item)}>
-                        <FaTrash
-                          style={{ fontSize: "10px", marginTop: "-3px" }}
-                        />{" "}
-                        Delete
-                      </button>
+                      {actionsAvailable ? item.subCategory : item.category}
                     </td>
+                    {!actionsAvailable && (
+                      <td valign="middle">{item.subCategory}</td>
+                    )}
+                    {!actionsAvailable && (
+                      <td valign="middle">
+                        {moment(item.createdAt).format("ll")}
+                      </td>
+                    )}
+                    <td valign="middle">{item.stock}</td>
+                    {actionsAvailable && (
+                      <td valign="middle">
+                        <button onClick={() => updateProduct(item)}>
+                          <FaEdit
+                            style={{ fontSize: "12px", marginTop: "-3px" }}
+                          />{" "}
+                          Edit
+                        </button>
+                        <br />
+                        <button onClick={() => removeProduct(item)}>
+                          <FaTrash
+                            style={{ fontSize: "10px", marginTop: "-3px" }}
+                          />{" "}
+                          Delete
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
