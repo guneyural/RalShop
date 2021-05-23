@@ -18,7 +18,7 @@ const ProductActionsPage = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar isProductActionsPage={true} />
       <Filters
         setListProducts={setListProducts}
         listProducts={listProducts}

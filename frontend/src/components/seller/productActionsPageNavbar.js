@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const ListItem = styled.li`
   width: 100%;
@@ -39,38 +39,47 @@ const UnorderedList = styled.ul`
 `;
 const Navbar = styled.div``;
 
-const ProductActionsPageNavbar = () => {
+const ProductActionsPageNavbar = ({
+  isProductListPage = false,
+  isProductActionsPage = false,
+}) => {
+  const [isProductList, setIsProductList] = useState(isProductListPage);
+  const [isProductActions, setIsProductActions] =
+    useState(isProductActionsPage);
+
   const history = useHistory();
-  const location = useLocation();
 
   useEffect(() => {
-    const navItems = document.querySelectorAll(".product-nav-item");
-    if (location.pathname === "/seller/products/actions") {
-      navItems.forEach((item, index) => {
-        if (location.pathname === "/seller/products/all" && index === 0) {
-          item.classList.add("product-nav-item-active");
-        }
-        if (location.pathname === "/seller/products/actions" && index === 1) {
-          item.classList.add("product-nav-item-active");
-        }
-        if (location.pathname === "/seller/products/add" && index === 2) {
-          item.classList.add("product-nav-item-active");
-        }
-      });
+    if (isProductList) {
+      setIsProductActions(false);
     }
-  }, [location]);
+  }, [isProductList]);
+
+  useEffect(() => {
+    if (isProductActions) {
+      setIsProductList(false);
+    }
+  }, [isProductActions]);
 
   return (
     <Navbar>
       <UnorderedList>
         <ListItem
-          className="product-nav-item"
+          className={
+            isProductList
+              ? "product-nav-item product-nav-item-active"
+              : "product-nav-item"
+          }
           onClick={() => history.push("/seller/products/all")}
         >
           Product List
         </ListItem>
         <ListItem
-          className="product-nav-item"
+          className={
+            isProductActions
+              ? "product-nav-item product-nav-item-active"
+              : "product-nav-item"
+          }
           onClick={() => history.push("/seller/products/actions")}
         >
           Product Actions
