@@ -42,24 +42,35 @@ const Navbar = styled.div``;
 const ProductActionsPageNavbar = ({
   isProductListPage = false,
   isProductActionsPage = false,
+  isAddProductPage = false,
 }) => {
   const [isProductList, setIsProductList] = useState(isProductListPage);
   const [isProductActions, setIsProductActions] =
     useState(isProductActionsPage);
+  const [isAddProduct, setIsAddProduct] = useState(isAddProductPage);
 
   const history = useHistory();
 
   useEffect(() => {
     if (isProductList) {
       setIsProductActions(false);
+      setIsAddProduct(false);
     }
   }, [isProductList]);
 
   useEffect(() => {
     if (isProductActions) {
       setIsProductList(false);
+      setIsAddProduct(false);
     }
   }, [isProductActions]);
+
+  useEffect(() => {
+    if (isAddProduct) {
+      setIsProductList(false);
+      setIsAddProduct(false);
+    }
+  }, [isAddProduct]);
 
   return (
     <Navbar>
@@ -85,7 +96,11 @@ const ProductActionsPageNavbar = ({
           Product Actions
         </ListItem>
         <ListItem
-          className="product-nav-item"
+          className={
+            isAddProductPage
+              ? "product-nav-item product-nav-item-active"
+              : "product-nav-item"
+          }
           onClick={() => history.push("/seller/products/add")}
         >
           Add Product
