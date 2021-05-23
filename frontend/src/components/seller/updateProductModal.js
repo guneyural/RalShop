@@ -9,7 +9,7 @@ import mapboxgl from "mapbox-gl";
 import axios from "axios";
 import { priceConverter } from "../../utils/helpers";
 import { useSelector, useDispatch } from "react-redux";
-import { createProduct } from "../../redux/actions/productActions";
+import { updateProduct } from "../../redux/actions/sellerActions";
 
 const FullPageBackground = styled.div`
   position: fixed;
@@ -303,7 +303,10 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
     formData.append("coordinate", center);
     formData.append("category", category);
     formData.append("subCategory", subCategory);
-    formData.append("oldImages", images);
+    formData.append("oldImages", JSON.stringify(images));
+
+    dispatch(updateProduct(Product._id, formData));
+    setIsUpdateProductModalOpen(false)
   };
   const handleChangeComplete = (color) => {
     setColor(color.hex);
@@ -321,11 +324,6 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
   const removeImage = (img) => {
     setImages(images.filter((item) => item._id !== img._id));
   };
-
-  //YENİ EKLENİLEN FOTOĞRAFLARI AYRI BİR DEĞİŞKENDE SAKLA
-  //YENİ EKLENİLEN FOTOĞRAFLARI AYRI BİR DEĞİŞKENDE SAKLA
-  //VERİTABANINA REQ.BODY İÇERİSİNDE IMAGES STATE'ini GÖNDER
-  //DİREKT OLARAK IMAGES'i PRODUCT IMAGES KISMINA KOYSUN ÜZERİNE DE YENİ EKLENİLEN FOTOLAR
 
   return (
     <FullPageBackground>
@@ -348,7 +346,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                     id="name"
                     placeholder="Product Name"
                     value={name}
-                    onBlur={(e) => setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                     required
                   />
                 </div>
@@ -402,7 +400,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                   placeholder="Stock"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
-                  min="1"
+                  min="0"
                 />
               </div>
               <div className="form-section col-md-6 mb-2 mt-2">
@@ -413,7 +411,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                   id="brand"
                   value={brand}
                   placeholder="Brand Name"
-                  onBlur={(e) => setBrand(e.target.value)}
+                  onChange={(e) => setBrand(e.target.value)}
                   required
                 />
               </div>
@@ -495,7 +493,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                 type="file"
                 id="images"
                 multiple
-                required
+                required={images.length > 0 ? false : true}
               />
               <DisplayImages>
                 <div
@@ -521,7 +519,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                   className="row"
                   style={{ padding: "10px", marginTop: "35px" }}
                 >
-                  {images.length > 0 ? (
+                  {images.length > 0 &&
                     images.map((img, index) => {
                       return (
                         <ImageBox
@@ -535,10 +533,7 @@ const UpdateProductModal = ({ setIsUpdateProductModalOpen, Product }) => {
                           </RemoveImageButton>
                         </ImageBox>
                       );
-                    })
-                  ) : (
-                    <p>You have to have at least 1 image</p>
-                  )}
+                    })}
                 </div>
               </DisplayImages>
             </section>

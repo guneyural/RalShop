@@ -16,10 +16,38 @@ import {
   UPDATE_SELLER,
   GET_ALL_SELLER_PRODUCTS,
   SELLER_DELETE_PRODUCT,
+  SELLER_UPDATE_PRODUCT,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
 
+export const updateProduct = (id, data) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+  
+  axios
+    .put(`/api/product/${id}`, data, {
+      headers: {
+        "shop-token": localStorage.getItem("shop-token"),
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: SELLER_UPDATE_PRODUCT,
+        payload: { id, updatedProduct: data },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 export const getAllSellerProducts = () => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -39,7 +67,6 @@ export const getAllSellerProducts = () => (dispatch) => {
       });
     });
 };
-
 export const deleteProduct = (id) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -58,7 +85,6 @@ export const deleteProduct = (id) => (dispatch) => {
       });
     });
 };
-
 export const getCurrentSeller = () => (dispatch) => {
   axios
     .get("/api/shop/current", tokenConfig())
@@ -76,7 +102,6 @@ export const getCurrentSeller = () => (dispatch) => {
       });
     });
 };
-
 export const sellerRegister = (data) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -97,7 +122,6 @@ export const sellerRegister = (data) => (dispatch) => {
       });
     });
 };
-
 export const sellerUpdateProfile = (data, sellerId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -117,7 +141,6 @@ export const sellerUpdateProfile = (data, sellerId) => (dispatch) => {
       });
     });
 };
-
 export const sellerLogin = (email, password) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -138,7 +161,6 @@ export const sellerLogin = (email, password) => (dispatch) => {
       });
     });
 };
-
 export const sendForgotPasswordEmail = (email, origin) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
@@ -156,7 +178,6 @@ export const sendForgotPasswordEmail = (email, origin) => (dispatch) => {
       });
     });
 };
-
 export const confirmPasswordResetToken = (email, shopToken) => (dispatch) => {
   dispatch({ type: LOADING });
 
@@ -169,7 +190,6 @@ export const confirmPasswordResetToken = (email, shopToken) => (dispatch) => {
       dispatch({ type: SELLER_RESET_PASSWORD_TOKEN_ERROR });
     });
 };
-
 export const resetPassword =
   (newPassword, confirmPassword, email, token) => (dispatch) => {
     dispatch({ type: LOADING });
@@ -187,23 +207,18 @@ export const resetPassword =
         dispatch({ type: SELLER_RESET_PASSWORD_ERROR });
       });
   };
-
 export const sellerRoute = () => {
   return { type: SELLER_ROUTE };
 };
-
 export const notSellerRoute = () => {
   return { type: NOT_SELLER_ROUTE };
 };
-
 export const sellerLogout = () => {
   return { type: SELLER_LOGOUT };
 };
-
 export const loading = () => {
   return { type: SELLER_LOADING };
 };
-
 const tokenConfig = () => {
   const token = localStorage.getItem("shop-token");
   const config = {

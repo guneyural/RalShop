@@ -15,6 +15,7 @@ import {
   UPDATE_SELLER,
   GET_ALL_SELLER_PRODUCTS,
   SELLER_DELETE_PRODUCT,
+  SELLER_UPDATE_PRODUCT,
 } from "../actions/types";
 
 const initialState = {
@@ -43,6 +44,19 @@ const initialState = {
 
 export const Seller = (state = initialState, action) => {
   switch (action.type) {
+    case SELLER_UPDATE_PRODUCT:
+      return {
+        ...state,
+        loading: false,
+        error: { message: null, status: null },
+        products: [
+          ...state.products.map((product) =>
+            product._id === action.payload.id
+              ? action.payload.updatedProduct
+              : product
+          ),
+        ],
+      };
     case SELLER_DELETE_PRODUCT:
       return {
         ...state,
