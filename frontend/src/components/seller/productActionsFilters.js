@@ -67,7 +67,11 @@ const ShowOrderButton = styled.button`
   }
 `;
 
-const ProductActionsFilters = ({ Products }) => {
+const ProductActionsFilters = ({
+  listProducts,
+  setListProducts,
+  DefaultProducts,
+}) => {
   const [sort, setSort] = useState("default");
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("");
@@ -76,6 +80,81 @@ const ProductActionsFilters = ({ Products }) => {
   const [areFiltersVisible, setAreFiltersVisible] = useState(
     window.innerWidth < 576 ? false : true
   );
+
+  useEffect(() => {
+    if (searchID.length > 0) {
+      setListProducts(listProducts.filter((item) => item._id === searchID));
+    } else {
+      setListProducts(DefaultProducts);
+    }
+  }, [searchID]);
+
+  useEffect(() => {
+    let tempCategories = new Set();
+    DefaultProducts.forEach((item) => {
+      tempCategories.add(item.subCategory);
+    });
+    setAllCategories([...tempCategories]);
+  }, [DefaultProducts]);
+
+  useEffect(() => {
+    if (category === "") {
+      setListProducts(DefaultProducts);
+    } else {
+      setListProducts(
+        [...DefaultProducts]
+          .filter((item) => item.subCategory === category)
+          .sort((a, b) => sortProducts(a, b))
+      );
+    }
+  }, [category]);
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      const regex = new RegExp(escapeRegex(searchQuery), "gi");
+      setListProducts(listProducts.filter((item) => item.title.match(regex)));
+    } else {
+      setListProducts(
+        DefaultProducts.filter((item) => item.subCategory === category)
+      );
+      setSort("default");
+    }
+  }, [searchQuery]);
+
+  let sortProducts = (a, b) => {
+    if (sort === "dateDesc" || sort === "default") {
+      return Date.parse(b.createdAt) - Date.parse(a.createdAt);
+    }
+    if (sort === "dateAsc") {
+      return Date.parse(a.createdAt) - Date.parse(b.createdAt);
+    }
+    if (sort === "priceDesc") {
+      return b.price - a.price;
+    }
+    if (sort === "priceAsc") {
+      return a.price - b.price;
+    }
+    if (sort === "stockDesc") {
+      return b.stock - a.stock;
+    }
+    if (sort === "stockAsc") {
+      return a.stock - b.stock;
+    }
+    if (sort === "ratingDesc") {
+      return b.rating - a.rating;
+    }
+    if (sort === "ratingAsc") {
+      return a.rating - b.rating;
+    }
+  };
+
+  let escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
+  useEffect(() => {
+    setListProducts([...listProducts].sort((a, b) => sortProducts(a, b)));
+  }, [sort]);
 
   return (
     <Container>
@@ -104,6 +183,7 @@ const ProductActionsFilters = ({ Products }) => {
             <Select
               name="sort"
               id="sort"
+              value={sort}
               onChange={(e) => setSort(e.target.value)}
             >
               <option value="default">Default</option>
@@ -166,5 +246,4 @@ const ProductActionsFilters = ({ Products }) => {
     </Container>
   );
 };
-
 export default ProductActionsFilters;
