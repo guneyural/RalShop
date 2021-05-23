@@ -263,10 +263,7 @@ const deleteProduct = catchAsync(async (req, res, next) => {
 });
 const getSellerAllProducts = catchAsync(async (req, res) => {
   const shop = req.shop.id;
-  const getAllProducts = await Product.find({ shop }).sort({
-    rating: "desc",
-    date: "desc",
-  });
+  const getAllProducts = await Product.find({ shop });
   res.status(200).json(getAllProducts);
 });
 const priceConverter = (number) => {
