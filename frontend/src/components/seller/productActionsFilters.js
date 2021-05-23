@@ -166,6 +166,18 @@ const ProductActionsFilters = ({
     if (sort === "ratingAsc") {
       return a.rating - b.rating;
     }
+    if (sort === "wishlistDesc") {
+      return b.wishlistCount - a.wishlistCount;
+    }
+    if (sort === "wishlistAsc") {
+      return a.wishlistCount - b.wishlistCount;
+    }
+    if (sort === "ordersDesc") {
+      return b.ordersCount - a.ordersCount;
+    }
+    if (sort === "ordersAsc") {
+      return a.ordersCount - b.ordersCount;
+    }
   };
 
   let escapeRegex = (text) => {
@@ -216,6 +228,14 @@ const ProductActionsFilters = ({
                 <option value="stockAsc">Stock (Lowest First)</option>
                 <option value="ratingDesc">Rating (Highest First)</option>
                 <option value="ratingAsc">Rating (Lowest First)</option>
+                <option value="wishlistDesc">
+                  Wishlist Count (Highest First)
+                </option>
+                <option value="wishlistAsc">
+                  Wishlist Count (Lowest First)
+                </option>
+                <option value="ordersDesc">Order Count (Highest First)</option>
+                <option value="ordersAsc">Order Count (Lowest First)</option>
               </Select>
             </InputSection>
             <InputSection className="col-md-3 col-sm-6">
