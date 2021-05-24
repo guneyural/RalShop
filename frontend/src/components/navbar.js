@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Logo from "../assets/logo.png";
+import LoadingIcon from "../assets/loading.gif";
 import {
   FaSearch,
   FaUserCircle,
@@ -14,6 +15,8 @@ import { categories, subCategories } from "../data/category";
 import { CgMenuGridR } from "react-icons/cg";
 import { useSelector } from "react-redux";
 import SellerNavbar from "./sellerNavbar";
+import { categories as CATEGORIES } from "../data/category";
+import axios from "axios";
 
 const TinyNavLink = styled.span`
   color: #6c757d;
@@ -46,6 +49,14 @@ const Navbar = () => {
   const [cartItems, setCartItems] = useState(0);
   const { user, isAuthenticated } = useSelector((state) => state.Auth);
   const { Cart, Seller, Chat } = useSelector((state) => state);
+  const [latestSearches, setLatestSearches] = useState(
+    JSON.parse(localStorage.getItem("latestSearch")) || []
+  );
+  const [categoryResults, setCategoryResults] = useState([]);
+  const [productResults, setProductResults] = useState([]);
+  const [brandResults, setBrandResults] = useState([]);
+  const [isResultsLoading, setIsResultsLoading] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     if (!Seller.inSellerRoute) {
@@ -108,6 +119,71 @@ const Navbar = () => {
     window.location.href = `http://localhost:3000/category/${idx}`;
   };
 
+  const searchBoxFocused = () => {
+    document
+      .querySelector(".navbar-search-box")
+      .classList.add("navbar-search-box-active");
+  };
+  const searchBoxBlured = () => {
+    setTimeout(() => {
+      document
+        .querySelector(".navbar-search-box")
+        .classList.remove("navbar-search-box-active");
+    }, 200);
+  };
+
+  const userTyping = (e) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value !== "") {
+      const regex = new RegExp(escapeRegex(e.target.value), "gi");
+      const foundCategories = CATEGORIES.filter((item) => item.match(regex));
+      setCategoryResults(foundCategories);
+
+      setIsResultsLoading(true);
+      let brandSet = new Set();
+      axios
+        .get(`/api/product/search/${e.target.value}`)
+        .then((res) => res.data)
+        .then((data) => {
+          setIsResultsLoading(false);
+          setProductResults(data.products);
+          data.brands.forEach((item) => {
+            brandSet.add(item.brand);
+          });
+          setBrandResults([...brandSet]);
+        });
+    }
+  };
+
+  const search = (e) => {
+    e.preventDefault();
+    if (searchQuery.length > 0) {
+      if (latestSearches.length > 4) {
+        latestSearches.pop();
+      }
+
+      setLatestSearches([searchQuery, ...latestSearches]);
+
+      localStorage.setItem(
+        "latestSearch",
+        JSON.stringify([searchQuery, ...latestSearches])
+      );
+
+      history.push(`/search/${searchQuery}`);
+      setSearchQuery("");
+      searchBoxBlured();
+    }
+  };
+
+  const clearLastSearch = () => {
+    setLatestSearches([]);
+    localStorage.setItem("latestSearch", JSON.stringify([]));
+  };
+
+  let escapeRegex = (text) => {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+
   if (!Seller.inSellerRoute) {
     return (
       <>
@@ -158,15 +234,18 @@ const Navbar = () => {
                 </Link>
               </section>
               <section className="navbar-middle">
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={(e) => search(e)}>
                   <input
                     type="text"
                     name="searchQuery"
                     id="search-bar"
                     aria-label={"search"}
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search Product, Brand, Category or Seller"
+                    onChange={(e) => userTyping(e)}
+                    onFocus={() => searchBoxFocused()}
+                    onBlur={() => searchBoxBlured()}
+                    placeholder="Search Product, Brand Or Category"
+                    autoComplete="off"
                     className="search-bar"
                   />
                   <button
@@ -176,6 +255,85 @@ const Navbar = () => {
                     <FaSearch />
                   </button>
                 </form>
+                <div className="navbar-search-box">
+                  <div className="navbar-search-results">
+                    {isResultsLoading && (
+                      <img
+                        src={LoadingIcon}
+                        alt="loading spinner"
+                        height="50"
+                        width="50"
+                      />
+                    )}
+
+                    <div className="search-results-section">
+                      <span className="header">Products</span>
+                      <p></p>
+                      {productResults.map((item, index) => {
+                        return (
+                          <p
+                            className="latest-search-item"
+                            key={index}
+                            onClick={() => history.push(`/product/${item._id}`)}
+                          >
+                            {item.title}
+                          </p>
+                        );
+                      })}
+                    </div>
+                    <div className="search-results-section">
+                      <span className="header">Brands</span>
+                      <p></p>
+                      {brandResults.map((item, index) => {
+                        return (
+                          <p
+                            className="latest-search-item"
+                            key={index}
+                            onClick={() =>
+                              history.push(`/search/${searchQuery}/${item}`)
+                            }
+                          >
+                            {item}
+                          </p>
+                        );
+                      })}
+                    </div>
+                    <div className="search-results-section">
+                      <span className="header">Categories</span>
+                      <p></p>
+                      {categoryResults.map((item, indx) => {
+                        return (
+                          <p className="latest-search-item" key={indx}>
+                            {item}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="navbar-search-box-bottom">
+                    <div className="navbar-search-box-top">
+                      <p>Latest Searches</p>
+                      <span role="button" onClick={() => clearLastSearch()}>
+                        Clear
+                      </span>
+                    </div>
+                    <div className="latest-searches">
+                      {latestSearches.length < 1
+                        ? "you haven't searched anything"
+                        : latestSearches.map((item, indx) => {
+                            return (
+                              <p
+                                className="latest-search-item"
+                                key={indx}
+                                onClick={() => history.push(`/search/${item}`)}
+                              >
+                                {item}
+                              </p>
+                            );
+                          })}
+                    </div>
+                  </div>
+                </div>
               </section>
               <section className="navbar-right">
                 {isAuthenticated && user !== null ? (

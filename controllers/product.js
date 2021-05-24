@@ -289,10 +289,42 @@ const priceConverter = (number) => {
 
   return formatter.format(number);
 };
+const searchProduct = catchAsync(async (req, res, next) => {
+  const query = req.params.searchQuery;
+  const regex = new RegExp(escapeRegex(query), "gi");
+  let results = { products: [], brands: [] };
+
+  if (String(query.length)) {
+    const findProducts = await Product.find({
+      $and: [{ title: regex }, { brand: regex }],
+    });
+    const findBrands = await Product.find({ brand: regex });
+
+    findProducts.forEach((item, index) => {
+      if (index <= 5) {
+        results.products.push(item);
+      }
+    });
+
+    findBrands.forEach((item, index) => {
+      if (index <= 5) {
+        results.brands.push(item);
+      }
+    });
+
+    res.status(200).json(results);
+  } else {
+    return next(new expressError("You can not search empty text", 400));
+  }
+});
+function escapeRegex(text) {
+  return String(text).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 module.exports = {
   createProduct,
   getProductById,
   updateProduct,
   deleteProduct,
   getSellerAllProducts,
+  searchProduct,
 };

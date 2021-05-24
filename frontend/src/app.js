@@ -45,6 +45,7 @@ import AllProductsPage from "./pages/seller/AllProductsPage";
 import CancelledOrdersPage from "./pages/seller/cancelledOrders";
 import ConfirmationRequiredOrders from "./pages/seller/confirmationRequiredOrders";
 import ProductActionsPage from "./pages/seller/productActionsPage";
+import SearchResultsPage from "./pages/searchResultsPage";
 
 require("dotenv").config();
 
@@ -207,6 +208,11 @@ const App = () => {
             auth={User.isAuthenticated}
           />
           <NormalRoute path="/product/:id" exact component={ProductPage} />
+          <NormalRoute
+            payh="/search/:query/:brand"
+            exact
+            component={SearchResultsPage}
+          />
           <NormalRoute path="/cart" exact component={ShoppingCartPage} />
           <PrivateRoute
             path="/checkout"
