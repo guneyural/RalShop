@@ -295,10 +295,8 @@ const searchProduct = catchAsync(async (req, res, next) => {
   let results = { products: [], brands: [] };
 
   if (String(query.length)) {
-    const findProducts = await Product.find({
-      $and: [{ title: regex }, { brand: regex }],
-    });
-    const findBrands = await Product.find({ brand: regex });
+    const findProducts = await Product.find({ title: regex }).populate("shop");
+    const findBrands = await Product.find({ brand: regex }).populate("shop");
 
     findProducts.forEach((item, index) => {
       if (index <= 5) {

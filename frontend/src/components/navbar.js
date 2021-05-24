@@ -169,7 +169,7 @@ const Navbar = () => {
         JSON.stringify([searchQuery, ...latestSearches])
       );
 
-      history.push(`/search/${searchQuery}/none`);
+      window.location.href = window.origin + `/search/${searchQuery}/none`;
       setSearchQuery("");
       searchBoxBlured();
     }
@@ -290,7 +290,9 @@ const Navbar = () => {
                             className="latest-search-item"
                             key={index}
                             onClick={() =>
-                              history.push(`/search/${searchQuery}/${item}`)
+                              (window.location.href =
+                                window.origin +
+                                `/search/${searchQuery}/${item}`)
                             }
                           >
                             {item}
@@ -326,7 +328,8 @@ const Navbar = () => {
                                 className="latest-search-item"
                                 key={indx}
                                 onClick={() =>
-                                  history.push(`/search/${item}/none`)
+                                  (window.location.href =
+                                    window.origin + `/search/${item}/none`)
                                 }
                               >
                                 {item}
