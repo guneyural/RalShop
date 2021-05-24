@@ -209,7 +209,7 @@ const App = () => {
           />
           <NormalRoute path="/product/:id" exact component={ProductPage} />
           <NormalRoute
-            payh="/search/:query/:brand"
+            path="/search/:query/:brand"
             exact
             component={SearchResultsPage}
           />

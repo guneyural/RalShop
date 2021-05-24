@@ -169,7 +169,7 @@ const Navbar = () => {
         JSON.stringify([searchQuery, ...latestSearches])
       );
 
-      history.push(`/search/${searchQuery}`);
+      history.push(`/search/${searchQuery}/none`);
       setSearchQuery("");
       searchBoxBlured();
     }
@@ -325,7 +325,9 @@ const Navbar = () => {
                               <p
                                 className="latest-search-item"
                                 key={indx}
-                                onClick={() => history.push(`/search/${item}`)}
+                                onClick={() =>
+                                  history.push(`/search/${item}/none`)
+                                }
                               >
                                 {item}
                               </p>
