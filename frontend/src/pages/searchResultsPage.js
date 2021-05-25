@@ -4,6 +4,7 @@ import LoadingIcon from "../assets/loading.gif";
 import axios from "axios";
 import styled from "styled-components";
 import ListProducts from "../components/listProducts";
+import ProductFilters from "../components/ProductFilters";
 
 const ResultsCountSection = styled.div`
   border-bottom: 1px solid #dbdbdb;
@@ -35,11 +36,17 @@ const SpanText = styled.span`
 const ProductsContainer = styled.div`
   margin-top: -5px;
 `;
-const OutOfStockSection = styled.div`
-  margin-top: 10px;
-  color: var(--text-muted);
-  font-size: 13px;
-  display: flex;
+const FiltersSection = styled.div`
+  position: -webkit-sticky;
+  position: sticky;
+  top: 100px;
+  z-index: 1;
+
+  @media (max-width: 767px) {
+    top: 140px;
+    position: fixed;
+    width: 100%;
+  }
 `;
 
 const SearchResultsPage = () => {
@@ -48,13 +55,14 @@ const SearchResultsPage = () => {
   const [products, setProducts] = useState([]);
   const [listProducts, setListProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [sellers, SetSellers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sort, setSort] = useState("default");
-  const [showOutOfStock, setShowOutOfStock] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     let brandSet = new Set();
+    let sellerSet = new Set();
     axios
       .get(`/api/product/search/${query}`)
       .then((res) => res.data)
@@ -64,8 +72,10 @@ const SearchResultsPage = () => {
         setListProducts(data.products);
         data.products.forEach((item) => {
           brandSet.add(item.brand);
+          sellerSet.add(item.shop.companyName);
         });
         setBrands([...brandSet]);
+        SetSellers([...sellerSet]);
         if (data.products.length < 1) {
           setProducts(data.brands);
           setListProducts(data.brands);
@@ -76,16 +86,6 @@ const SearchResultsPage = () => {
   useEffect(() => {
     setListProducts([...listProducts].sort((a, b) => sortProducts(a, b)));
   }, [sort]);
-
-  useEffect(() => {
-    if (showOutOfStock) {
-      setListProducts(
-        [...listProducts].filter((item) => item.stock < 0 || item.stock > 0)
-      );
-    } else {
-      setListProducts([...listProducts].filter((item) => item.stock > 0));
-    }
-  }, [showOutOfStock]);
 
   let sortProducts = (a, b) => {
     if (sort === "dateDesc" || sort === "default") {
@@ -131,7 +131,16 @@ const SearchResultsPage = () => {
   return (
     <div>
       <div className="row">
-        <div className="col-md-3">Filters</div>
+        <div className="col-md-3 mb-5">
+          <FiltersSection>
+            <ProductFilters
+              DefaultProducts={products}
+              ListProducts={listProducts}
+              Brands={brands}
+              Sellers={sellers}
+            />
+          </FiltersSection>
+        </div>
         <div className="col-md-9">
           <ResultsCountSection>
             <span>
@@ -156,16 +165,6 @@ const SearchResultsPage = () => {
               <option value="ratingAsc">Rating (Lowest First)</option>
             </Select>
           </ResultsCountSection>
-          <OutOfStockSection>
-            <input
-              type="checkbox"
-              checked={showOutOfStock}
-              onChange={() => setShowOutOfStock(!showOutOfStock)}
-            />
-            <p style={{ marginTop: "-3px", marginLeft: "3px" }}>
-              Show Out Of Stock Products
-            </p>
-          </OutOfStockSection>
           <ProductsContainer>
             {listProducts.length < 1 ? (
               <div style={{ textAlign: "center", marginTop: "20px" }}>
