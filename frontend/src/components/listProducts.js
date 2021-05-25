@@ -23,7 +23,7 @@ const ProductBox = styled.div`
   border-radius: 3px;
   height: 350px;
   margin: auto;
-  width: 90%;
+  width: 95%;
   margin-bottom: 30px;
   position: relative;
   background: white;
@@ -37,7 +37,7 @@ const ProductBox = styled.div`
       0 100px 80px rgba(0, 0, 0, 0.12);
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 880px) {
     width: 100%;
   }
   @media (max-width: 400px) {
@@ -142,7 +142,11 @@ const ListProducts = ({ DefaultProducts, ListedProducts }) => {
     <div className="row">
       {listedProducts.map((item, index) => {
         return (
-          <div className="col-md-4 col-6" key={index}>
+          <div
+            className="col-md-4 col-6"
+            style={{ padding: "2px" }}
+            key={index}
+          >
             <ProductBox>
               <ProductBoxImageSection>
                 <ProductImage
