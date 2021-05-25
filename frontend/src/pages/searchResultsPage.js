@@ -138,6 +138,8 @@ const SearchResultsPage = () => {
               ListProducts={listProducts}
               Brands={brands}
               Sellers={sellers}
+              setListProducts={setListProducts}
+              Brand={brand}
             />
           </FiltersSection>
         </div>

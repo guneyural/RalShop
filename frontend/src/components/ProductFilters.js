@@ -13,6 +13,7 @@ const StarSection = styled.p`
   padding: 0;
   margin-top: -10px;
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     color: black;
@@ -44,6 +45,7 @@ const BrandItem = styled.p`
   cursor: pointer;
   padding: 0;
   margin: 0;
+  user-select: none;
   &:hover {
     color: black;
   }
@@ -60,12 +62,66 @@ const ProductFilters = ({
   ListedProducts,
   Brands,
   Sellers,
+  setListProducts,
+  Brand,
 }) => {
-  const [minPrice, setMinPrice] = useState("");
+  const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState("");
   const [showOutOfStock, setShowOutOfStock] = useState(true);
+  const [brand, setBrand] = useState(Brand !== "none" ? Brand : "");
+  const [stars, setStars] = useState(0);
+  const [seller, setSeller] = useState("");
   const [showMultipleColorOptions, setShowMultipleColorOptions] =
-    useState(true);
+    useState(false);
+
+  useEffect(() => {
+    let temp = [...DefaultProducts];
+
+    if (brand !== "") {
+      temp = temp.filter((item) => item.brand === brand);
+    }
+    if (parseFloat(String(minPrice).replace(/,/g, "")) > 0) {
+      temp = temp.filter(
+        (item) => item.price >= parseFloat(String(minPrice).replace(/,/g, ""))
+      );
+    }
+    if (
+      parseFloat(maxPrice.replace(/,/g, "")) >
+      parseFloat(String(minPrice).replace(/,/g, ""))
+    ) {
+      temp = temp.filter(
+        (item) => item.price <= parseFloat(maxPrice.replace(/,/g, ""))
+      );
+    }
+    if (seller !== "") {
+      temp = temp.filter((item) => item.shop.companyName === seller);
+    }
+    if (showMultipleColorOptions) {
+      temp = temp.filter((item) => item.colors[0].split(",").length > 1);
+    }
+    if (!showMultipleColorOptions) {
+      temp = temp.filter((item) => item.colors[0].split(",").length >= 1);
+    }
+    if (showOutOfStock) {
+      temp = temp.filter((item) => item.stock >= 0);
+    }
+    if (!showOutOfStock) {
+      temp = temp.filter((item) => item.stock < 1);
+    }
+    temp = temp.filter((item) => item.rating >= stars);
+
+    setListProducts(temp);
+  }, [
+    minPrice,
+    maxPrice,
+    showOutOfStock,
+    showMultipleColorOptions,
+    brand,
+    stars,
+    seller,
+    ListedProducts,
+    DefaultProducts,
+  ]);
 
   return (
     <>
@@ -73,7 +129,15 @@ const ProductFilters = ({
         <FilterType>Stars</FilterType>
         {[4, 3, 2, 1].map((count, index) => {
           return (
-            <StarSection key={index}>
+            <StarSection
+              key={index}
+              onClick={() => (stars === count ? setStars(0) : setStars(count))}
+              style={
+                stars === count
+                  ? { fontWeight: "bold", color: "black" }
+                  : { fontWeight: "normal", color: "var(--text-muted)" }
+              }
+            >
               {Array.from({ length: 5 }, (_, index) => {
                 const number = index + 0.5;
                 return (
@@ -99,7 +163,7 @@ const ProductFilters = ({
           <InputField
             type="text"
             placeholder="min"
-            value={minPrice}
+            value={minPrice === "" ? 0 : minPrice}
             onChange={(e) =>
               setMinPrice(
                 e.target.value
@@ -127,16 +191,44 @@ const ProductFilters = ({
       <FilterTypeSection className="mt-3">
         <FilterType>Brands</FilterType>
         <BrandsSection>
-          {Brands.map((brand, index) => {
-            return <BrandItem key={index}>{brand}</BrandItem>;
+          {Brands.map((brandItem, index) => {
+            return (
+              <BrandItem
+                key={index}
+                onClick={() =>
+                  brandItem === brand ? setBrand("") : setBrand(brandItem)
+                }
+                style={
+                  brandItem === brand
+                    ? { fontWeight: "bold", color: "black" }
+                    : { fontWeight: "normal", color: "var(--text-muted)" }
+                }
+              >
+                {brandItem}
+              </BrandItem>
+            );
           })}
         </BrandsSection>
       </FilterTypeSection>
       <FilterTypeSection className="mt-3">
         <FilterType>Sellers</FilterType>
         <BrandsSection>
-          {Sellers.map((seller, index) => {
-            return <BrandItem key={index}>{seller}</BrandItem>;
+          {Sellers.map((shop, index) => {
+            return (
+              <BrandItem
+                key={index}
+                onClick={() =>
+                  shop === seller ? setSeller("") : setSeller(shop)
+                }
+                style={
+                  shop === seller
+                    ? { fontWeight: "bold", color: "black" }
+                    : { fontWeight: "normal", color: "var(--text-muted)" }
+                }
+              >
+                {shop}
+              </BrandItem>
+            );
           })}
         </BrandsSection>
       </FilterTypeSection>
