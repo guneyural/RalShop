@@ -5,6 +5,8 @@ import axios from "axios";
 import styled from "styled-components";
 import ListProducts from "../components/listProducts";
 import ProductFilters from "../components/ProductFilters";
+import { BsFilterRight } from "react-icons/bs";
+import { FaTimes } from "react-icons/fa";
 
 const ResultsCountSection = styled.div`
   border-bottom: 1px solid #dbdbdb;
@@ -36,6 +38,13 @@ const SpanText = styled.span`
 const ProductsContainer = styled.div`
   margin-top: 15px;
 `;
+const FilterButton = styled.button`
+  display: none;
+
+  &:focus {
+    outline: 0;
+  }
+`;
 const FiltersSection = styled.div`
   position: -webkit-sticky;
   position: sticky;
@@ -43,9 +52,65 @@ const FiltersSection = styled.div`
   z-index: 1;
 
   @media (max-width: 767px) {
-    top: 140px;
+    position: static;
+    z-index: 0;
+    top: 0;
+
+    ${FilterButton} {
+      display: block;
+    }
+  }
+`;
+const CloseButton = styled.button`
+  display: none;
+  user-select: none;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  transition: 0.3s;
+  position: relative;
+  left: -5px;
+  font-size: 22px;
+
+  &:focus {
+    outline: 0;
+  }
+
+  &:hover {
+    background: #dbdbdb;
+  }
+`;
+const MobileSeperator = styled.div`
+  display: none;
+  padding: 0;
+  margin: 0;
+  @media (max-width: 767px) {
+    display: block;
+  }
+`;
+const FilterHeader = styled.span`
+  font-weight: bold;
+  font-size: 20px;
+`;
+const DesktopFilterSection = styled.div`
+  transition: 0.5s;
+
+  @media (max-width: 767px) {
+    ${CloseButton} {
+      display: block;
+    }
+
     position: fixed;
-    width: 100%;
+    top: 0;
+    left: 0;
+    background: white;
+    border-left: 1px solid #dbdbdb;
+    width: 0;
+    z-index: 99999;
+    height: 100vh;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 `;
 
@@ -58,6 +123,19 @@ const SearchResultsPage = () => {
   const [sellers, SetSellers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sort, setSort] = useState("default");
+  const [isFiltersSectionOpen, setIsFiltersSectionOpen] = useState(false);
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const getWidth = () => {
+      setWindowSize(window.innerWidth);
+    };
+    window.addEventListener("resize", getWidth);
+
+    return () => {
+      window.removeEventListener("resize", getWidth);
+    };
+  }, [windowSize]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -131,16 +209,49 @@ const SearchResultsPage = () => {
   return (
     <div>
       <div className="row">
-        <div className="col-md-3 mb-5">
+        <div className="col-md-3 mb-3">
           <FiltersSection>
-            <ProductFilters
-              DefaultProducts={products}
-              ListProducts={listProducts}
-              Brands={brands}
-              Sellers={sellers}
-              setListProducts={setListProducts}
-              Brand={brand}
-            />
+            <DesktopFilterSection
+              style={
+                windowSize < 768
+                  ? isFiltersSectionOpen
+                    ? {
+                        padding: "10px 15px",
+                        width: "55%",
+                        borderRight: "1px solid #dbdbdb",
+                      }
+                    : { padding: "0", width: "0", borderRight: "0" }
+                  : { padding: "3px", width: "auto" }
+              }
+            >
+              <section style={{ display: "flex", alignItems: "center" }}>
+                <CloseButton onClick={() => setIsFiltersSectionOpen(false)}>
+                  <FaTimes />
+                </CloseButton>
+                <FilterHeader>Filters</FilterHeader>
+              </section>
+              <MobileSeperator>
+                <hr style={{ margin: "8px 0", padding: "0" }} />
+              </MobileSeperator>
+              <ProductFilters
+                DefaultProducts={products}
+                ListProducts={listProducts}
+                Brands={brands}
+                Sellers={sellers}
+                setListProducts={setListProducts}
+                Brand={brand}
+              />
+            </DesktopFilterSection>
+            <FilterButton
+              className="default-btn"
+              onClick={() =>
+                isFiltersSectionOpen
+                  ? setIsFiltersSectionOpen(false)
+                  : setIsFiltersSectionOpen(true)
+              }
+            >
+              <BsFilterRight style={{ fontWeight: "bold" }} /> Filters
+            </FilterButton>
           </FiltersSection>
         </div>
         <div className="col-md-9">
@@ -169,7 +280,7 @@ const SearchResultsPage = () => {
           </ResultsCountSection>
           <ProductsContainer>
             {listProducts.length < 1 ? (
-              <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <div style={{ textAlign: "center" }}>
                 <h2>No Results Found For</h2>
                 <p className="lead">"{query}"</p>
               </div>
