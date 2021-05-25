@@ -34,7 +34,7 @@ const SpanText = styled.span`
   }
 `;
 const ProductsContainer = styled.div`
-  margin-top: -5px;
+  margin-top: 15px;
 `;
 const FiltersSection = styled.div`
   position: -webkit-sticky;
