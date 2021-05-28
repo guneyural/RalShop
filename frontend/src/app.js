@@ -46,6 +46,8 @@ import CancelledOrdersPage from "./pages/seller/cancelledOrders";
 import ConfirmationRequiredOrders from "./pages/seller/confirmationRequiredOrders";
 import ProductActionsPage from "./pages/seller/productActionsPage";
 import SearchResultsPage from "./pages/searchResultsPage";
+import ProductsByCategory from "./pages/ProductsByCategory";
+import ProductsBySubCategory from "./pages/ProductsBySubCategory";
 
 require("dotenv").config();
 
@@ -212,6 +214,16 @@ const App = () => {
             path="/search/:query/:brand"
             exact
             component={SearchResultsPage}
+          />
+          <NormalRoute
+            path="/category/:category/:subCategory"
+            exact
+            component={ProductsBySubCategory}
+          />
+          <NormalRoute
+            path="/category/:category"
+            exact
+            component={ProductsByCategory}
           />
           <NormalRoute path="/cart" exact component={ShoppingCartPage} />
           <PrivateRoute

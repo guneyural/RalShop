@@ -1,4 +1,8 @@
-import { SEARCH_PRODUCT, SEARCH_PRODUCT_LOADING } from "../actions/types";
+import {
+  SEARCH_PRODUCT,
+  SEARCH_PRODUCT_LOADING,
+  GET_PRODUCTS_BY_CATEGORY,
+} from "../actions/types";
 
 const initialState = {
   products: [],
@@ -20,6 +24,17 @@ export const Search = (state = initialState, action) => {
         query: action.payload.query,
         sellers: action.payload.Sellers,
         searchedBrands: action.payload.SearchedBrands,
+        categories: action.payload.Categories,
+        brandsOfResults: action.payload.BrandsOfResults,
+      };
+    case GET_PRODUCTS_BY_CATEGORY:
+      return {
+        ...state,
+        loading: false,
+        products: action.payload.products,
+        query: "",
+        sellers: action.payload.Sellers,
+        searchedBrands: [],
         categories: action.payload.Categories,
         brandsOfResults: action.payload.BrandsOfResults,
       };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { BsStar, BsStarHalf, BsStarFill } from "react-icons/bs";
+import { useParams } from "react-router-dom";
 
 const FilterType = styled.p`
   font-size: 15px;
@@ -63,21 +64,28 @@ const ProductFilters = ({
   Brands = [],
   Sellers = [],
   setListProducts,
+  selectedCategory = "",
   Categories = [],
   Brand,
 }) => {
+  const { subCategory } = useParams();
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState("");
   const [showOutOfStock, setShowOutOfStock] = useState(true);
   const [brand, setBrand] = useState(Brand !== "none" ? Brand : "");
   const [stars, setStars] = useState(0);
   const [seller, setSeller] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(subCategory);
   const [showMultipleColorOptions, setShowMultipleColorOptions] =
     useState(false);
 
   useEffect(() => {
+    setCategory(subCategory);
+  }, [subCategory]);
+
+  useEffect(() => {
     let temp = [...DefaultProducts];
+    console.log(temp);
 
     if (brand !== "") {
       temp = temp.filter((item) => item.brand === brand);
@@ -128,6 +136,7 @@ const ProductFilters = ({
     seller,
     DefaultProducts,
     category,
+    setListProducts,
   ]);
 
   return (
