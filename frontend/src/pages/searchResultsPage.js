@@ -7,6 +7,8 @@ import ListProducts from "../components/listProducts";
 import ProductFilters from "../components/ProductFilters";
 import { BsFilterRight } from "react-icons/bs";
 import { FaTimes } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { searchProduct } from "../redux/actions/searchProduct";
 
 const ResultsCountSection = styled.div`
   border-bottom: 1px solid #dbdbdb;
@@ -115,16 +117,17 @@ const DesktopFilterSection = styled.div`
 `;
 
 const SearchResultsPage = () => {
-  const history = useHistory();
   const { query, brand } = useParams();
   const [products, setProducts] = useState([]);
   const [listProducts, setListProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [sellers, SetSellers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [Categories, setCategories] = useState([]);
   const [sort, setSort] = useState("default");
   const [isFiltersSectionOpen, setIsFiltersSectionOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
+  const dispatch = useDispatch();
+  const Search = useSelector((state) => state.Search);
 
   useEffect(() => {
     const getWidth = () => {
@@ -138,28 +141,21 @@ const SearchResultsPage = () => {
   }, [windowSize]);
 
   useEffect(() => {
-    setIsLoading(true);
-    let brandSet = new Set();
-    let sellerSet = new Set();
-    axios
-      .get(`/api/product/search/${query}`)
-      .then((res) => res.data)
-      .then((data) => {
-        setIsLoading(false);
-        setProducts(data.products);
-        setListProducts(data.products);
-        data.products.forEach((item) => {
-          brandSet.add(item.brand);
-          sellerSet.add(item.shop.companyName);
-        });
-        setBrands([...brandSet]);
-        SetSellers([...sellerSet]);
-        if (data.products.length < 1) {
-          setProducts(data.brands);
-          setListProducts(data.brands);
-        }
-      });
+    dispatch(searchProduct(query));
   }, [query]);
+  /*
+  useEffect(() => {
+    setCategories(Search.categories);
+    setBrands(Search.brandsOfResults);
+    SetSellers(Search.sellers);
+    setProducts(Search.products);
+    setListProducts(Search.products);
+  }, [
+    Search.products,
+    Search.brandsOfResults,
+    Search.sellers,
+    Search.categories,
+  ]);*/
 
   useEffect(() => {
     setListProducts([...listProducts].sort((a, b) => sortProducts(a, b)));
@@ -198,7 +194,7 @@ const SearchResultsPage = () => {
     }
   };
 
-  if (isLoading) {
+  if (Search.loading) {
     return (
       <div className="d-flex justify-content-center">
         <img src={LoadingIcon} alt="loading spinner" height="120" width="120" />
@@ -234,10 +230,11 @@ const SearchResultsPage = () => {
                 <hr style={{ margin: "8px 0", padding: "0" }} />
               </MobileSeperator>
               <ProductFilters
-                DefaultProducts={products}
+                DefaultProducts={Search.products}
                 ListProducts={listProducts}
-                Brands={brands}
-                Sellers={sellers}
+                Brands={Search.brandsOfResults}
+                Sellers={Search.sellers}
+                Categories={Search.categories}
                 setListProducts={setListProducts}
                 Brand={brand}
               />
@@ -258,7 +255,7 @@ const SearchResultsPage = () => {
           <ResultsCountSection>
             <span>
               <span style={{ fontWeight: "bold", fontSize: "15px" }}>
-                {products.length}
+                {Search.products.length}
               </span>{" "}
               results found <SpanText>for </SpanText>
               <ResultsCount>"{query}"</ResultsCount>
@@ -286,7 +283,7 @@ const SearchResultsPage = () => {
               </div>
             ) : (
               <ListProducts
-                DefaultProducts={products}
+                DefaultProducts={Search.products}
                 ListedProducts={listProducts}
               />
             )}

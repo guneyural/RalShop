@@ -58,11 +58,12 @@ const OutOfStockSection = styled.div`
 `;
 
 const ProductFilters = ({
-  DefaultProducts,
-  ListedProducts,
-  Brands,
-  Sellers,
+  DefaultProducts = [],
+  ListedProducts = [],
+  Brands = [],
+  Sellers = [],
   setListProducts,
+  Categories = [],
   Brand,
 }) => {
   const [minPrice, setMinPrice] = useState(0);
@@ -71,6 +72,7 @@ const ProductFilters = ({
   const [brand, setBrand] = useState(Brand !== "none" ? Brand : "");
   const [stars, setStars] = useState(0);
   const [seller, setSeller] = useState("");
+  const [category, setCategory] = useState("");
   const [showMultipleColorOptions, setShowMultipleColorOptions] =
     useState(false);
 
@@ -109,6 +111,11 @@ const ProductFilters = ({
       temp = temp.filter((item) => item.stock < 1);
     }
     temp = temp.filter((item) => item.rating >= stars);
+    if (category !== "") {
+      temp = temp.filter(
+        (item) => item.category === category || item.subCategory === category
+      );
+    }
 
     setListProducts(temp);
   }, [
@@ -119,8 +126,8 @@ const ProductFilters = ({
     brand,
     stars,
     seller,
-    ListedProducts,
     DefaultProducts,
+    category,
   ]);
 
   return (
@@ -187,6 +194,30 @@ const ProductFilters = ({
             step="any"
           />
         </PriceRangeSection>
+      </FilterTypeSection>
+      <FilterTypeSection className="mt-3">
+        <FilterType>Categories</FilterType>
+        <BrandsSection>
+          {Categories.map((categoryItem, index) => {
+            return (
+              <BrandItem
+                key={index}
+                onClick={() =>
+                  category === categoryItem
+                    ? setCategory("")
+                    : setCategory(categoryItem)
+                }
+                style={
+                  categoryItem === category
+                    ? { fontWeight: "bold", color: "black" }
+                    : { fontWeight: "normal", color: "var(--text-muted)" }
+                }
+              >
+                {categoryItem}
+              </BrandItem>
+            );
+          })}
+        </BrandsSection>
       </FilterTypeSection>
       <FilterTypeSection className="mt-3">
         <FilterType>Brands</FilterType>

@@ -13,10 +13,10 @@ import { BsFillChatFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { categories, subCategories } from "../data/category";
 import { CgMenuGridR } from "react-icons/cg";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SellerNavbar from "./sellerNavbar";
 import { categories as CATEGORIES } from "../data/category";
-import axios from "axios";
+import { searchProduct } from "../redux/actions/searchProduct";
 
 const TinyNavLink = styled.span`
   color: #6c757d;
@@ -53,10 +53,12 @@ const Navbar = () => {
     JSON.parse(localStorage.getItem("latestSearch")) || []
   );
   const [categoryResults, setCategoryResults] = useState([]);
+  const history = useHistory();
+  const Search = useSelector((state) => state.Search);
+
   const [productResults, setProductResults] = useState([]);
   const [brandResults, setBrandResults] = useState([]);
-  const [isResultsLoading, setIsResultsLoading] = useState(false);
-  const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!Seller.inSellerRoute) {
@@ -134,30 +136,28 @@ const Navbar = () => {
 
   const userTyping = (e) => {
     setSearchQuery(e.target.value);
-    if (e.target.value !== "") {
+    if (e.target.value.length > 1) {
       const regex = new RegExp(escapeRegex(e.target.value), "gi");
       const foundCategories = CATEGORIES.filter((item) => item.match(regex));
       setCategoryResults(foundCategories);
 
-      setIsResultsLoading(true);
-      let brandSet = new Set();
-      axios
-        .get(`/api/product/search/${e.target.value}`)
-        .then((res) => res.data)
-        .then((data) => {
-          setIsResultsLoading(false);
-          setProductResults(data.products);
-          data.brands.forEach((item) => {
-            brandSet.add(item.brand);
-          });
-          setBrandResults([...brandSet]);
-        });
+      dispatch(searchProduct(e.target.value));
     }
   };
 
+  const clickBrand = (item) => {
+    setSearchQuery(item);
+    window.location.href = window.origin + `/search/${item}/${item}`;
+  };
+
+  useEffect(() => {
+    setBrandResults(Search.searchedBrands);
+    setProductResults(Search.products);
+  }, [Search.searchedBrands, Search.products]);
+
   const search = (e) => {
     e.preventDefault();
-    if (searchQuery.length > 0) {
+    if (searchQuery.length > 2) {
       if (latestSearches.length > 4) {
         latestSearches.pop();
       }
@@ -257,7 +257,7 @@ const Navbar = () => {
                 </form>
                 <div className="navbar-search-box">
                   <div className="navbar-search-results">
-                    {isResultsLoading && (
+                    {Search.loading && (
                       <img
                         src={LoadingIcon}
                         alt="loading spinner"
@@ -289,11 +289,7 @@ const Navbar = () => {
                           <p
                             className="latest-search-item"
                             key={index}
-                            onClick={() =>
-                              (window.location.href =
-                                window.origin +
-                                `/search/${searchQuery}/${item}`)
-                            }
+                            onClick={() => clickBrand(item)}
                           >
                             {item}
                           </p>
