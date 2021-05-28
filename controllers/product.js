@@ -298,16 +298,12 @@ const searchProduct = catchAsync(async (req, res, next) => {
     const findProducts = await Product.find({ title: regex }).populate("shop");
     const findBrands = await Product.find({ brand: regex }).populate("shop");
 
-    findProducts.forEach((item, index) => {
-      if (index <= 5) {
-        results.products.push(item);
-      }
+    findProducts.forEach((item) => {
+      results.products.push(item);
     });
 
-    findBrands.forEach((item, index) => {
-      if (index <= 5) {
-        results.brands.push(item);
-      }
+    findBrands.forEach((item) => {
+      results.brands.push(item);
     });
 
     res.status(200).json(results);
@@ -318,11 +314,32 @@ const searchProduct = catchAsync(async (req, res, next) => {
 function escapeRegex(text) {
   return String(text).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
+const getProductByCategory = catchAsync(async (req, res) => {
+  const category = req.params.category;
+  const products = await Product.find({ category })
+    .sort({
+      rating: -1,
+      createdAt: -1,
+    })
+    .populate("shop");
+  res.status(200).json(products);
+});
+const getProductBySubCategory = catchAsync(async (req, res) => {
+  const { category, subCategory } = req.params;
+  const products = await Product.find({
+    $and: [{ category }, { subCategory }],
+  })
+    .sort({ createdAt: "desc", rating: "desc" })
+    .populate("shop");
+  res.status(200).json(products);
+});
 module.exports = {
   createProduct,
   getProductById,
+  getSellerAllProducts,
+  getProductByCategory,
+  getProductBySubCategory,
   updateProduct,
   deleteProduct,
-  getSellerAllProducts,
   searchProduct,
 };
