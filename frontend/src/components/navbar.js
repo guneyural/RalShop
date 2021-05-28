@@ -117,10 +117,6 @@ const Navbar = () => {
     };
   }, [windowSize, scroll, isNavOpen]);
 
-  const getCategory = (idx) => {
-    window.location.href = `http://localhost:3000/category/${idx}`;
-  };
-
   const searchBoxFocused = () => {
     document
       .querySelector(".navbar-search-box")
@@ -413,18 +409,20 @@ const Navbar = () => {
               <ul className="category-list">
                 {categories.map((category, i) => {
                   return (
-                    <li
-                      key={i}
-                      className="nav-category"
-                      onClick={() => getCategory(i)}
-                    >
-                      <span>{category}</span>
+                    <li key={i} className="nav-category">
+                      <span
+                        onClick={() => history.push(`/category/${category}`)}
+                      >
+                        {category}
+                      </span>
                       <div className="dropdown-content">
                         {subCategories[i] !== undefined &&
                           subCategories[i].map((sub, idx) => {
                             return (
                               <li key={idx}>
-                                <Link to={`/category/${i}`}>{sub}</Link>
+                                <Link to={`/category/${category}/${sub}`}>
+                                  {sub}
+                                </Link>
                               </li>
                             );
                           })}
