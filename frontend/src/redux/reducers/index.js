@@ -10,6 +10,7 @@ import { Chat } from "./chatReducer";
 import { Address } from "./addressReducer";
 import { Order } from "./orderReducer";
 import { RateSeller } from "./rateSellerReducer";
+import { Search } from "./searchReducer";
 
 function lastAction(state = null, action) {
   return action.type;
@@ -27,6 +28,7 @@ const reducers = combineReducers({
   Address,
   Order,
   RateSeller,
+  Search,
   lastAction,
 });
 
