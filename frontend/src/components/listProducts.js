@@ -117,12 +117,10 @@ const ColorBox = styled.button`
 `;
 
 const ListProducts = ({ DefaultProducts, ListedProducts }) => {
-  const [defaultProducts, setDefaultProducts] = useState(DefaultProducts);
   const [listedProducts, setListedProducts] = useState(ListedProducts);
   const history = useHistory();
   const dispatch = useDispatch();
   const Wishlist = useSelector((state) => state.Wishlist);
-  const Cart = useSelector((state) => state.Cart);
 
   useEffect(() => setListedProducts(ListedProducts), [ListedProducts]);
 

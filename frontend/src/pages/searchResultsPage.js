@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LoadingIcon from "../assets/loading.gif";
-import axios from "axios";
 import styled from "styled-components";
 import ListProducts from "../components/listProducts";
 import ProductFilters from "../components/ProductFilters";
@@ -118,11 +117,7 @@ const DesktopFilterSection = styled.div`
 
 const SearchResultsPage = () => {
   const { query, brand } = useParams();
-  const [products, setProducts] = useState([]);
   const [listProducts, setListProducts] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [sellers, SetSellers] = useState([]);
-  const [Categories, setCategories] = useState([]);
   const [sort, setSort] = useState("default");
   const [isFiltersSectionOpen, setIsFiltersSectionOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -143,19 +138,6 @@ const SearchResultsPage = () => {
   useEffect(() => {
     dispatch(searchProduct(query));
   }, [query]);
-  /*
-  useEffect(() => {
-    setCategories(Search.categories);
-    setBrands(Search.brandsOfResults);
-    SetSellers(Search.sellers);
-    setProducts(Search.products);
-    setListProducts(Search.products);
-  }, [
-    Search.products,
-    Search.brandsOfResults,
-    Search.sellers,
-    Search.categories,
-  ]);*/
 
   useEffect(() => {
     setListProducts([...listProducts].sort((a, b) => sortProducts(a, b)));
