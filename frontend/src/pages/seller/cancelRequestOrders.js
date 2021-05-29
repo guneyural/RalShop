@@ -5,7 +5,7 @@ import Navbar from "../../components/seller/productActionsPageNavbar";
 import OrderList from "../../components/seller/orderList";
 import Filters from "../../components/seller/productActionsFilters";
 
-const CancelledOrdersPage = () => {
+const CancelRequestOrders = () => {
   const { orders } = useSelector((state) => state.Seller);
   const [listProducts, setListProducts] = useState(orders);
   const dispatch = useDispatch();
@@ -13,26 +13,26 @@ const CancelledOrdersPage = () => {
   useEffect(() => dispatch(getSellerOrders()), []);
   useEffect(
     () =>
-      setListProducts(
-        orders.filter((item) => item.order.status === "cancelled")
-      ),
+      setListProducts([
+        ...orders.filter((item) => item.order.status === "cancelRequest"),
+      ]),
     [orders]
   );
 
   return (
     <>
-      <Navbar isOrders={true} isCancelledOrdersPage={true} />
+      <Navbar isOrders={true} isCancelRequestOrdersPage={true} />
       <Filters
         setListProducts={setListProducts}
         listProducts={listProducts}
         DefaultProducts={orders.filter(
-          (item) => item.order.status === "cancelled"
+          (item) => item.order.status === "cancelRequest"
         )}
         isOrders={true}
       />
-      <OrderList Orders={listProducts} />
+      <OrderList Orders={listProducts} onlyShowCancelRequests={true} />
     </>
   );
 };
 
-export default CancelledOrdersPage;
+export default CancelRequestOrders;

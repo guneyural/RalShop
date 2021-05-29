@@ -58,7 +58,6 @@ const createOrder = catchAsync(async (req, res, next) => {
     Payment: paymentIntent,
   });
 });
-
 const getOrdersByUser = catchAsync(async (req, res) => {
   let orders = [];
   const getOrders = await Order.find({ user: req.user.id })
@@ -67,11 +66,11 @@ const getOrdersByUser = catchAsync(async (req, res) => {
     })
     .populate("Product.product user seller");
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    getOrders[0].paymentIntentId
-  );
-
   for (let i = 0; i < getOrders.length; i++) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      getOrders[i].paymentIntentId
+    );
+
     orders.push({
       groupId: getOrders[i].groupId,
       order: getOrders[i],
@@ -81,18 +80,17 @@ const getOrdersByUser = catchAsync(async (req, res) => {
 
   res.status(200).json(orders);
 });
-
 const getOrdersBySeller = catchAsync(async (req, res) => {
   let orders = [];
-  const getOrders = await Order.find({ user: req.shop.id })
+  const getOrders = await Order.find({ seller: req.shop.id })
     .sort({ createdAt: "desc" })
     .populate("Product.product user seller");
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    getOrders[0].paymentIntentId
-  );
-
   for (let i = 0; i < getOrders.length; i++) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      getOrders[i].paymentIntentId
+    );
+
     orders.push({
       groupId: getOrders[i].groupId,
       order: getOrders[i],
@@ -102,7 +100,6 @@ const getOrdersBySeller = catchAsync(async (req, res) => {
 
   res.status(200).json(orders);
 });
-
 const orderCancelRequest = catchAsync(async (req, res, next) => {
   const { groupId } = req.body;
   let ordersArray = [];
@@ -135,7 +132,6 @@ const orderCancelRequest = catchAsync(async (req, res, next) => {
 
   return res.status(200).json(ordersArray);
 });
-
 const changeOrderStatus = catchAsync(async (req, res, next) => {
   const { id, status } = req.body;
 
@@ -149,7 +145,6 @@ const changeOrderStatus = catchAsync(async (req, res, next) => {
   const saveOrder = await Order.save();
   res.status(200).json(saveOrder);
 });
-
 const refundOrder = catchAsync(async (req, res, next) => {
   const { id } = req.body;
 

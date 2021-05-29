@@ -43,7 +43,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AllOrdersPage from "./pages/seller/allOrdersPage";
 import AllProductsPage from "./pages/seller/AllProductsPage";
 import CancelledOrdersPage from "./pages/seller/cancelledOrders";
-import ConfirmationRequiredOrders from "./pages/seller/confirmationRequiredOrders";
+import CancelRequestedOrders from "./pages/seller/cancelRequestOrders";
 import ProductActionsPage from "./pages/seller/productActionsPage";
 import SearchResultsPage from "./pages/searchResultsPage";
 import ProductsByCategory from "./pages/ProductsByCategory";
@@ -165,9 +165,9 @@ const App = () => {
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
-            path="/seller/orders/confirmation_required"
+            path="/seller/orders/cancel_request"
             exact
-            component={ConfirmationRequiredOrders}
+            component={CancelRequestedOrders}
             isSellerAuthenticated={Seller.isAuthenticated}
           />
           <SellerRoute
