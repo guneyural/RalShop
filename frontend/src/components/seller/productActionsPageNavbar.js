@@ -10,6 +10,7 @@ const ListItem = styled.li`
   white-space: nowrap;
   word-wrap: break-word;
   transition: 0.3s;
+  user-select: none;
 
   &:hover {
     background: #efefef;
@@ -43,71 +44,100 @@ const ProductActionsPageNavbar = ({
   isProductListPage = false,
   isProductActionsPage = false,
   isAddProductPage = false,
+  isAllOrdersPage = false,
+  isCancelRequestOrdersPage = false,
+  isCancelledOrdersPage = false,
+  isOrders = false,
 }) => {
   const [isProductList, setIsProductList] = useState(isProductListPage);
   const [isProductActions, setIsProductActions] =
     useState(isProductActionsPage);
   const [isAddProduct, setIsAddProduct] = useState(isAddProductPage);
+  const [isAllOrders, setIsAllOrdersPage] = useState(isAllOrdersPage);
+  const [isCancelRequestOrders, setIsCancelRequestOrders] = useState(
+    isCancelRequestOrdersPage
+  );
+  const [isCancelledOrders, setIsCancelledOrders] = useState(
+    isCancelledOrdersPage
+  );
 
   const history = useHistory();
 
-  useEffect(() => {
-    if (isProductList) {
-      setIsProductActions(false);
-      setIsAddProduct(false);
-    }
-  }, [isProductList]);
-
-  useEffect(() => {
-    if (isProductActions) {
-      setIsProductList(false);
-      setIsAddProduct(false);
-    }
-  }, [isProductActions]);
-
-  useEffect(() => {
-    if (isAddProduct) {
-      setIsProductList(false);
-      setIsAddProduct(false);
-    }
-  }, [isAddProduct]);
-
-  return (
-    <Navbar>
-      <UnorderedList>
-        <ListItem
-          className={
-            isProductList
-              ? "product-nav-item product-nav-item-active"
-              : "product-nav-item"
-          }
-          onClick={() => history.push("/seller/products/all")}
-        >
-          Product List
-        </ListItem>
-        <ListItem
-          className={
-            isProductActions
-              ? "product-nav-item product-nav-item-active"
-              : "product-nav-item"
-          }
-          onClick={() => history.push("/seller/products/actions")}
-        >
-          Product Actions
-        </ListItem>
-        <ListItem
-          className={
-            isAddProductPage
-              ? "product-nav-item product-nav-item-active"
-              : "product-nav-item"
-          }
-          onClick={() => history.push("/seller/products/add")}
-        >
-          Add Product
-        </ListItem>
-      </UnorderedList>
-    </Navbar>
-  );
+  if (!isOrders) {
+    return (
+      <Navbar>
+        <UnorderedList>
+          <ListItem
+            className={
+              isProductList
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/products/all")}
+          >
+            Product List
+          </ListItem>
+          <ListItem
+            className={
+              isProductActions
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/products/actions")}
+          >
+            Product Actions
+          </ListItem>
+          <ListItem
+            className={
+              isAddProductPage
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/products/add")}
+          >
+            Add Product
+          </ListItem>
+        </UnorderedList>
+      </Navbar>
+    );
+  } else {
+    return (
+      <Navbar>
+        <UnorderedList>
+          <ListItem
+            className={
+              isAllOrders
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/orders/list")}
+          >
+            Orders
+          </ListItem>
+          <ListItem
+            className={
+              isCancelRequestOrdersPage
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/orders/cancel_request")}
+          >
+            Cancel Requests
+          </ListItem>
+          <ListItem
+            className={
+              isCancelledOrders
+                ? "product-nav-item product-nav-item-active"
+                : "product-nav-item"
+            }
+            onClick={() => history.push("/seller/orders/cancelled")}
+          >
+            Cancelled Orders
+          </ListItem>
+        </UnorderedList>
+      </Navbar>
+    );
+  }
 };
 
 export default ProductActionsPageNavbar;

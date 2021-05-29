@@ -82,6 +82,7 @@ const ProductActionsFilters = ({
   listProducts,
   setListProducts,
   DefaultProducts,
+  isOrders = false,
 }) => {
   const [sort, setSort] = useState("default");
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +96,11 @@ const ProductActionsFilters = ({
 
   useEffect(() => {
     if (searchID.length > 0) {
-      setListProducts(listProducts.filter((item) => item._id === searchID));
+      setListProducts(
+        listProducts.filter((item) =>
+          isOrders ? item.order._id === searchID : item._id === searchID
+        )
+      );
     } else {
       setListProducts(DefaultProducts);
     }
@@ -104,7 +109,9 @@ const ProductActionsFilters = ({
   useEffect(() => {
     let tempCategories = new Set();
     DefaultProducts.forEach((item) => {
-      tempCategories.add(item.subCategory);
+      tempCategories.add(
+        isOrders ? item.order.Product.product.subCategory : item.subCategory
+      );
     });
     setAllCategories([...tempCategories]);
   }, [DefaultProducts]);
@@ -123,8 +130,12 @@ const ProductActionsFilters = ({
     } else {
       setListProducts(
         [...DefaultProducts]
-          .filter((item) => item.subCategory === category)
-          .sort((a, b) => sortProducts(a, b))
+          .filter((item) =>
+            isOrders
+              ? item.order.Product.product.subCategory === category
+              : item.subCategory === category
+          )
+          .sort((a, b) => (isOrders ? sortOrders(a, b) : sortProducts(a, b)))
       );
     }
   }, [category]);
@@ -132,14 +143,45 @@ const ProductActionsFilters = ({
   useEffect(() => {
     if (searchQuery.length > 0) {
       const regex = new RegExp(escapeRegex(searchQuery), "gi");
-      setListProducts(listProducts.filter((item) => item.title.match(regex)));
+      setListProducts(
+        listProducts.filter((item) =>
+          isOrders
+            ? item.order.Product.product.title.match(regex)
+            : item.title.match(regex)
+        )
+      );
     } else {
       setListProducts(
-        DefaultProducts.filter((item) => item.subCategory === category)
+        DefaultProducts.filter((item) =>
+          isOrders
+            ? item.order.Product.product.subCategory === category
+            : item.subCategory === category
+        )
       );
       setSort("default");
     }
   }, [searchQuery]);
+
+  let sortOrders = (a, b) => {
+    if (sort === "dateDesc" || sort === "default") {
+      return Date.parse(b.order.createdAt) - Date.parse(a.order.createdAt);
+    }
+    if (sort === "dateAsc") {
+      return Date.parse(a.order.createdAt) - Date.parse(b.order.createdAt);
+    }
+    if (sort === "priceDesc") {
+      return b.order.Product.product.price - a.order.Product.product.price;
+    }
+    if (sort === "priceAsc") {
+      return a.order.Product.product.price - b.order.Product.product.price;
+    }
+    if (sort === "stockDesc") {
+      return b.order.Product.product.stock - a.order.Product.product.stock;
+    }
+    if (sort === "stockAsc") {
+      return a.order.Product.product.stock - b.order.Product.product.stock;
+    }
+  };
 
   let sortProducts = (a, b) => {
     if (sort === "dateDesc" || sort === "default") {
@@ -185,7 +227,11 @@ const ProductActionsFilters = ({
   };
 
   useEffect(() => {
-    setListProducts([...listProducts].sort((a, b) => sortProducts(a, b)));
+    setListProducts(
+      [...listProducts].sort((a, b) =>
+        isOrders ? sortOrders(a, b) : sortProducts(a, b)
+      )
+    );
   }, [sort]);
 
   return (
@@ -226,16 +272,24 @@ const ProductActionsFilters = ({
                 <option value="priceAsc">Price (Lowest First)</option>
                 <option value="stockDesc">Stock (Highest First)</option>
                 <option value="stockAsc">Stock (Lowest First)</option>
-                <option value="ratingDesc">Rating (Highest First)</option>
-                <option value="ratingAsc">Rating (Lowest First)</option>
-                <option value="wishlistDesc">
-                  Wishlist Count (Highest First)
-                </option>
-                <option value="wishlistAsc">
-                  Wishlist Count (Lowest First)
-                </option>
-                <option value="ordersDesc">Order Count (Highest First)</option>
-                <option value="ordersAsc">Order Count (Lowest First)</option>
+                {!isOrders && (
+                  <>
+                    <option value="ratingDesc">Rating (Highest First)</option>
+                    <option value="ratingAsc">Rating (Lowest First)</option>
+                    <option value="wishlistDesc">
+                      Wishlist Count (Highest First)
+                    </option>
+                    <option value="wishlistAsc">
+                      Wishlist Count (Lowest First)
+                    </option>
+                    <option value="ordersDesc">
+                      Order Count (Highest First)
+                    </option>
+                    <option value="ordersAsc">
+                      Order Count (Lowest First)
+                    </option>
+                  </>
+                )}
               </Select>
             </InputSection>
             <InputSection className="col-md-3 col-sm-6">
@@ -285,16 +339,18 @@ const ProductActionsFilters = ({
           </div>
         </ContainerLeft>
       </Container>
-      <OutOfStockSection>
-        <input
-          type="checkbox"
-          checked={showOutOfStock}
-          onChange={() => setShowOutOfStock(!showOutOfStock)}
-        />
-        <p style={{ marginTop: "-3px", marginLeft: "3px" }}>
-          Show Only Out Of Stock
-        </p>
-      </OutOfStockSection>
+      {!isOrders && (
+        <OutOfStockSection>
+          <input
+            type="checkbox"
+            checked={showOutOfStock}
+            onChange={() => setShowOutOfStock(!showOutOfStock)}
+          />
+          <p style={{ marginTop: "-3px", marginLeft: "3px" }}>
+            Show Only Out Of Stock
+          </p>
+        </OutOfStockSection>
+      )}
     </>
   );
 };

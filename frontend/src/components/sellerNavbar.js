@@ -113,10 +113,10 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                       All Orders
                     </Link>
                     <Link
-                      to="/seller/orders/confirmation_required"
+                      to="/seller/orders/cancel_request"
                       className="dropdown-link"
                     >
-                      Confirmation Required
+                      Cancel Requested Orders
                     </Link>
                     <Link
                       to="/seller/orders/cancelled"
@@ -240,10 +240,10 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                   All Orders
                 </Link>
                 <Link
-                  to="/seller/orders/confirmation_required"
+                  to="/seller/orders/cancel_request"
                   className="dropdown-link"
                 >
-                  Confirmation Required
+                  Cancel Requested Orders
                 </Link>
                 <Link to="/seller/orders/cancelled" className="dropdown-link">
                   Cancelled
