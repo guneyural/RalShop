@@ -17,13 +17,34 @@ import {
   GET_ALL_SELLER_PRODUCTS,
   SELLER_DELETE_PRODUCT,
   SELLER_UPDATE_PRODUCT,
+  GET_SELLER_ORDERS,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
 
+export const getSellerOrders = () => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .get("/api/order/seller-orders", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_SELLER_ORDERS, payload: data });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
 export const updateProduct = (id, data) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
-  
+
   axios
     .put(`/api/product/${id}`, data, {
       headers: {

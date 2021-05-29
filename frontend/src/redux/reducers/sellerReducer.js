@@ -16,6 +16,7 @@ import {
   GET_ALL_SELLER_PRODUCTS,
   SELLER_DELETE_PRODUCT,
   SELLER_UPDATE_PRODUCT,
+  GET_SELLER_ORDERS,
 } from "../actions/types";
 
 const initialState = {
@@ -40,10 +41,18 @@ const initialState = {
     successText: null,
   },
   products: [],
+  orders: [],
 };
 
 export const Seller = (state = initialState, action) => {
   switch (action.type) {
+    case GET_SELLER_ORDERS:
+      return {
+        ...state,
+        error: { message: null, status: null },
+        loading: false,
+        orders: action.payload,
+      };
     case SELLER_UPDATE_PRODUCT:
       return {
         ...state,
