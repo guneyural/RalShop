@@ -124,7 +124,7 @@ const ProductActionsProductList = ({ Products, actionsAvailable = true }) => {
           />
         )}
         <div className="table-responsive">
-          <table class="table table-bordered">
+          <table className="table table-bordered">
             <thead>
               <tr>
                 <th scope="col" style={{ minWidth: "30px" }}>
