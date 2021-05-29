@@ -60,13 +60,13 @@ const OutOfStockSection = styled.div`
 
 const ProductFilters = ({
   DefaultProducts = [],
-  ListedProducts = [],
   Brands = [],
   Sellers = [],
   setListProducts,
   selectedCategory = "",
   Categories = [],
   Brand,
+  isCategoryPage = false,
 }) => {
   const { subCategory } = useParams();
   const [minPrice, setMinPrice] = useState(0);
@@ -75,7 +75,7 @@ const ProductFilters = ({
   const [brand, setBrand] = useState(Brand !== "none" ? Brand : "");
   const [stars, setStars] = useState(0);
   const [seller, setSeller] = useState("");
-  const [category, setCategory] = useState(subCategory);
+  const [category, setCategory] = useState(subCategory ? subCategory : "all");
   const [showMultipleColorOptions, setShowMultipleColorOptions] =
     useState(false);
 
@@ -85,7 +85,6 @@ const ProductFilters = ({
 
   useEffect(() => {
     let temp = [...DefaultProducts];
-    console.log(temp);
 
     if (brand !== "") {
       temp = temp.filter((item) => item.brand === brand);
@@ -119,7 +118,7 @@ const ProductFilters = ({
       temp = temp.filter((item) => item.stock < 1);
     }
     temp = temp.filter((item) => item.rating >= stars);
-    if (category !== "") {
+    if (category !== "all") {
       temp = temp.filter(
         (item) => item.category === category || item.subCategory === category
       );
@@ -138,6 +137,11 @@ const ProductFilters = ({
     category,
     setListProducts,
   ]);
+
+  useEffect(() => {
+    // Set category to all when DefaultProducts are loaded for setting the ListProducts
+    setCategory("all");
+  }, [DefaultProducts]);
 
   return (
     <>
@@ -213,7 +217,7 @@ const ProductFilters = ({
                 key={index}
                 onClick={() =>
                   category === categoryItem
-                    ? setCategory("")
+                    ? setCategory("all")
                     : setCategory(categoryItem)
                 }
                 style={

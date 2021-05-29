@@ -117,12 +117,12 @@ const DesktopFilterSection = styled.div`
 
 const SearchResultsPage = () => {
   const { query, brand } = useParams();
-  const [listProducts, setListProducts] = useState([]);
   const [sort, setSort] = useState("default");
   const [isFiltersSectionOpen, setIsFiltersSectionOpen] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
   const dispatch = useDispatch();
   const Search = useSelector((state) => state.Search);
+  const [listProducts, setListProducts] = useState([]);
 
   useEffect(() => {
     const getWidth = () => {
@@ -213,7 +213,6 @@ const SearchResultsPage = () => {
               </MobileSeperator>
               <ProductFilters
                 DefaultProducts={Search.products}
-                ListProducts={listProducts}
                 Brands={Search.brandsOfResults}
                 Sellers={Search.sellers}
                 Categories={Search.categories}

@@ -213,13 +213,13 @@ const ProductsByCategory = () => {
               </MobileSeperator>
               <ProductFilters
                 DefaultProducts={Search.products}
-                ListProducts={listProducts}
                 Brands={Search.brandsOfResults}
                 Sellers={Search.sellers}
                 Categories={Search.categories}
                 setListProducts={setListProducts}
                 selectedCategory={SUBCATEGORY}
                 Brand={"none"}
+                isCategoryPage={true}
               />
             </DesktopFilterSection>
             <FilterButton
@@ -255,7 +255,7 @@ const ProductsByCategory = () => {
           <ProductsContainer>
             {listProducts.length < 1 ? (
               <div style={{ textAlign: "center" }}>
-                <h2>No Products Found With {category} Category</h2>
+                <h2>No Products Found In {category} Category</h2>
               </div>
             ) : (
               <ListProducts
