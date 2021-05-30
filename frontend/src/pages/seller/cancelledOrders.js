@@ -30,7 +30,7 @@ const CancelledOrdersPage = () => {
         )}
         isOrders={true}
       />
-      <OrderList Orders={listProducts} />
+      <OrderList Orders={listProducts} onlyCancelled={true} />
     </>
   );
 };

@@ -11,7 +11,15 @@ const AllOrdersPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => dispatch(getSellerOrders()), []);
-  useEffect(() => setListProducts(orders), [orders]);
+  useEffect(
+    () =>
+      setListProducts([
+        ...orders
+          .filter((item) => item.order.status !== "cancelRequest")
+          .filter((item) => item.order.status !== "cancelled"),
+      ]),
+    [orders]
+  );
 
   return (
     <>
@@ -19,7 +27,9 @@ const AllOrdersPage = () => {
       <Filters
         setListProducts={setListProducts}
         listProducts={listProducts}
-        DefaultProducts={orders}
+        DefaultProducts={orders
+          .filter((item) => item.order.status !== "cancelRequest")
+          .filter((item) => item.order.status !== "cancelled")}
         isOrders={true}
       />
       <OrderList Orders={listProducts} />
