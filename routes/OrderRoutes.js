@@ -7,6 +7,7 @@ const {
   changeOrderStatus,
   orderCancelRequest,
   refundOrder,
+  denyCancelRequest,
 } = require("../controllers/order");
 
 Router.get("/user-orders", isUser, getOrdersByUser);
@@ -15,5 +16,6 @@ Router.post("/", isUser, createOrder);
 Router.post("/change-status", isShop, changeOrderStatus);
 Router.post("/cancel-request", isUser, orderCancelRequest);
 Router.post("/refund", isShop, refundOrder);
+Router.post("/cancel-request/deny", isShop, denyCancelRequest);
 
 module.exports = Router;

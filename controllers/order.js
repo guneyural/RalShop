@@ -145,27 +145,53 @@ const changeOrderStatus = catchAsync(async (req, res, next) => {
   const saveOrder = await Order.save();
   res.status(200).json(saveOrder);
 });
+const denyCancelRequest = catchAsync(async (req, res, next) => {
+  const { groupId } = req.body;
+  let newOrders = [];
+
+  const getOrders = await Order.find({
+    $and: [{ groupId }, { seller: req.shop.id }, { status: "cancelRequest" }],
+  }).populate("Product.product user seller");
+
+  if (getOrders.length === 0)
+    return next(new expressError("Order Not Found", 404));
+
+  for (let orderItem of getOrders) {
+    orderItem.status = "confirmed";
+    orderItem.note = "Cancellation request denied by the seller.";
+    await orderItem.save();
+    newOrders.push(orderItem);
+  }
+
+  res.status(200).json(newOrders);
+});
 const refundOrder = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
+  const { groupId } = req.body;
+  let newOrders = [];
 
-  const getOrder = await Order.findOne({
-    $and: [{ _id: id }, { seller: req.shop.id }, { status: "cancelRequest" }],
-  });
+  const getOrders = await Order.find({
+    $and: [{ groupId }, { seller: req.shop.id }, { status: "cancelRequest" }],
+  }).populate("Product.product user seller");
 
-  if (!getOrder) return next(new expressError("Order Not Found", 404));
+  if (getOrders.length === 0)
+    return next(new expressError("Order Not Found", 404));
+
+  for (let orderItem of getOrders) {
+    orderItem.status = "cancelled";
+    orderItem.note = "Order is cancelled.";
+    await orderItem.save();
+    newOrders.push(orderItem);
+  }
 
   try {
     await stripe.refunds.create({
-      payment_intent: getOrder.paymentIntentId,
+      payment_intent: getOrders[0].paymentIntentId,
     });
+
+    res.status(200).json(newOrders);
   } catch (e) {
     return next(new expressError("Error while refunding.", 400));
   }
-
-  getOrder.status = "cancelled";
-  const saveOrder = await getOrder.save();
-
-  res.status(200).json(saveOrder);
 });
 
 module.exports = {
@@ -175,4 +201,5 @@ module.exports = {
   changeOrderStatus,
   orderCancelRequest,
   refundOrder,
+  denyCancelRequest,
 };
