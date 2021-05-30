@@ -223,6 +223,30 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
+    const lastVisited = JSON.parse(localStorage.getItem("lastVisited")) || [];
+    if (Object.keys(Product).length > 0) {
+      const isInList = lastVisited.some((value) => {
+        console.log(value._id === Product._id);
+        return value._id === Product._id;
+      });
+
+      if (lastVisited.length > 5) {
+        lastVisited.pop();
+      }
+
+      if (!isInList) {
+        localStorage.setItem(
+          "lastVisited",
+          JSON.stringify([
+            { _id: Product._id, img: Product.images[0].url },
+            ...lastVisited,
+          ])
+        );
+      }
+    }
+  }, [Product]);
+
+  useEffect(() => {
     if (window.location.hash) {
       let reviewElement = document.getElementById(
         window.location.hash.slice(1)
