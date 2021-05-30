@@ -12,6 +12,7 @@ import OrderDetail from "../orderDetailsModal";
 import {
   denyOrderCancelRequest,
   cancelOrder,
+  changeOrderStatus,
 } from "../../redux/actions/sellerActions";
 
 const Container = styled.div`
@@ -105,14 +106,14 @@ const OrderList = ({
     document.body.removeChild(tempInput);
   }
 
-  function changeStatus(e, itemId, groupId) {
+  function changeStatus(e, itemId = "", groupId) {
     if (e.target.value === "cancelled") {
       setNewStatus(e.target.value);
       setSelectedOrder(groupId);
       setIsCancelModalOpen(true);
     } else {
       setNewStatus(e.target.value);
-      setSelectedOrder(itemId);
+      setSelectedOrder(groupId);
       setIsConfirmaitonModalOpen(true);
     }
   }
@@ -205,15 +206,15 @@ const OrderList = ({
       {isConfirmationModalOpen && (
         <Modal
           isRedux={true}
-          action={"buraya bir aksiyon koy"}
+          action={changeOrderStatus}
           message={
             "Any status change of order will be sent as mail to the customer. Do you want to change status?"
           }
           setIsModalOpen={setIsConfirmaitonModalOpen}
           header={"Change Status"}
           btnText={"Change Status"}
-          param={newStatus}
-          secondParam={"gerekirse ikinci parametreyi de koy"}
+          param={selectedOrder}
+          secondParam={newStatus}
         />
       )}
       <Caption>List of {Orders.length} orders</Caption>
@@ -299,7 +300,7 @@ const OrderList = ({
                     <td valign="middle">{item.order.Product.product.stock}</td>
                     <td valign="middle">
                       {onlyCancelled ? (
-                        item.order.status
+                        item.order.status.toUpperCase()
                       ) : onlyShowCancelRequests ? (
                         <Select
                           value={item.order.status}
@@ -316,6 +317,8 @@ const OrderList = ({
                           <option value="cancelled">Cancel Order</option>
                           <option value="deny">Deny Cancel Request</option>
                         </Select>
+                      ) : item.order.status === "delivered" ? (
+                        item.order.status.toUpperCase()
                       ) : (
                         <Select
                           value={item.order.status}

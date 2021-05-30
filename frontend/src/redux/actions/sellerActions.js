@@ -20,9 +20,33 @@ import {
   GET_SELLER_ORDERS,
   DENY_ORDER_CANCEL_REQUEST,
   CANCEL_ORDER,
+  CHANGE_ORDER_STATUS,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
+
+export const changeOrderStatus = (groupId, status) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .post("/api/order/change-status", { groupId, status }, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: CHANGE_ORDER_STATUS,
+        payload: { groupId, newOrders: data },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 export const cancelOrder = (groupId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
