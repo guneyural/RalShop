@@ -7,8 +7,12 @@ import { CgDetailsMore } from "react-icons/cg";
 import { useHistory } from "react-router-dom";
 import moment from "moment";
 import { priceConverter } from "../../utils/helpers";
-import ConfirmationModal from "../messageBox";
+import Modal from "../messageBox";
 import OrderDetail from "../orderDetailsModal";
+import {
+  denyOrderCancelRequest,
+  cancelOrder,
+} from "../../redux/actions/sellerActions";
 
 const Container = styled.div`
   margin-left: 15px;
@@ -67,15 +71,22 @@ const DetailsButton = styled.button`
   }
 `;
 
-const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
+const OrderList = ({
+  Orders,
+  onlyShowCancelRequests = false,
+  onlyCancelled = false,
+}) => {
   const { loading } = useSelector((state) => state.Seller);
   const [selectedOrder, setSelectedOrder] = useState();
   const [newStatus, setNewStatus] = useState("");
   const [isConfirmationModalOpen, setIsConfirmaitonModalOpen] = useState(false);
+  const [isDenyCancelRequestModalOpen, setIsDenyCancelRequestModalOpen] =
+    useState(false);
+  const [isCancelOrderModalOpen, setIsCancelModalOpen] = useState(false);
   const [statusList, setStatusList] = useState([
     { value: "waitingConfirmation", text: "Waiting For Seller Confirmation" },
     { value: "confirmed", text: "Order Confirmed By Seller" },
-    { value: "cancelRequest", text: "Customer Requested To Cancel The Order" },
+    { value: "cancelRequest", text: "Customer, Requested To Cancel The Order" },
     { value: "cancelled", text: "Order Is Cancelled" },
     { value: "packing", text: "Order Is Packing" },
     { value: "shipped", text: "Order Is Shipped" },
@@ -94,10 +105,27 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
     document.body.removeChild(tempInput);
   }
 
-  function changeStatus(e, itemId) {
-    setNewStatus(e.target.value);
-    setSelectedOrder(itemId);
-    setIsConfirmaitonModalOpen(true);
+  function changeStatus(e, itemId, groupId) {
+    if (e.target.value === "cancelled") {
+      setNewStatus(e.target.value);
+      setSelectedOrder(groupId);
+      setIsCancelModalOpen(true);
+    } else {
+      setNewStatus(e.target.value);
+      setSelectedOrder(itemId);
+      setIsConfirmaitonModalOpen(true);
+    }
+  }
+
+  function handleOrderCancellation(status, groupId) {
+    if (status === "cancelled") {
+      setSelectedOrder(groupId);
+      setIsCancelModalOpen(true);
+    }
+    if (status === "deny") {
+      setSelectedOrder(groupId);
+      setIsDenyCancelRequestModalOpen(true);
+    }
   }
 
   function getOrderDetails(groupId) {
@@ -135,9 +163,7 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
           justifyContent: "center",
         }}
       >
-        <p className="lead">
-          You Don't Have Any Orders
-        </p>
+        <p className="lead">You Don't Have Any Orders</p>
       </Container>
     );
   }
@@ -150,8 +176,34 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
           orderGroup={selectedOrderGroup}
         />
       )}
+      {isCancelOrderModalOpen && (
+        <Modal
+          isRedux={true}
+          action={cancelOrder}
+          message={
+            "If you cancel the order the customer will be refunded. Do you want to cancel this order?"
+          }
+          setIsModalOpen={setIsCancelModalOpen}
+          header={"Cancel Order"}
+          btnText={"Cancel Order"}
+          param={selectedOrder}
+        />
+      )}
+      {isDenyCancelRequestModalOpen && (
+        <Modal
+          isRedux={true}
+          action={denyOrderCancelRequest}
+          message={
+            "If you cancel this request. Order's status will be set to 'Confirmed By Seller'. No body will be refunded. Do you want to cancel?"
+          }
+          setIsModalOpen={setIsDenyCancelRequestModalOpen}
+          header={"Deny Cancellation"}
+          btnText={"Deny Cancellation"}
+          param={selectedOrder}
+        />
+      )}
       {isConfirmationModalOpen && (
-        <ConfirmationModal
+        <Modal
           isRedux={true}
           action={"buraya bir aksiyon koy"}
           message={
@@ -160,7 +212,7 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
           setIsModalOpen={setIsConfirmaitonModalOpen}
           header={"Change Status"}
           btnText={"Change Status"}
-          param={"gerekirse parametre koy"}
+          param={newStatus}
           secondParam={"gerekirse ikinci parametreyi de koy"}
         />
       )}
@@ -203,7 +255,11 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
                         Copy ID
                       </CopyButton>
                     </td>
-                    <td valign="middle" style={{ fontSize: "13px" }}>
+                    <td
+                      valign="middle"
+                      style={{ fontSize: "13px", minWidth: "200px" }}
+                      className="product-actions-product-name"
+                    >
                       <b
                         className="product-actions-product-name"
                         onClick={() =>
@@ -242,21 +298,32 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
                     </td>
                     <td valign="middle">{item.order.Product.product.stock}</td>
                     <td valign="middle">
-                      <Select
-                        value={item.order.status}
-                        onChange={(e) => changeStatus(e)}
-                      >
-                        {onlyShowCancelRequests ? (
-                          <>
-                            <option value="cancelRequest">
-                              Customer Requested To Cancel The Order
-                            </option>
-                            <option value="cancelled">
-                              Order Is Cancelled
-                            </option>
-                          </>
-                        ) : (
-                          statusList.map((status, index) => {
+                      {onlyCancelled ? (
+                        item.order.status
+                      ) : onlyShowCancelRequests ? (
+                        <Select
+                          value={item.order.status}
+                          onChange={(e) =>
+                            handleOrderCancellation(
+                              e.target.value,
+                              item.groupId
+                            )
+                          }
+                        >
+                          <option value="cancelRequest">
+                            Customer, Requested To Cancel The Order
+                          </option>
+                          <option value="cancelled">Cancel Order</option>
+                          <option value="deny">Deny Cancel Request</option>
+                        </Select>
+                      ) : (
+                        <Select
+                          value={item.order.status}
+                          onChange={(e) =>
+                            changeStatus(e, item.order._id, item.groupId)
+                          }
+                        >
+                          {statusList.map((status, index) => {
                             return (
                               status.value !== "cancelRequest" && (
                                 <option key={index} value={status.value}>
@@ -264,9 +331,9 @@ const OrderList = ({ Orders, onlyShowCancelRequests = false }) => {
                                 </option>
                               )
                             );
-                          })
-                        )}
-                      </Select>
+                          })}
+                        </Select>
+                      )}
                     </td>
                     <td valign="middle">
                       <DetailsButton

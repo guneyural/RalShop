@@ -17,6 +17,8 @@ import {
   SELLER_DELETE_PRODUCT,
   SELLER_UPDATE_PRODUCT,
   GET_SELLER_ORDERS,
+  DENY_ORDER_CANCEL_REQUEST,
+  CANCEL_ORDER,
 } from "../actions/types";
 
 const initialState = {
@@ -45,7 +47,41 @@ const initialState = {
 };
 
 export const Seller = (state = initialState, action) => {
+  let newOrders = [];
   switch (action.type) {
+    case DENY_ORDER_CANCEL_REQUEST:
+      newOrders = state.orders.map((item) => {
+        let temp = 0;
+        if (item.groupId === action.payload.groupId) {
+          temp++;
+          return { ...item, order: action.payload.newOrders[temp - 1] };
+        } else {
+          return item;
+        }
+      });
+
+      return {
+        ...state,
+        error: { message: null, status: null },
+        loading: false,
+        orders: newOrders,
+      };
+    case CANCEL_ORDER:
+      newOrders = state.orders.map((item) => {
+        let temp = 0;
+        if (item.groupId === action.payload.groupId) {
+          temp++;
+          return { ...item, order: action.payload.newOrders[temp - 1] };
+        } else {
+          return item;
+        }
+      });
+      return {
+        ...state,
+        error: { message: null, status: null },
+        loading: false,
+        orders: newOrders,
+      };
     case GET_SELLER_ORDERS:
       return {
         ...state,

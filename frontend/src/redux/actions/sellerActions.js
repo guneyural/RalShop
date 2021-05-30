@@ -18,9 +18,54 @@ import {
   SELLER_DELETE_PRODUCT,
   SELLER_UPDATE_PRODUCT,
   GET_SELLER_ORDERS,
+  DENY_ORDER_CANCEL_REQUEST,
+  CANCEL_ORDER,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
+
+export const cancelOrder = (groupId) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .post("/api/order/refund", { groupId }, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: CANCEL_ORDER, payload: { groupId, newOrders: data } });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const denyOrderCancelRequest = (groupId) => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .post("/api/order/cancel-request/deny", { groupId }, tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({
+        type: DENY_ORDER_CANCEL_REQUEST,
+        payload: { groupId, newOrders: data },
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
 
 export const getSellerOrders = () => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
