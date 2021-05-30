@@ -10,6 +10,9 @@ import {
   MdKeyboardArrowUp,
   MdInfoOutline,
 } from "react-icons/md";
+import { TiTick, TiCancel } from "react-icons/ti";
+import { FcPackage, FcShipped } from "react-icons/fc";
+import { MdLocalShipping } from "react-icons/md";
 import OrderDetailsModal from "./orderDetailsModal";
 import SellerDetailsModal from "./sellerDetailsModal";
 import ReactStars from "react-rating-stars-component";
@@ -465,23 +468,68 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                         <OrderItemPrice
                           style={{
                             fontSize: "14px",
-                            color: "var(--text-muted)",
                           }}
                         >
                           <span
                             style={{
                               fontWeight: "normal",
-                              textDecoration: "underline",
                             }}
                           >
                             {orderItem.order.status === "waitingConfirmation" &&
                               "Waiting confirmation by seller"}
                             {orderItem.order.status === "cancelRequest" &&
-                              "Waiting for seller to confirm cancellation"}
-                            {orderItem.order.status === "confirmed" &&
-                              "Seller confirmed your order"}
-                            {orderItem.order.status === "cancelled" &&
-                              "Order is cancelled"}
+                              "Waiting confirmation by seller to confirm cancellation"}
+                            {orderItem.order.status === "confirmed" && (
+                              <>
+                                <TiTick
+                                  style={{
+                                    fontSize: "18px",
+                                    color: "black",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order confirmed by the seller
+                              </>
+                            )}
+                            {orderItem.order.status === "cancelled" && (
+                              <>
+                                <TiCancel
+                                  style={{
+                                    fontSize: "18px",
+                                    color: "red",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is cancelled
+                              </>
+                            )}
+                            {orderItem.order.status === "packing" && (
+                              <>
+                                <FcPackage /> Order is packing
+                              </>
+                            )}
+                            {orderItem.order.status === "shipped" && (
+                              <>
+                                <MdLocalShipping
+                                  style={{
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is shipped
+                              </>
+                            )}
+                            {orderItem.order.status === "delivered" && (
+                              <>
+                                <FcShipped
+                                  style={{
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is delivered
+                              </>
+                            )}
                           </span>
                         </OrderItemPrice>
                         <OrderItemBottom>

@@ -4,6 +4,9 @@ import { useHistory } from "react-router-dom";
 import { createChatroom } from "../redux/actions/chatActions";
 import styled from "styled-components";
 import { FaTimes } from "react-icons/fa";
+import { MdLocalShipping } from "react-icons/md";
+import { FcShipped, FcPackage } from "react-icons/fc";
+import { TiTick, TiCancel } from "react-icons/ti";
 import { priceConverter } from "../utils/helpers";
 import moment from "moment";
 
@@ -371,18 +374,64 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
                           <span
                             style={{
                               fontSize: "14px",
-                              color: "var(--text-muted)",
                             }}
                           >
-                            <b style={{ color: "#333" }}>Status:</b>
+                            <b style={{ color: "#333" }}>Status:</b>{" "}
                             {order.order.status === "waitingConfirmation" &&
                               "Waiting confirmation by seller"}
                             {order.order.status === "cancelRequest" &&
                               "Waiting confirmation by seller to confirm cancellation"}
-                            {order.order.status === "confirmed" &&
-                              "Order confirmed by the seller"}
-                            {order.order.status === "cancelled" &&
-                              "Order is cancelled"}
+                            {order.order.status === "confirmed" && (
+                              <>
+                                <TiTick
+                                  style={{
+                                    fontSize: "18px",
+                                    color: "black",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order confirmed by the seller
+                              </>
+                            )}
+                            {order.order.status === "cancelled" && (
+                              <>
+                                <TiCancel
+                                  style={{
+                                    fontSize: "18px",
+                                    color: "red",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is cancelled
+                              </>
+                            )}
+                            {order.order.status === "packing" && (
+                              <>
+                                <FcPackage /> Order is packing
+                              </>
+                            )}
+                            {order.order.status === "shipped" && (
+                              <>
+                                <MdLocalShipping
+                                  style={{
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is shipped
+                              </>
+                            )}
+                            {order.order.status === "delivered" && (
+                              <>
+                                <FcShipped
+                                  style={{
+                                    fontSize: "18px",
+                                    fontWeight: "bold",
+                                  }}
+                                />{" "}
+                                Order is delivered
+                              </>
+                            )}
                           </span>
                         </OrderItem>
                       </div>
