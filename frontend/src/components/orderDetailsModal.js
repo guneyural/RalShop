@@ -308,14 +308,16 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
             <AddressBox>
               <AddressBoxTop>
                 <b>Seller Information</b>
-                <span
-                  style={{ fontSize: "14px", cursor: "pointer" }}
-                  onClick={() =>
-                    communicateSeller(orderGroup[0].order.seller._id)
-                  }
-                >
-                  Send Message
-                </span>
+                {!inSellerRoute && (
+                  <span
+                    style={{ fontSize: "14px", cursor: "pointer" }}
+                    onClick={() =>
+                      communicateSeller(orderGroup[0].order.seller._id)
+                    }
+                  >
+                    Send Message
+                  </span>
+                )}
               </AddressBoxTop>
               <AddressBoxInner>
                 <InnerItem style={{ borderBottom: "1px solid #dbdbdb" }}>
@@ -377,6 +379,10 @@ const OrderDetailsModal = ({ setIsOrderDetailsModalOpen, orderGroup }) => {
                               "Waiting confirmation by seller"}
                             {order.order.status === "cancelRequest" &&
                               "Waiting confirmation by seller to confirm cancellation"}
+                            {order.order.status === "confirmed" &&
+                              "Order confirmed by the seller"}
+                            {order.order.status === "cancelled" &&
+                              "Order is cancelled"}
                           </span>
                         </OrderItem>
                       </div>

@@ -5,7 +5,11 @@ import styled from "styled-components";
 import { priceConverter } from "../utils/helpers";
 import moment from "moment";
 import { Link, useHistory } from "react-router-dom";
-import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import {
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdInfoOutline,
+} from "react-icons/md";
 import OrderDetailsModal from "./orderDetailsModal";
 import SellerDetailsModal from "./sellerDetailsModal";
 import ReactStars from "react-rating-stars-component";
@@ -290,7 +294,7 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
   const showCancelButton = (key) => {
     return orders[key][0].order.status === "delivered" ||
       orders[key][0].order.status === "cancelRequest" ||
-      orders[key][0].order === "cancelled"
+      orders[key][0].order.status === "cancelled"
       ? false
       : true;
   };
@@ -409,6 +413,18 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                   maxHeight: visibleOrder === order ? "1000px" : "0",
                 }}
               >
+                {orders[order][0].order.note && (
+                  <span
+                    style={{ fontSize: "14px", color: "var(--text-muted)" }}
+                  >
+                    <span style={{ fontSize: "20px", color: "black" }}>
+                      <b>
+                        <MdInfoOutline />
+                      </b>
+                    </span>{" "}
+                    {orders[order][0].order.note}
+                  </span>
+                )}
                 {orders[order].map((orderItem, idx) => {
                   return (
                     <div className="col-md-6" key={idx}>
@@ -462,6 +478,10 @@ const ProfilePageOrderSection = ({ setIsEmpty, isEmpty }) => {
                               "Waiting confirmation by seller"}
                             {orderItem.order.status === "cancelRequest" &&
                               "Waiting for seller to confirm cancellation"}
+                            {orderItem.order.status === "confirmed" &&
+                              "Seller confirmed your order"}
+                            {orderItem.order.status === "cancelled" &&
+                              "Order is cancelled"}
                           </span>
                         </OrderItemPrice>
                         <OrderItemBottom>
