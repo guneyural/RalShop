@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Logo from "../assets/logo.png";
 import Styled from "styled-components";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import AddressSection from "../components/checkoutAddress";
 import PaymentSection from "../components/checkoutPayment";
 import AddressModal from "../components/AddressModal";
@@ -43,6 +44,7 @@ const CheckoutPage = () => {
   const [activeTab, setActiveTab] = useState("address");
   const [errorMsg, setErrorMsg] = useState("");
   const [isBillingAddress, setIsBillingAddress] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     let sum = 0,
@@ -53,9 +55,15 @@ const CheckoutPage = () => {
         itemSumToBuy += item.qty;
       }
     });
+
+    if (itemSumToBuy === 0) {
+      history.push("/cart");
+    }
+
     setTotal(sum);
     setItemsToBuy(itemSumToBuy);
   }, [Cart]);
+
   useEffect(() => {
     const getNavItems = document.querySelectorAll(".checkout-nav div");
     getNavItems.forEach((navItem) => {
