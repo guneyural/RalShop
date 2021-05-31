@@ -6,6 +6,12 @@
   --btn-bg-color: #e9e9e9;
   --text-muted: #706464;
 }
+
+body,
+html {
+  font-family: "Rubik", sans-serif;
+}
+
 .navbar-middle.seller a {
   color: #f8f9fa !important;
   padding-left: 20px;
