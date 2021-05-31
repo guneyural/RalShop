@@ -854,16 +854,13 @@ const ProductPage = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Link to="/" id="product-link">
+                  <Link id="product-link">
                     <h6 style={{ fontSize: "18px" }}>
                       {Product.shop.companyName}{" "}
                       <div className="badge bg-primary">
                         {Product.shop.rating}
                       </div>
                     </h6>
-                  </Link>
-                  <Link to="/" id="product-link">
-                    Go To Shop
                   </Link>
                 </section>
                 <p style={{ marginTop: "-8px" }}>{Product.shop.fullname}</p>

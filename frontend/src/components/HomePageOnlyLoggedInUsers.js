@@ -56,7 +56,7 @@ const RowItem = styled.div`
     margin: auto;
   }
 
-  @media (max-width: 405px) {
+  @media (max-width: 485px) {
     width: 100%;
   }
 `;
@@ -124,7 +124,7 @@ const WishlistInner = styled.div`
   display: flex;
 
   &::-webkit-scrollbar {
-    height: 2px;
+    height: 4px;
   }
   &::-webkit-scrollbar-track {
     background: #dddddd;
@@ -319,54 +319,50 @@ const HomePageOnlyLoggedInUsers = () => {
         />
       )}
       <RowItem className="col-lg-4 col-md-5 col-6 mb-2">
-        <ProfileBox>
-          <div className="row">
-            <div className="col-sm-5 col-6">
-              <ProfilePhotoSection>
-                <ProfileImage
-                  src={
-                    user.hasPhoto !== null
-                      ? user.hasPhoto
-                        ? user.profilePhoto.url
-                        : NoProfilePhoto
-                      : NoProfilePhoto
-                  }
-                  alt="profile img"
-                />
-              </ProfilePhotoSection>
-            </div>
-            <div className="col-sm-7 col-6">
-              <p>
-                <b>{user.username}</b>
-                <p
-                  className="m-0 p-0"
-                  style={{
-                    marginTop: "-8px",
-                    color: "var(--text-muted)",
-                    fontSize: "13px",
-                  }}
-                >
-                  Member since {moment(user.createdAt).format("ll")}
+        {user !== null && (
+          <ProfileBox>
+            <div className="row">
+              <div className="col-sm-5 col-6">
+                <ProfilePhotoSection>
+                  <ProfileImage
+                    src={user.hasPhoto ? user.profilePhoto.url : NoProfilePhoto}
+                    alt="profile img"
+                  />
+                </ProfilePhotoSection>
+              </div>
+              <div className="col-sm-7 col-6">
+                <p>
+                  <b>{user.username}</b>
+                  <p
+                    className="m-0 p-0"
+                    style={{
+                      marginTop: "-8px",
+                      color: "var(--text-muted)",
+                      fontSize: "13px",
+                    }}
+                  >
+                    Member since {moment(user.createdAt).format("ll")}
+                  </p>
                 </p>
-              </p>
-              <ProfileButton
-                className="m-0"
-                onClick={() => history.push("/account/settings")}
-              >
-                <MdSettings
-                  style={{ display: "inline-block", marginTop: "-2px" }}
-                />{" "}
-                Settings
-              </ProfileButton>
-              <ProfileButton
-                className="m-0"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <BiLogOut /> Logout
-              </ProfileButton>
+                <ProfileButton
+                  className="m-0"
+                  onClick={() => history.push("/account/settings")}
+                >
+                  <MdSettings
+                    style={{ display: "inline-block", marginTop: "-2px" }}
+                  />{" "}
+                  Settings
+                </ProfileButton>
+                <ProfileButton
+                  className="m-0"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <BiLogOut /> Logout
+                </ProfileButton>
+              </div>
             </div>
-          </div>
-        </ProfileBox>
+          </ProfileBox>
+        )}
       </RowItem>
       <RowItem className="col-lg-8 col-md-7 col-6 mb-2">
         <WishlistBox>
@@ -645,7 +641,9 @@ const HomePageOnlyLoggedInUsers = () => {
               />
             ) : (
               <>
-                <ChatCount>{Chat.chatrooms.length} Chats</ChatCount>
+                {Chat.chatrooms.length > 0 && (
+                  <ChatCount>{Chat.chatrooms.length} Chats</ChatCount>
+                )}
                 <div className="main-area">
                   {Chat.chatrooms.length >= 1 &&
                     Chat.chatrooms.map((room, index) => {

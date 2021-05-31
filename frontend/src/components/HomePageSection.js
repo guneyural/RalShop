@@ -32,7 +32,7 @@ const RowItem = styled.div`
     margin: auto;
   }
 
-  @media (max-width: 405px) {
+  @media (max-width: 485px) {
     width: 100%;
   }
 `;
@@ -67,7 +67,7 @@ const BoxInner = styled.div`
   display: flex;
 
   &::-webkit-scrollbar {
-    height: 2px;
+    height: 4px;
   }
   &::-webkit-scrollbar-track {
     background: #dddddd;

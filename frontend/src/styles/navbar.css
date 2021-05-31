@@ -162,6 +162,18 @@ body {
   z-index: 1000;
   overflow-y: auto;
 }
+.navbar-search-box::-webkit-scrollbar {
+  width: 3px;
+}
+.navbar-search-box::-webkit-scrollbar-track {
+  background: #dddddd;
+}
+.navbar-search-box::-webkit-scrollbar-thumb {
+  background: #acaaaa;
+}
+.navbar-search-box::-webkit-scrollbar-thumb:hover {
+  background: #c2c2c2;
+}
 .navbar-search-results {
   position: relative;
   padding-top: 5px;
