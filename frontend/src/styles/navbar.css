@@ -274,7 +274,7 @@ body {
   margin: 0;
 }
 .category-list::-webkit-scrollbar {
-  height: 7px;
+  height: 3px;
 }
 .category-list::-webkit-scrollbar-track {
   background: #dddddd;

@@ -324,7 +324,13 @@ const HomePageOnlyLoggedInUsers = () => {
             <div className="col-sm-5 col-6">
               <ProfilePhotoSection>
                 <ProfileImage
-                  src={user.hasPhoto ? user.profilePhoto.url : NoProfilePhoto}
+                  src={
+                    user.hasPhoto !== null
+                      ? user.hasPhoto
+                        ? user.profilePhoto.url
+                        : NoProfilePhoto
+                      : NoProfilePhoto
+                  }
                   alt="profile img"
                 />
               </ProfilePhotoSection>
