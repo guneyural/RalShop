@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const { ShopValidation } = require("../validations/shcmeas");
 const expressError = require("../utils/expressError");
 const Shop = require("../models/shop");
+const Order = require("../models/orders");
+const Product = require("../models/product");
 const bcrypt = require("bcrypt");
 const mongoId = require("mongoose").Types.ObjectId;
 const Joi = require("joi");
@@ -262,6 +264,7 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     return next(new expressError("Enter Valid ID.", 400));
   const getShop = await Shop.findById(req.shop.id);
   if (!getShop) return next(new expressError("Shop Does Not Exist.", 400));
+  let seller = {};
   const {
     _id,
     fullname,
@@ -277,7 +280,7 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     rating,
     ratingCount,
   } = getShop;
-  res.json({
+  seller = {
     id: _id,
     fullname,
     createdAt,
@@ -291,7 +294,38 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     links,
     rating,
     ratingCount,
+  };
+
+  const productsOnSale = await Product.countDocuments({
+    $and: [{ shop: req.shop.id }, { stock: { $gt: 0 } }],
   });
+  const productsOutOfStock = await Product.countDocuments({
+    $and: [{ shop: req.shop.id }, { stock: { $lt: 1 } }],
+  });
+  const allProducts = await Product.countDocuments({ shop: req.shop.id });
+  const confirmationRequiredOrders = await Order.count({
+    $and: [{ seller: req.shop.id }, { status: "waitingConfirmation" }],
+  });
+  const cancelledOrders = await Order.countDocuments({
+    $and: [{ seller: req.shop.id }, { status: "cancelled" }],
+  });
+  const allOrders = await Order.countDocuments({ seller: req.shop.id });
+  const allCustomers = await Order.distinct("user", {
+    seller: req.shop.id,
+  });
+
+  seller = {
+    ...seller,
+    productsOnSale,
+    productsOutOfStock,
+    allProducts,
+    confirmationRequiredOrders,
+    cancelledOrders,
+    allOrders,
+    allCustomers: allCustomers.length,
+  };
+
+  res.json(seller);
 });
 
 const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
