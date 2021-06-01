@@ -20,6 +20,15 @@ const BoxTop = styled.div`
   align-items: center;
   margin-bottom: 10px;
 `;
+const BoxHeader = styled.h5`
+  @media (max-width: 576px) {
+    font-size: 17px !important;
+  }
+
+  @media (max-width: 372px) {
+    font-size: 16px !important;
+  }
+`;
 const IconBox = styled.div`
   background: #333;
   color: white;
@@ -193,9 +202,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-3 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>On Sale</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FiBox />
               </IconBox>
@@ -208,9 +217,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-4 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>Out Of Stock</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FiBox />
               </IconBox>
@@ -223,9 +232,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-4 col-sm-6 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>All Products</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FiBox />
               </IconBox>
@@ -238,9 +247,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-4 col-sm-6 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>Waiting Orders</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FaShoppingCart />
               </IconBox>
@@ -253,9 +262,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-4 col-sm-6 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>Cancelled Orders</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FaShoppingCart />
               </IconBox>
@@ -268,9 +277,9 @@ const SellerHomePageSections = () => {
         <div className="col-lg-3 col-md-4 col-sm-6 col-6">
           <ProductBox>
             <BoxTop>
-              <h5>
+              <BoxHeader>
                 <b>Customers</b>
-              </h5>
+              </BoxHeader>
               <IconBox>
                 <FaUserPlus />
               </IconBox>
