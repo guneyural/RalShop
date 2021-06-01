@@ -126,9 +126,6 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                     </Link>
                   </div>
                 </span>
-                <Link to="/seller/dashboard" className="seller-nav-link">
-                  Dashboard
-                </Link>
               </section>
             </section>
             <section
@@ -250,9 +247,6 @@ const SellerNavbar = ({ isNavOpen, setIsNavOpen, windowSize }) => {
                 </Link>
               </div>
             </span>
-            <Link to="/seller/dashboard" className="seller-mobile-link">
-              Dashboard
-            </Link>
             <Link
               to="/chat/seller"
               className="seller-mobile-link"

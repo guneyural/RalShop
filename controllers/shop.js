@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { ShopValidation } = require("../validations/shcmeas");
 const expressError = require("../utils/expressError");
 const Shop = require("../models/shop");
+const Rating = require("../models/sellerRating");
 const Order = require("../models/orders");
 const Product = require("../models/product");
 const bcrypt = require("bcrypt");
@@ -313,6 +314,12 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   const allCustomers = await Order.distinct("user", {
     seller: req.shop.id,
   });
+  const orderGroups = await Order.distinct("groupId", { seller: req.shop.id });
+  const totalPrice = await Order.aggregate([
+    { $match: { $or: [...orderGroups.map((item) => ({ groupId: item }))] } },
+    { $group: { _id: null, amount: { $sum: "$totalAmount" } } },
+  ]);
+  const reviewCount = await Rating.count({ seller: req.shop.id });
 
   seller = {
     ...seller,
@@ -323,6 +330,8 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     cancelledOrders,
     allOrders,
     allCustomers: allCustomers.length,
+    totalPrice,
+    reviewCount,
   };
 
   res.json(seller);
