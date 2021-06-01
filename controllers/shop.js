@@ -314,7 +314,10 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   const allCustomers = await Order.distinct("user", {
     seller: req.shop.id,
   });
-  const orderGroups = await Order.distinct("groupId", { seller: req.shop.id });
+  const orderGroups = await Order.distinct("groupId", {
+    seller: req.shop.id,
+    status: "delivered",
+  });
   const totalPrice = await Order.aggregate([
     { $match: { $or: [...orderGroups.map((item) => ({ groupId: item }))] } },
     { $group: { _id: null, amount: { $sum: "$totalAmount" } } },
