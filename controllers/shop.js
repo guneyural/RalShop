@@ -314,15 +314,41 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   const allCustomers = await Order.distinct("user", {
     seller: req.shop.id,
   });
-  const orderGroups = await Order.distinct("groupId", {
+  const orderGroups = await Order.find({
     seller: req.shop.id,
     status: "delivered",
   });
-  const totalPrice = await Order.aggregate([
-    { $match: { $or: [...orderGroups.map((item) => ({ groupId: item }))] } },
-    { $group: { _id: null, amount: { $sum: "$totalAmount" } } },
-  ]);
+
+  const uniqueGroupIds = Array.from(
+    new Set(orderGroups.map((item) => item.groupId))
+  ).map((id) => {
+    return orderGroups.find((group) => group.groupId === id);
+  });
+
+  let sum = 0;
+  uniqueGroupIds.map((item) => (sum += item.totalAmount));
+
   const reviewCount = await Rating.count({ seller: req.shop.id });
+
+  const lastMonth = new Date();
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+  const today = new Date(new Date() - 60 * 60 * 1000);
+
+  const lastMonthOrders = await Order.find({
+    $and: [
+      { seller: req.shop.id },
+      { status: "delivered" },
+      {
+        createdAt: {
+          $gte: lastMonth,
+          $lt: today,
+        },
+      },
+    ],
+  });
+  console.log(
+    "GEÇEN AY VERİLEN SİPARİŞ SAYISI ===== " + lastMonthOrders.length
+  );
 
   seller = {
     ...seller,
@@ -333,7 +359,7 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     cancelledOrders,
     allOrders,
     allCustomers: allCustomers.length,
-    totalPrice,
+    totalPrice: sum,
     reviewCount,
   };
 

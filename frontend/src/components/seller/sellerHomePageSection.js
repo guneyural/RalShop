@@ -196,7 +196,7 @@ const SellerHomePageSections = () => {
                 <BiMoney />
               </IconBox>
             </BoxTop>
-            <h4>{priceConverter(shop.totalPrice[0].amount)}</h4>
+            <h4>{priceConverter(shop.totalPrice)}</h4>
           </RevenueBox>
         </div>
         <div className="col-lg-3 col-md-3 col-6">

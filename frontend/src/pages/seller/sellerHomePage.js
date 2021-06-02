@@ -5,6 +5,11 @@ const SellerHomePage = () => {
   return (
     <>
       <Sections />
+      <h2
+        style={{ marginTop: "30px", marginBottom: "20px", fontWeight: "bold" }}
+      >
+        Dashboard
+      </h2>
     </>
   );
 };
