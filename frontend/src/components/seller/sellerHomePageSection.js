@@ -4,6 +4,7 @@ import styled from "styled-components";
 import moment from "moment";
 import { MdLocationOn, MdPerson } from "react-icons/md";
 import { BiLogOut, BiRightArrowAlt, BiMoney } from "react-icons/bi";
+import { BsGraphUp } from "react-icons/bs";
 import { FaUserPlus, FaShoppingCart } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
 import LoadingIcon from "../../assets/loading.gif";
@@ -103,6 +104,11 @@ const ReviewCount = styled.p`
   font-size: 15px;
   text-align: center;
 `;
+const IncreaseText = styled.p`
+  margin: 0;
+  margin-top: -8px;
+  font-size: 15px;
+`;
 
 const SellerHomePageSections = () => {
   const { shop } = useSelector((state) => state.Seller);
@@ -121,7 +127,7 @@ const SellerHomePageSections = () => {
         />
       )}
       <div className="row">
-        <div className="col-lg-6 col-md-6 col-sm-8">
+        <div className="col-lg-6 col-md-8 col-sm-8 m-auto col-12">
           <ProfileBox>
             {shop !== null ? (
               <>
@@ -186,7 +192,7 @@ const SellerHomePageSections = () => {
             )}
           </ProfileBox>
         </div>
-        <div className="col-lg-3 col-md-3 col-sm-4">
+        <div className="col-lg-3 col-sm-6">
           <RevenueBox>
             <BoxTop>
               <h4>
@@ -197,9 +203,30 @@ const SellerHomePageSections = () => {
               </IconBox>
             </BoxTop>
             <h4>{priceConverter(shop.totalPrice)}</h4>
+            <IncreaseText
+              className={
+                shop.growthRate[0] === "-" ? "text-danger" : "text-success"
+              }
+            >
+              <BsGraphUp /> {shop.growthRate}%{" "}
+              {`${shop.growthRate[0] === "-" ? "Down" : "Up"}`}
+            </IncreaseText>
           </RevenueBox>
         </div>
-        <div className="col-lg-3 col-md-3 col-6">
+        <div className="col-lg-3 col-sm-6">
+          <ProductBox>
+            <BoxTop>
+              <BoxHeader>
+                <b>Last Month Revenue</b>
+              </BoxHeader>
+              <IconBox>
+                <BiMoney />
+              </IconBox>
+            </BoxTop>
+            <h4>{priceConverter(shop.lastMonthRevenue)}</h4>
+          </ProductBox>
+        </div>
+        <div className="col-lg-3 col-md-4 col-6">
           <ProductBox>
             <BoxTop>
               <BoxHeader>
@@ -225,7 +252,7 @@ const SellerHomePageSections = () => {
               </IconBox>
             </BoxTop>
             <h4>
-              <b>{shop.productsOnSale}</b>
+              <b>{shop.productsOutOfStock}</b>
             </h4>
           </ProductBox>
         </div>
@@ -264,6 +291,21 @@ const SellerHomePageSections = () => {
             <BoxTop>
               <BoxHeader>
                 <b>Cancelled Orders</b>
+              </BoxHeader>
+              <IconBox>
+                <FaShoppingCart />
+              </IconBox>
+            </BoxTop>
+            <h4>
+              <b>{shop.cancelledOrders}</b>
+            </h4>
+          </ProductBox>
+        </div>
+        <div className="col-lg-3 col-md-4 col-sm-6 col-6">
+          <ProductBox>
+            <BoxTop>
+              <BoxHeader>
+                <b>All Orders</b>
               </BoxHeader>
               <IconBox>
                 <FaShoppingCart />

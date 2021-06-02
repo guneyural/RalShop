@@ -340,15 +340,37 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
       { status: "delivered" },
       {
         createdAt: {
-          $gte: lastMonth,
-          $lt: today,
+          $lte: lastMonth,
         },
       },
     ],
   });
-  console.log(
-    "GEÇEN AY VERİLEN SİPARİŞ SAYISI ===== " + lastMonthOrders.length
-  );
+  const uniqueLastMonthOrders = Array.from(
+    new Set(lastMonthOrders.map((item) => item.groupId))
+  ).map((id) => {
+    return lastMonthOrders.find((group) => group.groupId === id);
+  });
+  let lastMonthRevenue = 0;
+
+  uniqueLastMonthOrders.map((item) => (lastMonthRevenue += item.totalAmount));
+
+  let divideBy = Math.trunc(lastMonthRevenue === 0 ? 1 : lastMonthRevenue);
+  let growthRate = (((Math.trunc(sum) - divideBy) / divideBy) * 100).toFixed(2);
+
+  let seperateDecimal = growthRate.split(".");
+
+  let commaSeperatedNum = String(seperateDecimal[0])
+    .replace(/\D/g, "")
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  seperateDecimal[0] = commaSeperatedNum;
+
+  let finalGrowthRate = "";
+  if (growthRate[0] === "-") {
+    finalGrowthRate = `-${seperateDecimal.join(".")}`;
+  } else {
+    finalGrowthRate = seperateDecimal.join(".");
+  }
 
   seller = {
     ...seller,
@@ -360,6 +382,8 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
     allOrders,
     allCustomers: allCustomers.length,
     totalPrice: sum,
+    lastMonthRevenue,
+    growthRate: finalGrowthRate,
     reviewCount,
   };
 
