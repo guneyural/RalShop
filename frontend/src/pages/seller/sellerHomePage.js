@@ -1,5 +1,6 @@
 import React from "react";
 import Sections from "../../components/seller/sellerHomePageSection";
+import Dashboard from "../../components/seller/HomePageDashboard";
 
 const SellerHomePage = () => {
   return (
@@ -13,8 +14,9 @@ const SellerHomePage = () => {
           textAlign: "center",
         }}
       >
-        Dashboard
+        Charts
       </h1>
+      <Dashboard />
     </>
   );
 };
