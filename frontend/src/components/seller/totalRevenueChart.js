@@ -34,7 +34,7 @@ const HomePageDashboard = () => {
   const chartConfigs = {
     type: "timeseries",
     width: "100%",
-    height: "400",
+    height: "320",
     dataFormat: "json",
     renderAt: "container",
     dataSource: {

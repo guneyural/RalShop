@@ -47,7 +47,6 @@ export const changeOrderStatus = (groupId, status) => (dispatch) => {
       });
     });
 };
-
 export const cancelOrder = (groupId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
@@ -67,7 +66,6 @@ export const cancelOrder = (groupId) => (dispatch) => {
       });
     });
 };
-
 export const denyOrderCancelRequest = (groupId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
