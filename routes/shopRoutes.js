@@ -8,6 +8,7 @@ const {
   sendForgetPasswordEmail,
   checkResetPasswordToken,
   changePassword,
+  getSellerCharts,
 } = require("../controllers/shop");
 const { isShop } = require("../middlewares/isAuth");
 const rateLimit = require("express-rate-limit");
@@ -26,5 +27,6 @@ Router.post("/changePassword", limiter, changePassword);
 Router.put("/update/:id", isShop, limiter, editShop);
 Router.get("/p/:id", getShopById);
 Router.get("/current", isShop, getCurrentShop);
+Router.get("/charts", isShop, getSellerCharts);
 
 module.exports = Router;

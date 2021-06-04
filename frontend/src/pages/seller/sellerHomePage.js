@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getSellerOrders } from "../../redux/actions/sellerActions";
+import {
+  getSellerOrders,
+  getSellerCharts,
+} from "../../redux/actions/sellerActions";
 import LoadingGif from "../../assets/loading.gif";
 import styled from "styled-components";
 import Sections from "../../components/seller/sellerHomePageSection";
@@ -17,7 +20,7 @@ const LoadingIcon = styled.img`
 `;
 
 const SellerHomePage = () => {
-  const { loading, orders } = useSelector((state) => state.Seller);
+  const { loading, orders, charts } = useSelector((state) => state.Seller);
   const [uniqueOrders, setUniqueOrders] = useState([]);
   const [confirmedOrders, setConfirmedOrders] = useState(0);
   const [confirmationRequiredOrders, setConfirmedRequiredOrders] = useState(0);
@@ -31,6 +34,7 @@ const SellerHomePage = () => {
 
   useEffect(() => {
     dispatch(getSellerOrders());
+    dispatch(getSellerCharts());
   }, [dispatch]);
 
   useEffect(() => {
@@ -85,19 +89,19 @@ const SellerHomePage = () => {
             <h5 style={{ textAlign: "center" }}>
               <b>Total Revenue Growth By Month</b>
             </h5>
-            <TotalRevenueChart />
+            <TotalRevenueChart Data={charts.revenueGrowthByMonth} />
           </div>
           <div className="col-md-6 mt-4">
             <h5 style={{ textAlign: "center" }}>
               <b>Orders</b>
             </h5>
-            <OrdersByMonthChart />
+            <OrdersByMonthChart Data={charts.ordersByMonth} />
           </div>
           <div className="col-12 mt-4">
             <h5 style={{ textAlign: "center" }}>
               <b>Earned Money By Month</b>
             </h5>
-            <RevenueByMonthChart />
+            <RevenueByMonthChart Data={charts.monthlyRevenue} />
           </div>
           <div className="col-md-12 mt-4">
             <h5 style={{ textAlign: "center" }}>

@@ -310,7 +310,8 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   const cancelledOrders = await Order.countDocuments({
     $and: [{ seller: req.shop.id }, { status: "cancelled" }],
   });
-  const allOrders = await Order.countDocuments({ seller: req.shop.id });
+  const getAllOrders = await Order.find({ seller: req.shop.id });
+  const allOrders = makeOrdersUnique(getAllOrders).length;
   const allCustomers = await Order.distinct("user", {
     seller: req.shop.id,
   });
@@ -332,7 +333,6 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
 
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
-  const today = new Date(new Date() - 60 * 60 * 1000);
 
   const lastMonthOrders = await Order.find({
     $and: [
@@ -388,6 +388,74 @@ const getCurrentShop = catchAsync(async (req, res, next) => {
   };
 
   res.json(seller);
+});
+
+const getSellerCharts = catchAsync(async (req, res, next) => {
+  // Fetch User Data
+  const getSeller = await Shop.findById(req.shop.id);
+  const getOrders = await Order.find({ seller: req.shop.id });
+
+  // Set Up Dates
+  const ShopCreated = new Date(getSeller.createdAt);
+  const MinDate = new Date(ShopCreated);
+  const MaxDate = new Date(ShopCreated);
+  MinDate.setMonth(MinDate.getMonth() - 1);
+
+  //Calculate Months Passed Since the Shop is Created
+  const today = new Date(new Date() - 60 * 60 * 1000);
+  const DateDifferenceSinceShopCreated = monthsPassed(ShopCreated, today);
+
+  let RevenueTotalByMonth = [];
+  let OrdersByMonth = [];
+  let MonthlyRevenue = [];
+
+  // Calculate Total Revenue Growth By Month
+  for (let i = 0; i < DateDifferenceSinceShopCreated; i++) {
+    let newMonth = MaxDate.setMonth(MaxDate.getMonth() + 1);
+    MinDate.setMonth(MinDate.getMonth() + 1);
+
+    let ordersByMonth = getOrders.filter(
+      (order) => order.createdAt <= MaxDate && order.status === "delivered"
+    );
+
+    let OrderCountByMonth = getOrders.filter(
+      (order) =>
+        order.createdAt > MinDate &&
+        order.createdAt <= MaxDate &&
+        order.status === "delivered"
+    );
+
+    let uniqueLastMonthOrders = makeOrdersUnique(ordersByMonth);
+    let uniqueOrdersForCount = makeOrdersUnique(OrderCountByMonth);
+
+    let totalRevenue = 0;
+    let monthlyRevenue = 0;
+
+    uniqueOrdersForCount.map((item) => {
+      if (item.status === "delivered") {
+        monthlyRevenue += item.totalAmount;
+      }
+    });
+
+    uniqueLastMonthOrders.map((item) => (totalRevenue += item.totalAmount));
+
+    // Format Current Date Appropriate for Chart
+    let CurrentMonth = new Date(newMonth);
+    let fullDate = FormatFullDate(CurrentMonth);
+
+    RevenueTotalByMonth.push([fullDate, Math.trunc(totalRevenue)]);
+    OrdersByMonth.push([fullDate, uniqueOrdersForCount.length]);
+    MonthlyRevenue.push({
+      label: fullDate,
+      value: `${Math.trunc(monthlyRevenue)}`,
+    });
+  }
+
+  res.json({
+    revenueGrowthByMonth: RevenueTotalByMonth,
+    ordersByMonth: OrdersByMonth,
+    monthlyRevenue: MonthlyRevenue,
+  });
 });
 
 const sendForgetPasswordEmail = catchAsync(async (req, res, next) => {
@@ -478,6 +546,32 @@ const changePassword = catchAsync(async (req, res, next) => {
   res.json("Successfully changed the password.");
 });
 
+function monthsPassed(dt2, dt1) {
+  var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= 60 * 60 * 24 * 7 * 4;
+  return Math.abs(Math.round(diff));
+}
+
+function makeOrdersUnique(orders) {
+  return Array.from(new Set(orders.map((item) => item.groupId))).map((id) => {
+    return orders.find((group) => group.groupId === id);
+  });
+}
+
+function FormatFullDate(date) {
+  const getDay = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+  const getShortMonthName = date.toLocaleString("default", {
+    month: "short",
+  });
+  const year = date.getFullYear();
+
+  let fullDate = `${getDay}-${getShortMonthName}-${year
+    .toString()
+    .substring(2)}`;
+
+  return fullDate;
+}
+
 module.exports = {
   createShop,
   editShop,
@@ -487,4 +581,5 @@ module.exports = {
   sendForgetPasswordEmail,
   checkResetPasswordToken,
   changePassword,
+  getSellerCharts,
 };

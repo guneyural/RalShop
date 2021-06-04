@@ -21,6 +21,7 @@ import {
   DENY_ORDER_CANCEL_REQUEST,
   CANCEL_ORDER,
   CHANGE_ORDER_STATUS,
+  GET_SELLER_CHARTS,
 } from "./types";
 import { logoutUser } from "./authActions";
 import axios from "axios";
@@ -77,6 +78,26 @@ export const denyOrderCancelRequest = (groupId) => (dispatch) => {
         type: DENY_ORDER_CANCEL_REQUEST,
         payload: { groupId, newOrders: data },
       });
+    })
+    .catch((err) => {
+      dispatch({
+        type: SELLER_ERROR,
+        payload: {
+          msg: err.response.data.errorMessage,
+          status: err.response.status,
+        },
+      });
+    });
+};
+
+export const getSellerCharts = () => (dispatch) => {
+  dispatch({ type: SELLER_LOADING });
+
+  axios
+    .get("/api/shop/charts", tokenConfig())
+    .then((res) => res.data)
+    .then((data) => {
+      dispatch({ type: GET_SELLER_CHARTS, payload: data });
     })
     .catch((err) => {
       dispatch({

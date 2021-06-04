@@ -6,21 +6,8 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 
 ReactFC.fcRoot(FusionCharts, Column2D, FusionTheme);
 
-const RevenueByMonthChart = () => {
-  const [chartData, setChartData] = useState([
-    { label: "Jan-21", value: "100" },
-    { label: "Feb-21", value: "50" },
-    { label: "Mar-21", value: "768" },
-    { label: "Apr-21", value: "310" },
-    { label: "May-21", value: "220" },
-    { label: "Jun-21", value: "520" },
-    { label: "Jul-21", value: "875" },
-    { label: "Aug-21", value: "985" },
-    { label: "Sep-21", value: "1258" },
-    { label: "Oct-21", value: "4732" },
-    { label: "Nov-21", value: "3568" },
-    { label: "Dec-21", value: "2540" },
-  ]);
+const RevenueByMonthChart = ({ Data = [] }) => {
+  const [chartData, setChartData] = useState([...Data]);
 
   const chartConfigs = {
     type: "column2d",

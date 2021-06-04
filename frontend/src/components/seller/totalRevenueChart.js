@@ -6,18 +6,9 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 
 ReactFC.fcRoot(FusionCharts, TimeSeries, FusionTheme);
 
-const HomePageDashboard = () => {
+const HomePageDashboard = ({ Data = [] }) => {
   const fusionTable = new FusionCharts.DataStore().createDataTable(
-    [
-      ["01-Jan-04", 125800],
-      ["01-Feb-04", 132500],
-      ["01-Mar-04", 168500],
-      ["01-Apr-04", 985400],
-      ["01-May-04", 1085400],
-      ["01-Jun-04", 985400],
-      ["01-Jul-04", 400000],
-      ["01-Aug-04", 85002],
-    ],
+    [...Data],
     [
       {
         name: "Time",

@@ -20,6 +20,7 @@ import {
   DENY_ORDER_CANCEL_REQUEST,
   CANCEL_ORDER,
   CHANGE_ORDER_STATUS,
+  GET_SELLER_CHARTS,
 } from "../actions/types";
 
 const initialState = {
@@ -45,11 +46,17 @@ const initialState = {
   },
   products: [],
   orders: [],
+  charts: {},
 };
 
 export const Seller = (state = initialState, action) => {
   let newOrders = [];
   switch (action.type) {
+    case GET_SELLER_CHARTS:
+      return {
+        ...state,
+        charts: action.payload,
+      };
     case CHANGE_ORDER_STATUS:
       newOrders = state.orders.map((item) => {
         let temp = 0;
