@@ -43,38 +43,41 @@ export default function CheckoutForm() {
 
   useEffect(() => {
     window
-      .fetch("/api/stripe/create-payment-intent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "user-token": localStorage.getItem("user-token"),
-        },
-        body: JSON.stringify({
-          items: cartProducts.filter((product) => product.selected === true),
-          shippingFee: 4.99,
-          shippingAddress: {
-            address: {
-              city: Address.city,
-              country: Address.country,
-              line1: Address.address,
-              postal_code: "35890",
-              state: Address.state,
+      .fetch(
+        "https://ural-shop.herokuapp.com/api/stripe/create-payment-intent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "user-token": localStorage.getItem("user-token"),
+          },
+          body: JSON.stringify({
+            items: cartProducts.filter((product) => product.selected === true),
+            shippingFee: 4.99,
+            shippingAddress: {
+              address: {
+                city: Address.city,
+                country: Address.country,
+                line1: Address.address,
+                postal_code: "35890",
+                state: Address.state,
+              },
+              name: `${Address.name} ${Address.surname}`,
+              phone: Address.phoneNumber,
             },
-            name: `${Address.name} ${Address.surname}`,
-            phone: Address.phoneNumber,
-          },
-          address: {
-            line1: BillingAddress.address,
-            postal_code: "34890",
-            state: BillingAddress.state,
-            country: BillingAddress.country,
-            city: BillingAddress.city,
-          },
-          email: BillingAddress.email,
-          name: `${BillingAddress.name} ${BillingAddress.surname}`,
-          phone: BillingAddress.phoneNumber,
-        }),
-      })
+            address: {
+              line1: BillingAddress.address,
+              postal_code: "34890",
+              state: BillingAddress.state,
+              country: BillingAddress.country,
+              city: BillingAddress.city,
+            },
+            email: BillingAddress.email,
+            name: `${BillingAddress.name} ${BillingAddress.surname}`,
+            phone: BillingAddress.phoneNumber,
+          }),
+        }
+      )
       .then((res) => {
         return res.json();
       })

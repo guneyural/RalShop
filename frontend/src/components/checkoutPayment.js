@@ -3,7 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./stripeCheckoutForm";
 
-const promise = loadStripe("pk_test_6XtghloNmnIJt2Bov5bGRCAg00ozfbAMRE");
+const promise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 export default function CheckoutPayment() {
   return (
     <div className="App">

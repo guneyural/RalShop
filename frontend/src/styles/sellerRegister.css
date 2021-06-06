@@ -1,7 +1,3 @@
-.mapboxgl-control-container {
-  display: none;
-}
-
 .mapboxgl-map {
   overflow: hidden;
 }

@@ -74,7 +74,7 @@ const Messaging = () => {
   }, [Chat.activeChat.participant]);
   useEffect(() => {
     if (isParticipantLoaded) {
-      socketRef.current = io.connect("/");
+      socketRef.current = io.connect("https://ural-shop.herokuapp.com/");
       socketRef.current.emit(
         "user connected",
         inSellerRoute ? Seller.shop.id : Auth.user._id
@@ -128,9 +128,8 @@ const Messaging = () => {
   useEffect(() => {
     if (isUnreadMessage === true) {
       const getUnreadMessages = document.querySelectorAll(".unread-message");
-      const getUnreadMessageNotificationText = document.querySelector(
-        ".unread-message"
-      );
+      const getUnreadMessageNotificationText =
+        document.querySelector(".unread-message");
       const getFirstUnreadMessage = document.querySelector(".unread-wrapper");
       getFirstUnreadMessage.classList.add("show");
       setUnreadMessageLength(getUnreadMessages.length);

@@ -15,6 +15,8 @@ const socket = require("socket.io");
 const Message = require("./models/message");
 const cors = require("cors");
 
+console.log(process.env);
+
 app.use(cors());
 app.use(helmet());
 app.use(sanitize());
@@ -22,7 +24,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const io = socket(server);
+const io = socket(server, {
+  cors: { origin: "https://ural-shop.herokuapp.com/" },
+});
 let users = {};
 io.on("connection", (socket) => {
   socket.on("user connected", (userId) => {

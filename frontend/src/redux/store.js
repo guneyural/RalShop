@@ -56,7 +56,11 @@ Store.subscribe(() => {
       lastAction === REMOVE_WISHLIST ||
       lastAction === GET_WISHLIST
     ) {
-      axios.post("/api/wishlist/update", { products }, tokenConfig());
+      axios.post(
+        "https://ural-shop.herokuapp.com/api/wishlist/update",
+        { products },
+        tokenConfig()
+      );
     }
     if (
       lastAction === ADD_CART ||
@@ -68,7 +72,7 @@ Store.subscribe(() => {
       lastAction === DONT_SELECT_CART_ITEM
     ) {
       axios.post(
-        "/api/cart/update",
+        "https://ural-shop.herokuapp.com/api/cart/update",
         { products: Cart.products },
         tokenConfig()
       );
