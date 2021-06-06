@@ -128,7 +128,7 @@ io.on("connection", (socket) => {
 });
 
 mongoose
-  .create(DATABASE, {
+  .connect(DATABASE, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: true,
