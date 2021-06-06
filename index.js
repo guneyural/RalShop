@@ -15,8 +15,6 @@ const socket = require("socket.io");
 const Message = require("./models/message");
 const cors = require("cors");
 
-console.log(process.env);
-
 app.use(cors());
 app.use(helmet());
 app.use(sanitize());
