@@ -53,7 +53,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://localhost:3002/",
+  "proxy": "https://ural-shop.herokuapp.com/",
   "browserslist": {
     "production": [
       ">0.2%",
