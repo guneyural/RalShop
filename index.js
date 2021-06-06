@@ -22,6 +22,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 const io = socket(server, {
   cors: { origin: "https://ural-shop.herokuapp.com/" },
 });
