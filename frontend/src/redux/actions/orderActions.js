@@ -7,7 +7,7 @@ import {
 } from "./types";
 import axios from "axios";
 
-const PREFIX = "/api/order";
+const PREFIX = "https://ural-shop.herokuapp.com/api/order";
 
 export const createOrder = (data) => (dispatch) => {
   dispatch({ type: ORDER_LOADING });

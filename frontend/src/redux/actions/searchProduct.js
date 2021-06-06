@@ -7,7 +7,7 @@ import {
 import axios from "axios";
 import { categories, subCategories } from "../../data/category";
 
-const prefix = "/api/product/search/";
+const prefix = "https://ural-shop.herokuapp.com/api/product/search/";
 
 export const searchProduct = (query) => (dispatch) => {
   dispatch({ type: SEARCH_PRODUCT_LOADING });
@@ -57,7 +57,7 @@ export const getProductsByCategory = (category) => (dispatch) => {
   dispatch({ type: SEARCH_PRODUCT_LOADING });
 
   axios
-    .get("/api/product/category/" + category)
+    .get("https://ural-shop.herokuapp.com/api/product/category/" + category)
     .then((res) => res.data)
     .then((data) => {
       let brandsOfResults = new Set();

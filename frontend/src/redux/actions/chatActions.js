@@ -15,7 +15,7 @@ export const createChatroom = (participantId, isShop) => (dispatch) => {
 
   axios
     .post(
-      "/api/chat/createRoom",
+      "https://ural-shop.herokuapp.com/api/chat/createRoom",
       { participantId },
       isShop ? shopConfig() : userConfig()
     )
@@ -38,7 +38,7 @@ export const getChatrooms = (isShop) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .get("/api/chat/getChatrooms", isShop ? shopConfig() : userConfig())
+    .get("https://ural-shop.herokuapp.com/api/chat/getChatrooms", isShop ? shopConfig() : userConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_CHATROOMS, payload: data });
@@ -60,7 +60,7 @@ export const setActiveChatroom = (roomId, participant, isShop) => (
 
   axios
     .get(
-      `/api/chat/getMessages/${roomId}`,
+      `https://ural-shop.herokuapp.com/api/chat/getMessages/${roomId}`,
       isShop ? shopConfig() : userConfig()
     )
     .then((res) => res.data)
@@ -91,7 +91,7 @@ export const getChatroomMessages = (roomId, isShop) => (dispatch) => {
 
   axios
     .get(
-      `/api/chat/getMessages/${roomId}`,
+      `https://ural-shop.herokuapp.com/api/chat/getMessages/${roomId}`,
       isShop ? shopConfig() : userConfig()
     )
     .then((res) => res.data)
@@ -110,7 +110,7 @@ export const getChatroomMessages = (roomId, isShop) => (dispatch) => {
 };
 export const getNotifications = (isShop) => (dispatch) => {
   axios
-    .get("/api/chat/notifications", isShop ? shopConfig() : userConfig())
+    .get("https://ural-shop.herokuapp.com/api/chat/notifications", isShop ? shopConfig() : userConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_NOTIFICATIONS, payload: data });

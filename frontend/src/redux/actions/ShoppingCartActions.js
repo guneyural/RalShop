@@ -18,7 +18,7 @@ export const getCart =
     dispatch({ type: LOADING });
     if (!isAuth) {
       axios
-        .post("/api/cart/check_unauthorized", { Products })
+        .post("https://ural-shop.herokuapp.com/api/cart/check_unauthorized", { Products })
         .then((res) => res.data)
         .then((data) => {
           dispatch({ type: GET_CART, payload: data });
@@ -34,7 +34,7 @@ export const getCart =
         });
     } else {
       axios
-        .get("/api/cart/", tokenConfig())
+        .get("https://ural-shop.herokuapp.com/api/cart/", tokenConfig())
         .then((res) => res.data)
         .then((data) => {
           dispatch({ type: GET_CART, payload: data });

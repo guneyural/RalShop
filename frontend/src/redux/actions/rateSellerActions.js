@@ -8,7 +8,7 @@ import {
 } from "./types";
 import axios from "axios";
 
-const prefix = "/api/seller_rating";
+const prefix = "https://ural-shop.herokuapp.com/api/seller_rating";
 
 export const getRatedSellersForSeller = () => (dispatch) => {
   dispatch({ type: RATE_SELLER_LOADING });

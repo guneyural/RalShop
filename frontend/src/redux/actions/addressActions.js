@@ -20,9 +20,9 @@ export const createAddress = (data, isBillingAddress) => (dispatch) => {
     ...data,
     addressType: isBillingAddress ? "billing" : "delivery",
   };
-  console.log(isBillingAddress);
+
   axios
-    .post("/api/address", addressObject, tokenConfig())
+    .post("https://ural-shop.herokuapp.com/api/address", addressObject, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -45,7 +45,7 @@ export const getAddresses = () => (dispatch) => {
   dispatch({ type: ADDRESS_LOADING });
 
   axios
-    .get("/api/address", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/address", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -68,7 +68,7 @@ export const updateAddress = (id, data, isBillingAddress) => (dispatch) => {
   dispatch({ type: ADDRESS_LOADING });
 
   axios
-    .put(`/api/address/${id}`, data, tokenConfig())
+    .put(`https://ural-shop.herokuapp.com/api/address/${id}`, data, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -91,7 +91,7 @@ export const deleteAddress = (id, isBillingAddress) => (dispatch) => {
   dispatch({ type: ADDRESS_LOADING });
 
   axios
-    .delete(`/api/address/${id}`, tokenConfig())
+    .delete(`https://ural-shop.herokuapp.com/api/address/${id}`, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({

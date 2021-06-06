@@ -135,7 +135,7 @@ export default function CheckoutForm() {
     } else {
       axios
         .post(
-          "/api/stripe/create-invoice",
+          "https://ural-shop.herokuapp.com/api/stripe/create-invoice",
           {
             items: cartProducts.filter((product) => product.selected === true),
             paymentIntentId,

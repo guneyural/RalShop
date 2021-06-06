@@ -30,7 +30,11 @@ export const changeOrderStatus = (groupId, status) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .post("/api/order/change-status", { groupId, status }, tokenConfig())
+    .post(
+      "https://ural-shop.herokuapp.com/api/order/change-status",
+      { groupId, status },
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -52,7 +56,11 @@ export const cancelOrder = (groupId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .post("/api/order/refund", { groupId }, tokenConfig())
+    .post(
+      "https://ural-shop.herokuapp.com/api/order/refund",
+      { groupId },
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: CANCEL_ORDER, payload: { groupId, newOrders: data } });
@@ -71,7 +79,11 @@ export const denyOrderCancelRequest = (groupId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .post("/api/order/cancel-request/deny", { groupId }, tokenConfig())
+    .post(
+      "https://ural-shop.herokuapp.com/api/order/cancel-request/deny",
+      { groupId },
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -94,7 +106,7 @@ export const getSellerCharts = () => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .get("/api/shop/charts", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/shop/charts", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_SELLER_CHARTS, payload: data });
@@ -114,7 +126,10 @@ export const getSellerOrders = () => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .get("/api/order/seller-orders", tokenConfig())
+    .get(
+      "https://ural-shop.herokuapp.com/api/order/seller-orders",
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_SELLER_ORDERS, payload: data });
@@ -134,7 +149,7 @@ export const updateProduct = (id, data) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .put(`/api/product/${id}`, data, {
+    .put(`https://ural-shop.herokuapp.com/api/product/${id}`, data, {
       headers: {
         "shop-token": localStorage.getItem("shop-token"),
         "Content-Type": "multipart/form-data",
@@ -161,7 +176,10 @@ export const getAllSellerProducts = () => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .get("/api/product/products/all", tokenConfig())
+    .get(
+      "https://ural-shop.herokuapp.com/api/product/products/all",
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_ALL_SELLER_PRODUCTS, payload: data });
@@ -180,7 +198,7 @@ export const deleteProduct = (id) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .delete(`/api/product/${id}`, tokenConfig())
+    .delete(`https://ural-shop.herokuapp.com/api/product/${id}`, tokenConfig())
     .then(() => {
       dispatch({ type: SELLER_DELETE_PRODUCT, payload: id });
     })
@@ -196,7 +214,7 @@ export const deleteProduct = (id) => (dispatch) => {
 };
 export const getCurrentSeller = () => (dispatch) => {
   axios
-    .get("/api/shop/current", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/shop/current", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_CURRENT_SELLER, payload: { shop: data } });
@@ -215,7 +233,7 @@ export const sellerRegister = (data) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .post("/api/shop/create", data)
+    .post("https://ural-shop.herokuapp.com/api/shop/create", data)
     .then((res) => res.data)
     .then((data) => {
       dispatch(logoutUser());
@@ -235,7 +253,11 @@ export const sellerUpdateProfile = (data, sellerId) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .put(`/api/shop/update/${sellerId}`, data, tokenConfig())
+    .put(
+      `https://ural-shop.herokuapp.com/api/shop/update/${sellerId}`,
+      data,
+      tokenConfig()
+    )
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: UPDATE_SELLER, payload: data });
@@ -254,7 +276,7 @@ export const sellerLogin = (email, password) => (dispatch) => {
   dispatch({ type: SELLER_LOADING });
 
   axios
-    .post("/api/shop/login", { email, password })
+    .post("https://ural-shop.herokuapp.com/api/shop/login", { email, password })
     .then((res) => res.data)
     .then((data) => {
       dispatch(logoutUser());
@@ -273,7 +295,10 @@ export const sellerLogin = (email, password) => (dispatch) => {
 export const sendForgotPasswordEmail = (email, origin) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .post("/api/shop/sendEmail", { email, origin })
+    .post("https://ural-shop.herokuapp.com/api/shop/sendEmail", {
+      email,
+      origin,
+    })
     .then(() => {
       dispatch({ type: SELLER_SEND_FORGOT_PASSWORD_EMAIL });
     })
@@ -291,7 +316,10 @@ export const confirmPasswordResetToken = (email, shopToken) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .post("/api/shop/checkToken", { email, shopToken })
+    .post("https://ural-shop.herokuapp.com/api/shop/checkToken", {
+      email,
+      shopToken,
+    })
     .then(() => {
       dispatch({ type: SELLER_CHECK_PASSWORD_TOKEN });
     })
@@ -305,7 +333,7 @@ export const resetPassword =
 
     axios
       .post(
-        "/api/shop/changePassword",
+        "https://ural-shop.herokuapp.com/api/shop/changePassword",
         { newPassword, confirmPassword, email },
         { headers: { "password-token": token } }
       )

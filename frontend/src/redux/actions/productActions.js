@@ -10,7 +10,7 @@ export const createProduct = (data) => (dispatch) => {
   dispatch({ type: PRODUCT_LOADING });
 
   axios
-    .post("/api/product/new", data, {
+    .post("https://ural-shop.herokuapp.com/api/product/new", data, {
       headers: {
         "shop-token": localStorage.getItem("shop-token"),
         "Content-Type": "multipart/form-data",
@@ -39,7 +39,7 @@ export const getProductById = (id) => (dispatch) => {
   dispatch({ type: PRODUCT_LOADING });
 
   axios
-    .get(`/api/product/${id}`)
+    .get(`https://ural-shop.herokuapp.com/api/product/${id}`)
     .then((res) => res.data)
     .then((data) => {
       dispatch({

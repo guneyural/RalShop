@@ -126,7 +126,7 @@ const ShoppingCartPage = () => {
     if (!isInWishlist) {
       tempWishlist = [{ _id: product.product }, ...wishlistProducts];
       axios
-        .post("/api/wishlist/update", { products: tempWishlist }, tokenConfig())
+        .post("https://ural-shop.herokuapp.com/api/wishlist/update", { products: tempWishlist }, tokenConfig())
         .then((res) => res.data)
         .then((data) => {
           dispatch(addItem(data.products[0]));

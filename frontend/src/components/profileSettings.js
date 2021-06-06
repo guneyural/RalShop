@@ -81,7 +81,7 @@ const ProfileSettings = () => {
   const removeAccount = () => {
     axios
       .post(
-        "/api/user/remove",
+        "https://ural-shop.herokuapp.com/api/user/remove",
         { password },
         {
           headers: {

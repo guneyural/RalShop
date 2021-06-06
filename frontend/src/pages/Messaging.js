@@ -214,7 +214,7 @@ const Messaging = () => {
 
       axios
         .post(
-          "/api/chat/sendImage",
+          "https://ural-shop.herokuapp.com/api/chat/sendImage",
           formData,
           inSellerRoute ? shopConfig() : userConfig()
         )

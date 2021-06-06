@@ -12,7 +12,7 @@ export const getWishlist = () => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .get("/api/wishlist", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/wishlist", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_WISHLIST, payload: data });
@@ -39,7 +39,10 @@ export const removeItem = (id) => {
 export const removeAllItems = () => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .delete("api/wishlist/remove_all", tokenConfig())
+    .delete(
+      "https://ural-shop.herokuapp.com/api/wishlist/remove_all",
+      tokenConfig()
+    )
     .then(() => dispatch({ type: REMOVE_ALL_WISHLIST }))
     .catch((err) => {
       dispatch({

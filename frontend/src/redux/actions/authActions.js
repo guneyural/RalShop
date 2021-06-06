@@ -25,7 +25,7 @@ import axios from "axios";
 export const getUser = () => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .get("/api/user/current", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/user/current", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_USER, payload: data });
@@ -44,7 +44,7 @@ export const getUser = () => (dispatch) => {
 export const userLogin = (loginData) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .post("/api/user/login", loginData)
+    .post("https://ural-shop.herokuapp.com/api/user/login", loginData)
     .then((res) => res.data)
     .then((data) => {
       dispatch(sellerLogout());
@@ -64,7 +64,7 @@ export const userLogin = (loginData) => (dispatch) => {
 export const registerUser = (registerData) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .post("/api/user/register", registerData)
+    .post("https://ural-shop.herokuapp.com/api/user/register", registerData)
     .then((res) => res.data)
     .then((data) => {
       dispatch(sellerLogout());
@@ -88,7 +88,7 @@ export const logoutUser = () => (dispatch) => {
 export const getProfile = (username) => (dispatch) => {
   dispatch({ type: LOADING });
   axios
-    .get(`/api/user/p/${username}`)
+    .get(`https://ural-shop.herokuapp.com/api/user/p/${username}`)
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_USER_BY_USERNAME, payload: data });
@@ -108,7 +108,7 @@ export const sendForgotPasswordEmail = (emailOrUsername) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .post("/api/user/sendEmail", { emailOrUsername })
+    .post("https://ural-shop.herokuapp.com/api/user/sendEmail", { emailOrUsername })
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -130,7 +130,7 @@ export const confirmPasswordResetCode =
   (dispatch) => {
     dispatch({ type: LOADING });
     axios
-      .post(`/api/user/checkPasswordResetCode`, {
+      .post(`https://ural-shop.herokuapp.com/api/user/checkPasswordResetCode`, {
         usernameOrEmail: localStorage.getItem("emailOrUsername"),
         userToken: resetCode,
       })
@@ -154,7 +154,7 @@ export const changePassword =
   (dispatch) => {
     axios
       .post(
-        "/api/user/newPassword",
+        "https://ural-shop.herokuapp.com/api/user/newPassword",
         { emailOrUsername, newPassword, confirmPassword },
         { headers: { "password-token": confirmationCode } }
       )
@@ -169,7 +169,7 @@ export const updateUserData =
   (dispatch) => {
     dispatch({ type: LOADING });
     axios
-      .put("/api/user/update", { username, email }, tokenConfig())
+      .put("https://ural-shop.herokuapp.com/api/user/update", { username, email }, tokenConfig())
       .then((res) => res.data)
       .then((data) => {
         dispatch({ type: UPDATE_USER_DATA, payload: data });
@@ -189,7 +189,7 @@ export const addProfilePhoto = (formData) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .put("/api/user/updatePhoto", formData, {
+    .put("https://ural-shop.herokuapp.com/api/user/updatePhoto", formData, {
       headers: {
         "user-token": localStorage.getItem("user-token"),
         "Content-Type": "multipart/form-data",
@@ -214,7 +214,7 @@ export const removeProfilePhoto = () => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .delete("/api/user/profilePhoto", tokenConfig())
+    .delete("https://ural-shop.herokuapp.com/api/user/profilePhoto", tokenConfig())
     .then((res) => res.data)
     .then((data) => dispatch({ type: REMOVE_PROFILE_PHOTO, payload: data }))
     .catch((err) => {
@@ -232,7 +232,7 @@ export const getUserReviews = () => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .get("/api/review/user/reviews", tokenConfig())
+    .get("https://ural-shop.herokuapp.com/api/review/user/reviews", tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: GET_USER_REVIEWS, payload: data });
@@ -252,7 +252,7 @@ export const deleteReview = (id) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .delete(`/api/review/${id}`, tokenConfig())
+    .delete(`https://ural-shop.herokuapp.com/api/review/${id}`, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: USER_DELETE_REVIEW, payload: id });

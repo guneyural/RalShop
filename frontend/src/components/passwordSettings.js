@@ -55,7 +55,7 @@ const PasswordSettings = () => {
 
     setIsLoading(true);
     axios
-      .put("/api/user/resetPassword", body, {
+      .put("https://ural-shop.herokuapp.com/api/user/resetPassword", body, {
         headers: { "user-token": localStorage.getItem("user-token") },
       })
       .then((res) => res.data)

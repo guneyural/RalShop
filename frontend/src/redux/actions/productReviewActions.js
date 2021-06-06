@@ -12,7 +12,7 @@ export const getReviews = (productId) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .get(`/api/review/product/${productId}`)
+    .get(`https://ural-shop.herokuapp.com/api/review/product/${productId}`)
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -36,7 +36,7 @@ export const addReview = (rating, text, productId) => (dispatch) => {
 
   axios
     .post(
-      `/api/review/product/${productId}/review`,
+      `https://ural-shop.herokuapp.com/api/review/product/${productId}/review`,
       { rating, text },
       tokenConfig()
     )
@@ -62,7 +62,7 @@ export const updateReview = (id, rating, text) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .put(`/api/review/${id}`, { rating, text }, tokenConfig())
+    .put(`https://ural-shop.herokuapp.com/api/review/${id}`, { rating, text }, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({
@@ -85,7 +85,7 @@ export const deleteReview = (id) => (dispatch) => {
   dispatch({ type: LOADING });
 
   axios
-    .delete(`/api/review/${id}`, tokenConfig())
+    .delete(`https://ural-shop.herokuapp.com/api/review/${id}`, tokenConfig())
     .then((res) => res.data)
     .then((data) => {
       dispatch({ type: DELETE_REVIEW, payload: { id, average: data.average } });
