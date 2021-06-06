@@ -13,7 +13,9 @@ const http = require("http");
 const server = http.createServer(app);
 const socket = require("socket.io");
 const Message = require("./models/message");
+const cors = require("cors");
 
+app.use(cors());
 app.use(helmet());
 app.use(sanitize());
 app.use(morgan("dev"));
