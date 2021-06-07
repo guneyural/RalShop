@@ -22,9 +22,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 const io = socket(server, {
-  cors: { origin: "https://ural-shop.herokuapp.com/" },
+  cors: { origin: "https://practical-carson-947785.netlify.app/" },
 });
 let users = {};
 io.on("connection", (socket) => {
