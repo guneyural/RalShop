@@ -23,7 +23,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const io = socket(server, {
-  cors: { origin: "https://practical-carson-947785.netlify.app/" },
+  cors: {
+    origin: "https://practical-carson-947785.netlify.app/",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["user-token", "shop-token"],
+  },
 });
 let users = {};
 io.on("connection", (socket) => {
