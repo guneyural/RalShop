@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
 import PrivateRoute from "./privateRoutes/privateRoute";
@@ -49,7 +51,11 @@ import SearchResultsPage from "./pages/searchResultsPage";
 import ProductsByCategory from "./pages/ProductsByCategory";
 import ProductsBySubCategory from "./pages/ProductsBySubCategory";
 
+import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
+
 require("dotenv").config();
+
+mapboxgl.workerClass = MapboxWorker;
 
 const App = () => {
   const dispatch = useDispatch();

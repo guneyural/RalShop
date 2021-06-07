@@ -24,9 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const io = socket(server, {
   cors: {
-    origin: "https://ural-shop.herokuapp.com/",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["user-token", "shop-token"],
+    origin: "*",
   },
 });
 let users = {};
