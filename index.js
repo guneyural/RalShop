@@ -22,7 +22,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const io = socket(server);
+const io = socket(server, {
+  origin: "https://practical-carson-947785.netlify.app",
+});
 let users = {};
 io.on("connection", (socket) => {
   socket.on("user connected", (userId) => {
