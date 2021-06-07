@@ -15,7 +15,7 @@ const socket = require("socket.io");
 const Message = require("./models/message");
 const cors = require("cors");
 
-app.use(cors());
+app.use(cors({ origin: "https://practical-carson-947785.netlify.app" }));
 app.use(helmet());
 app.use(sanitize());
 app.use(morgan("dev"));
