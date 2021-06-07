@@ -22,8 +22,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const io = socket(server);
-io.origins("*:*");
+const io = socket(server, { cors: { origin: "*" } });
 let users = {};
 io.on("connection", (socket) => {
   socket.on("user connected", (userId) => {
