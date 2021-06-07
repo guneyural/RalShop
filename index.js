@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const io = socket(server);
+io.origins("*:*");
 let users = {};
 io.on("connection", (socket) => {
   socket.on("user connected", (userId) => {
