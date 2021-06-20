@@ -20,7 +20,7 @@ You can check my website from [here](https://practical-carson-947785.netlify.app
 
 ## Author
 
-Guney Ural
+Guney Ural - guneyural@gmail.com
 
 ## License
 
