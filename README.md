@@ -30,7 +30,7 @@ You can be a **seller** or a **customer**.
 - **Rate** the seller
 - Create **invoice address and delivery address**
 
-You can check UralShop from [here](https://practical-carson-947785.netlify.app/)
+You can visit UralShop from [here](https://practical-carson-947785.netlify.app/)
 
 -----
 
